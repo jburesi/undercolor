@@ -31,7 +31,6 @@ Players must describe their image to prove their innocence without revealing too
 - **Framework**: Nuxt 4 (Nitro Engine)
 - **Database & Realtime**: Supabase (PostgreSQL + Realtime)
 - **UI Library**: shadcn-vue (Radix Vue + Tailwind)
-- **State Management**: Pinia (Client) + XState (Server Logic)
 - **Validation**: Zod
 - **Image Optimization**: @nuxt/image
 

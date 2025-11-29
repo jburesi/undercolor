@@ -38,35 +38,11 @@ The project structure must reflect the clear separation between game logic, user
 | :--- | :--- | :--- |
 | `@nuxtjs/tailwindcss` | Style Engine | Allows rapid prototyping and native integration with Shadcn. |
 | `shadcn-nuxt` | UI Components | Provides accessible and customizable components without heavy dependencies. |
-| `@pinia/nuxt` | Client State Management | Replaces Vuex for reactive management of local player state (role, vote). |
 | `@nuxt/image` | Visual Optimization | Crucial for serving Image A/B in WebP/AVIF format with automatic resizing. |
 | `@vueuse/nuxt` | Composition Utilities | Window event management, clipboard (copy room link), and WebRTC. |
-| `nuxt-security` | Security | Secure HTTP headers to prevent XSS attacks during chat/upload phases. |
 
 The directory structure must isolate business logic. A `composables/game` folder will group specific hooks like `useGameSocket` or `useTurnTimer`, while `server/api` will handle interactions with the Supabase database for retrieving image sets.
 
-### 2.2 Rendering Strategies and Hydration
-
-For an "Undercover" game, perceived latency is the enemy. Nuxt 3 offers several rendering modes. Although SSR (Server-Side Rendering) is excellent for SEO, the core gameplay (the "Room") must prioritize a SPA (Single Page Application) approach or hybrid rendering to avoid costly page reloads during phase transitions.
-
-Using `routeRules` in `nuxt.config.ts` allows defining these behaviors:
-
-*   Home and rules pages (`/`, `/rules`) are statically generated (**SSG**) for maximum loading performance.
-*   Game routes (`/room/**`) are configured with `ssr: false` to switch to **SPA** mode, letting the client handle state via WebSockets without server overhead for initial HTML rendering.
-*   The administration interface (`/admin`) benefits from exclusive client-side rendering to protect routes via strict authentication middleware executed in the browser before any sensitive data display.
-
-### 2.3 Client State Management with Pinia
-
-Although the "truth" state of the game resides on the server, the client must maintain a synchronized copy for display. Pinia offers an intuitive API and full TypeScript support to define these complex data structures.
-
-The `useGameStore` must encapsulate:
-
-*   **Player Identity**: `socketId`, `nickname`, `avatar`.
-*   **Room State**: `roomId`, `hostId`, `phase` (LOBBY, REVEAL, DEBATE, VOTE).
-*   **Sensitive Data**: `myRole` (encrypted or obfuscated until revelation), `secretImage` (temporary URL).
-*   **Player List**: A reactive collection of player objects including their status (alive/eliminated, voted/waiting).
-
-The advantage of Pinia lies in its ability to subscribe to state changes (`$subscribe`), allowing UI side effects (like playing a sound or showing a Toast notification) to be triggered as soon as a critical mutation occurs, for example when a player is eliminated.
 
 ## 3. User Interface Design: Shadcn and Visual Experience
 
