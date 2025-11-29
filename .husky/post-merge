@@ -1,0 +1,12 @@
+echo "🔍 [HUSKY:POST-MERGE] Starting post-merge dependency check..."
+
+if git diff --name-only HEAD@{1}..HEAD | grep -q "package.json\|pnpm-lock.yaml"; then
+  echo "📦 [HUSKY:POST-MERGE] Dependencies changed, running pnpm install..."
+  pnpm install
+  echo "✅ [HUSKY:POST-MERGE] Dependencies installation completed successfully"
+else
+  echo "✅ [HUSKY:POST-MERGE] No dependency changes detected"
+  echo "🎯 [HUSKY:POST-MERGE] Post-merge check completed - no action needed"
+fi
+
+echo "🏁 [HUSKY:POST-MERGE] Post-merge hook finished"

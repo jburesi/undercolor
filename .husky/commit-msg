@@ -1,0 +1,12 @@
+echo "🔍 [HUSKY:COMMIT-MSG] Starting commit message validation..."
+
+if pnpm dlx commitlint --edit $1; then
+  echo "✅ [HUSKY:COMMIT-MSG] Commit message validation passed"
+  echo "🎯 [HUSKY:COMMIT-MSG] Commit message follows conventional format"
+else
+  echo "❌ [HUSKY:COMMIT-MSG] Commit message validation failed"
+  echo "💡 [HUSKY:COMMIT-MSG] Please use conventional format: feat|fix|docs|style|refactor|test|chore: description"
+  exit 1
+fi
+
+echo "🏁 [HUSKY:COMMIT-MSG] Commit message hook finished"

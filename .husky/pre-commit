@@ -1,0 +1,12 @@
+echo "🔍 [HUSKY:PRE-COMMIT] Starting pre-commit validation..."
+
+if pnpm lint-staged; then
+  echo "✅ [HUSKY:PRE-COMMIT] Pre-commit validation passed"
+  echo "🎯 [HUSKY:PRE-COMMIT] Code quality checks completed successfully"
+else
+  echo "❌ [HUSKY:PRE-COMMIT] Pre-commit validation failed"
+  echo "💡 [HUSKY:PRE-COMMIT] Please fix linting issues before committing again"
+  exit 1
+fi
+
+echo "🏁 [HUSKY:PRE-COMMIT] Pre-commit hook finished"

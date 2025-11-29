@@ -1,0 +1,41 @@
+{
+  // Tailwind CSS
+  "files.associations": {
+    "*.css": "tailwindcss"
+  },
+  "editor.quickSuggestions": {
+    "strings": "on"
+  },
+  "sonarlint.analysisExcludesStandalone": "**/tailwind.css",
+
+  // Formatting
+  "editor.formatOnSave": true,
+  "editor.formatOnPaste": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "[snippets]": {
+    "editor.defaultFormatter": "vscode.json-language-features"
+  },
+
+  "editor.codeActionsOnSave": {
+    "source.fixAll.markdownlint": "always"
+  },
+
+  // Git & Conventional Commits
+  "git.autofetch": true,
+  "git.smartCommitChanges": "all",
+  "git.postCommitCommand": "sync",
+  "conventionalCommits.showNewVersionNotes": false,
+
+  // Vue
+  "vue.inlayHints.destructuredProps": true,
+  "vue.inlayHints.missingProps": true,
+  "vue.autoInsert.dotValue": true,
+
+  "editor.gotoLocation.multipleDefinitions": "goto",
+
+  // i18n Ally Configuration
+  "i18n-ally.sortKeys": true,
+  "i18n-ally.keepFulfilled": true,
+  "i18n-ally.keystyle": "nested",
+  "i18n-ally.localesPaths": ["i18n/locales"]
+}

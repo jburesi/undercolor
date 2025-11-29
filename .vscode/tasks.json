@@ -1,0 +1,148 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "type": "npm",
+      "script": "install",
+      "group": {
+        "kind": "build"
+      },
+      "label": "Nuxt: Install Dependencies",
+      "detail": "Install all project dependencies with pnpm 📦",
+      "runOptions": {
+        "instancePolicy": "warn"
+      },
+      "presentation": {
+        "clear": true
+      }
+    },
+    {
+      "type": "npm",
+      "script": "dev",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "label": "Nuxt: Start Dev Server",
+      "detail": "Start Nuxt development server on localhost:3000 🚀",
+      "runOptions": {
+        "instancePolicy": "warn"
+      },
+      "presentation": {
+        "panel": "dedicated",
+        "clear": true
+      }
+    },
+    {
+      "type": "npm",
+      "script": "lint",
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      },
+      "problemMatcher": ["$eslint-stylish", "$markdownlint"],
+      "label": "Nuxt: Lint Code",
+      "detail": "Run ESLint + Prettier + Markdownlint 🔍",
+      "runOptions": {
+        "instancePolicy": "warn"
+      },
+      "presentation": {
+        "clear": true
+      }
+    },
+    {
+      "type": "npm",
+      "script": "supabase:gen",
+      "group": "build",
+      "label": "Supabase: Generate Types",
+      "detail": "Generate TypeScript types from Supabase schema 🎯",
+      "runOptions": {
+        "instancePolicy": "warn"
+      },
+      "presentation": {
+        "clear": true
+      }
+    },
+    {
+      "type": "shell",
+      "command": "pnpm",
+      "args": ["dlx", "supabase", "start"],
+      "group": "build",
+      "label": "Supabase: Start Local",
+      "detail": "Start Supabase local development stack ▶️",
+      "runOptions": {
+        "runOn": "folderOpen",
+        "instancePolicy": "warn"
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      }
+    },
+    {
+      "type": "shell",
+      "command": "pnpm",
+      "args": ["dlx", "supabase", "stop"],
+      "group": "build",
+      "label": "Supabase: Stop Local",
+      "detail": "Stop Supabase local development stack ⏹️",
+      "runOptions": {
+        "instancePolicy": "warn"
+      },
+      "presentation": {
+        "clear": true
+      }
+    },
+    {
+      "type": "shell",
+      "command": "pnpm",
+      "args": ["dlx", "supabase", "db", "reset"],
+      "group": "build",
+      "label": "Supabase: Reset Database",
+      "detail": "Reset Supabase database to initial state 🔄",
+      "runOptions": {
+        "instancePolicy": "warn"
+      },
+      "presentation": {
+        "clear": true
+      }
+    },
+    {
+      "type": "shell",
+      "command": "pnpm",
+      "args": ["dlx", "supabase", "db", "diff", "-f", "${input:migrationName}"],
+      "group": "build",
+      "label": "Supabase: Create Migration",
+      "detail": "Create a diff file for database changes 📋",
+      "runOptions": {
+        "instancePolicy": "warn"
+      },
+      "presentation": {
+        "clear": true
+      }
+    },
+    {
+      "type": "shell",
+      "command": "pnpm",
+      "args": ["nuxt", "cleanup"],
+      "group": "build",
+      "label": "Nuxt: Cleanup",
+      "detail": "Clean up generated files and caches 🧹",
+      "runOptions": {
+        "instancePolicy": "warn"
+      },
+      "presentation": {
+        "clear": true
+      }
+    }
+  ],
+  "inputs": [
+    {
+      "id": "migrationName",
+      "description": "Enter migration name",
+      "default": "migration_name",
+      "type": "promptString"
+    }
+  ]
+}

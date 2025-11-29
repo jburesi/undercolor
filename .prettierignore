@@ -1,0 +1,8 @@
+# Ignore artifacts:
+build
+coverage
+/pnpm-lock.yaml
+/pnpm-workspace.yaml
+/src/app/components/ui/
+/src/app/lib/utils.ts
+/components.json

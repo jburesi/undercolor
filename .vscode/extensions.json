@@ -1,0 +1,15 @@
+{
+  "recommendations": [
+    "vivaxy.vscode-conventional-commits",
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "editorconfig.editorconfig",
+    "bradlc.vscode-tailwindcss",
+    "vue.volar",
+    "antfu.iconify",
+    "antfu.goto-alias",
+    "vitest.explorer",
+    "lokalise.i18n-ally",
+    "selemondev.shadcn-vue"
+  ]
+}

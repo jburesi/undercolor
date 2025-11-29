@@ -1,0 +1,98 @@
+{
+  "languageSwitcher": {
+    "toggleLanguage": "Toggle language"
+  },
+  "breadcrumb": {
+    "items": {
+      "index": {
+        "icon": "i-heroicons-home",
+        "ariaLabel": "Home"
+      },
+      "settings": {
+        "icon": "i-heroicons-cog",
+        "ariaLabel": "Settings"
+      }
+    }
+  },
+  "settings": {
+    "title": "Account Settings",
+    "description": "Manage your account settings and preferences.",
+    "tabs": {
+      "general": "General",
+      "profile": "Profile",
+      "notifications": "Notifications",
+      "security": "Security"
+    },
+    "general": {
+      "title": "General Settings",
+      "description": "Update your general account settings.",
+      "name": "Name",
+      "namePlaceholder": "Your name",
+      "email": "Email",
+      "emailPlaceholder": "Your email",
+      "language": "Language",
+      "languagePlaceholder": "Select a language"
+    },
+    "profile": {
+      "title": "Profile Information",
+      "description": "Update your profile details.",
+      "bio": "Bio",
+      "bioPlaceholder": "Tell us about yourself",
+      "profilePicture": "Profile Picture",
+      "change": "Change",
+      "updateProfile": "Update Profile",
+      "profileUpdated": "Profile Updated",
+      "profileUpdatedDescription": "Your profile information has been updated successfully."
+    },
+    "notifications": {
+      "title": "Notification Preferences",
+      "description": "Configure how you receive notifications.",
+      "email": "Email Notifications",
+      "emailDescription": "Receive notifications via email.",
+      "push": "Push Notifications",
+      "pushDescription": "Receive push notifications on your devices.",
+      "marketing": "Marketing Emails",
+      "marketingDescription": "Receive marketing emails from us.",
+      "savePreferences": "Save Preferences",
+      "preferencesUpdated": "Notification Preferences Updated",
+      "preferencesUpdatedDescription": "Your notification preferences have been updated successfully."
+    },
+    "security": {
+      "title": "Security Settings",
+      "description": "Update your security preferences.",
+      "currentPassword": "Current Password",
+      "newPassword": "New Password",
+      "confirmPassword": "Confirm New Password",
+      "twoFactor": "Two-Factor Authentication",
+      "twoFactorDescription": "Add an extra layer of security to your account.",
+      "twoFactorEnabled": "Two-Factor Authentication Enabled",
+      "enableTwoFactor": "Enable Two-Factor Authentication",
+      "updatePassword": "Update Password",
+      "dangerZone": "Danger Zone",
+      "deleteAccount": "Delete Account",
+      "deleteAccountDescription": "Permanently delete your account and all of your data.",
+      "passwordMismatch": "New passwords do not match.",
+      "passwordUpdated": "Password Updated",
+      "passwordUpdatedDescription": "Your password has been updated successfully.",
+      "twoFactorEnabledDescription": "Your account is now more secure.",
+      "accountDeleted": "Account Deleted",
+      "accountDeletedDescription": "Your account has been permanently deleted."
+    },
+    "deleteDialog": {
+      "title": "Are you absolutely sure?",
+      "description": "This action cannot be undone. This will permanently delete your account and remove your data from our servers.",
+      "confirmLabel": "Type \"DELETE\" to confirm",
+      "confirmPlaceholder": "DELETE",
+      "cancel": "Cancel"
+    },
+    "saveChanges": "Save Changes",
+    "updated": "Settings Updated",
+    "updatedDescription": "Your general settings have been updated successfully."
+  },
+  "errors": {
+    "general": "Error",
+    "authRequired": "Authentication Required",
+    "authRequiredDescription": "You must be logged in to save settings.",
+    "saveError": "An error occurred while saving settings."
+  }
+}
