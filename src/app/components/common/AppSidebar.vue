@@ -1,5 +1,13 @@
 <script setup lang="ts">
+import type { RouteNamedMapI18n } from "vue-router/auto-routes";
 import { toast } from "vue-sonner";
+
+// Type for navigation items with IntelliSense on route names
+interface NavItem {
+  title: string;
+  icon: string;
+  to: { name: keyof RouteNamedMapI18n };
+}
 
 const { t } = useI18n();
 const localePath = useLocalePath();
@@ -16,64 +24,64 @@ async function handleLogout() {
   try {
     await supabase.auth.signOut();
     toast.success(t("toast.logoutSuccess"));
-    await navigateTo(localePath({ path: "/" }));
+    await navigateTo(localePath("index"));
   } catch {
     toast.error(t("toast.errorOccurred"));
   }
 }
 
-// Navigation items
-const mainNavItems = computed(() => [
+// Navigation items - using route names for NuxtLinkLocale
+const mainNavItems = computed<NavItem[]>(() => [
   {
     title: t("nav.home"),
     icon: "lucide:home",
-    to: localePath({ path: "/" }),
+    to: { name: "index" },
   },
   {
     title: t("nav.rooms"),
     icon: "lucide:gamepad-2",
-    to: localePath({ path: "/rooms" }),
+    to: { name: "rooms" },
   },
 ]);
 
-const gameNavItems = computed(() => [
+const gameNavItems = computed<NavItem[]>(() => [
   {
     title: t("rooms.create"),
     icon: "lucide:plus-circle",
-    to: localePath({ path: "/rooms/create" }),
+    to: { name: "rooms-create" },
   },
   {
     title: t("rooms.join"),
     icon: "lucide:log-in",
-    to: localePath({ path: "/rooms/join" }),
+    to: { name: "rooms-join" },
   },
 ]);
 
 // User stats items (for logged in users)
-const userNavItems = computed(() => [
+const userNavItems = computed<NavItem[]>(() => [
   {
     title: t("nav.profile"),
     icon: "lucide:user",
-    to: localePath({ path: "/profile" }),
+    to: { name: "profile" },
   },
   {
     title: t("nav.gameHistory"),
     icon: "lucide:history",
-    to: localePath({ path: "/profile/history" }),
+    to: { name: "profile-history" },
   },
 ]);
 
 // Admin items (only for admin users)
-const adminNavItems = computed(() => [
+const adminNavItems = computed<NavItem[]>(() => [
   {
     title: t("nav.imageSets"),
     icon: "lucide:images",
-    to: localePath({ path: "/admin/images" }),
+    to: { name: "admin-images" },
   },
   {
     title: t("nav.dashboard"),
     icon: "lucide:layout-dashboard",
-    to: localePath({ path: "/admin" }),
+    to: { name: "admin" },
   },
 ]);
 </script>
@@ -108,12 +116,12 @@ const adminNavItems = computed(() => [
         <SidebarGroupLabel>{{ t("nav.home") }}</SidebarGroupLabel>
         <SidebarGroupContent>
           <SidebarMenu>
-            <SidebarMenuItem v-for="item in mainNavItems" :key="item.to">
+            <SidebarMenuItem v-for="item in mainNavItems" :key="item.to.name">
               <SidebarMenuButton as-child>
-                <NuxtLink :to="item.to">
+                <NuxtLinkLocale :to="item.to">
                   <Icon :name="item.icon" class="size-4" />
                   <span>{{ item.title }}</span>
-                </NuxtLink>
+                </NuxtLinkLocale>
               </SidebarMenuButton>
             </SidebarMenuItem>
           </SidebarMenu>
@@ -125,12 +133,12 @@ const adminNavItems = computed(() => [
         <SidebarGroupLabel>{{ t("nav.play") }}</SidebarGroupLabel>
         <SidebarGroupContent>
           <SidebarMenu>
-            <SidebarMenuItem v-for="item in gameNavItems" :key="item.to">
+            <SidebarMenuItem v-for="item in gameNavItems" :key="item.to.name">
               <SidebarMenuButton as-child>
-                <NuxtLink :to="item.to">
+                <NuxtLinkLocale :to="item.to">
                   <Icon :name="item.icon" class="size-4" />
                   <span>{{ item.title }}</span>
-                </NuxtLink>
+                </NuxtLinkLocale>
               </SidebarMenuButton>
             </SidebarMenuItem>
           </SidebarMenu>
@@ -142,12 +150,12 @@ const adminNavItems = computed(() => [
         <SidebarGroupLabel>{{ t("nav.myAccount") }}</SidebarGroupLabel>
         <SidebarGroupContent>
           <SidebarMenu>
-            <SidebarMenuItem v-for="item in userNavItems" :key="item.to">
+            <SidebarMenuItem v-for="item in userNavItems" :key="item.to.name">
               <SidebarMenuButton as-child>
-                <NuxtLink :to="item.to">
+                <NuxtLinkLocale :to="item.to">
                   <Icon :name="item.icon" class="size-4" />
                   <span>{{ item.title }}</span>
-                </NuxtLink>
+                </NuxtLinkLocale>
               </SidebarMenuButton>
             </SidebarMenuItem>
           </SidebarMenu>
@@ -159,12 +167,12 @@ const adminNavItems = computed(() => [
         <SidebarGroupLabel>{{ t("nav.admin") }}</SidebarGroupLabel>
         <SidebarGroupContent>
           <SidebarMenu>
-            <SidebarMenuItem v-for="item in adminNavItems" :key="item.to">
+            <SidebarMenuItem v-for="item in adminNavItems" :key="item.to.name">
               <SidebarMenuButton as-child>
-                <NuxtLink :to="item.to">
+                <NuxtLinkLocale :to="item.to">
                   <Icon :name="item.icon" class="size-4" />
                   <span>{{ item.title }}</span>
-                </NuxtLink>
+                </NuxtLinkLocale>
               </SidebarMenuButton>
             </SidebarMenuItem>
           </SidebarMenu>
