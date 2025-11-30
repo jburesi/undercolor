@@ -2,20 +2,12 @@
  * POST /api/admin/images - Create a new image set (admin only)
  */
 
-import { z } from "zod";
 import {
   serverSupabaseServiceRole,
   serverSupabaseUser,
 } from "#supabase/server";
 import type { Database } from "#shared/types/database.types";
-
-const createImageSetSchema = z.object({
-  name: z.string().min(2).max(100),
-  category: z.string().min(2).max(50),
-  difficulty: z.enum(["easy", "medium", "hard"]),
-  innocentImageUrl: z.string().url(),
-  imposterImageUrl: z.string().url(),
-});
+import { createImageSetSchema } from "#shared/schemas";
 
 export default defineEventHandler(async (event) => {
   // Verify admin access

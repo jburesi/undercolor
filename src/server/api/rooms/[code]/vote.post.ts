@@ -2,7 +2,6 @@
  * POST /api/rooms/[code]/vote - Cast a vote to eliminate a player
  */
 
-import { z } from "zod";
 import { serverSupabaseServiceRole } from "#supabase/server";
 import {
   calculateVoteResults,
@@ -10,11 +9,7 @@ import {
 } from "../../../utils/game-logic";
 import type { GameConfig, PlayerRole } from "#shared/types/game.types";
 import type { Database } from "#shared/types/database.types";
-
-const voteSchema = z.object({
-  sessionId: z.string().uuid(),
-  targetPlayerId: z.string().uuid(),
-});
+import { voteSchema } from "#shared/schemas";
 
 export default defineEventHandler(async (event) => {
   const code = getRouterParam(event, "code");

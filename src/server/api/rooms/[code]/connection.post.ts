@@ -2,14 +2,9 @@
  * POST /api/rooms/:code/connection - Update player connection status
  */
 
-import { z } from "zod";
 import { serverSupabaseServiceRole } from "#supabase/server";
 import type { Database } from "#shared/types/database.types";
-
-const connectionSchema = z.object({
-  sessionId: z.string().uuid(),
-  status: z.enum(["CONNECTED", "DISCONNECTED", "RECONNECTING"]),
-});
+import { updateConnectionSchema } from "#shared/schemas";
 
 export default defineEventHandler(async (event) => {
   const code = getRouterParam(event, "code");
@@ -23,7 +18,7 @@ export default defineEventHandler(async (event) => {
   const body = await readBody(event);
 
   // Validate input
-  const result = connectionSchema.safeParse(body);
+  const result = updateConnectionSchema.safeParse(body);
   if (!result.success) {
     throw createError({
       statusCode: 400,

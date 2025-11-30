@@ -2,14 +2,9 @@
  * POST /api/rooms/join - Join an existing room by code
  */
 
-import { z } from "zod";
 import { serverSupabaseServiceRole } from "#supabase/server";
 import type { Database } from "#shared/types/database.types";
-
-const joinRoomSchema = z.object({
-  roomCode: z.string().length(6),
-  username: z.string().min(2).max(20),
-});
+import { joinRoomSchema } from "#shared/schemas";
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event);

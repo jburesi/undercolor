@@ -2,14 +2,10 @@
  * POST /api/rooms/[code]/advance - Advance game phase (called by timer or host)
  */
 
-import { z } from "zod";
 import { serverSupabaseServiceRole } from "#supabase/server";
 import type { GameConfig, GameState } from "#shared/types/game.types";
 import type { Database } from "#shared/types/database.types";
-
-const advanceSchema = z.object({
-  sessionId: z.string().uuid(),
-});
+import { advancePhaseSchema } from "#shared/schemas";
 
 export default defineEventHandler(async (event) => {
   const code = getRouterParam(event, "code");
@@ -23,7 +19,7 @@ export default defineEventHandler(async (event) => {
   }
 
   // Validate input
-  const result = advanceSchema.safeParse(body);
+  const result = advancePhaseSchema.safeParse(body);
   if (!result.success) {
     throw createError({
       statusCode: 400,

@@ -2,26 +2,11 @@
  * POST /api/rooms - Create a new game room
  */
 
-import { z } from "zod";
 import { serverSupabaseServiceRole } from "#supabase/server";
 import { generateRoomCode } from "../../utils/game-logic";
 import { DEFAULT_GAME_CONFIG } from "#shared/types/game.types";
 import type { Database } from "#shared/types/database.types";
-
-const createRoomSchema = z.object({
-  hostUsername: z.string().min(2).max(20),
-  isPublic: z.boolean().default(true),
-  config: z
-    .object({
-      observationTime: z.number().min(5).max(60).optional(),
-      debateTime: z.number().min(30).max(300).optional(),
-      votingTime: z.number().min(10).max(120).optional(),
-      includeMrWhite: z.boolean().optional(),
-      minPlayers: z.number().min(3).max(20).optional(),
-      maxPlayers: z.number().min(3).max(20).optional(),
-    })
-    .optional(),
-});
+import { createRoomSchema } from "#shared/schemas";
 
 export default defineEventHandler(async (event) => {
   console.log("Creating new room...");

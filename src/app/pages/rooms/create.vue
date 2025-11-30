@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { useForm } from "vee-validate";
-import { z } from "zod";
 import { toast } from "vue-sonner";
 import { DEFAULT_GAME_CONFIG } from "~/types/game.types";
+import { createRoomFormSchema } from "#shared/schemas";
 
 interface GameSession {
   roomId: string;
@@ -19,18 +19,8 @@ const { t } = useI18n();
 const localePath = useLocalePath();
 const { $api } = useNuxtApp();
 
-// Form schema - VeeValidate v5 supports Zod natively
-const formSchema = z.object({
-  hostUsername: z.string().min(2).max(20),
-  isPublic: z.boolean(),
-  observationTime: z.number().min(5).max(60),
-  debateTime: z.number().min(30).max(300),
-  votingTime: z.number().min(10).max(120),
-  maxPlayers: z.number().min(3).max(20),
-});
-
 const form = useForm({
-  validationSchema: formSchema,
+  validationSchema: createRoomFormSchema,
   initialValues: {
     hostUsername: "",
     isPublic: true,

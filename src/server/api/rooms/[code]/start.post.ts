@@ -2,15 +2,11 @@
  * POST /api/rooms/[code]/start - Start the game (host only)
  */
 
-import { z } from "zod";
 import { serverSupabaseServiceRole } from "#supabase/server";
 import { assignRoles } from "../../../utils/game-logic";
 import type { Database } from "#shared/types/database.types";
 import type { GameConfig } from "#shared/types/game.types";
-
-const startGameSchema = z.object({
-  sessionId: z.string().uuid(),
-});
+import { startGameSchema } from "#shared/schemas";
 
 export default defineEventHandler(async (event) => {
   const code = getRouterParam(event, "code");

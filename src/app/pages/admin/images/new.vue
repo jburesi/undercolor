@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useForm } from "vee-validate";
-import { z } from "zod";
+import { imageSetFormSchema } from "#shared/schemas";
 
 definePageMeta({
   layout: "default",
@@ -10,15 +10,8 @@ definePageMeta({
 const { t } = useI18n();
 const localePath = useLocalePath();
 
-// VeeValidate v5 supports Zod v4 natively
-const formSchema = z.object({
-  name: z.string().min(2).max(100),
-  category: z.string().min(1),
-  difficulty: z.enum(["easy", "medium", "hard"]),
-});
-
 const form = useForm({
-  validationSchema: formSchema,
+  validationSchema: imageSetFormSchema,
   initialValues: {
     name: "",
     category: "",
