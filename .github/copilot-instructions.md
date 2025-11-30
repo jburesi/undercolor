@@ -17,7 +17,7 @@ It uses a custom directory structure with `srcDir: "src/app"`.
 
 ```txt
 src/app/           # Main application code (Nuxt srcDir)
-  composables/     
+  composables/
     game/          # Game-specific logic (useGameSocket, useTurnTimer)
     common/        # Shared UI logic
   components/ui/   # shadcn/ui components
@@ -78,11 +78,12 @@ pnpm lint:fix      # Auto-fixes all linting issues
 
 ```typescript
 // Use Supabase Realtime for game events
-const channel = supabase.channel(`room:${roomId}`)
-  .on('broadcast', { event: 'game_state' }, (payload) => {
+const channel = supabase
+  .channel(`room:${roomId}`)
+  .on("broadcast", { event: "game_state" }, (payload) => {
     // Update local store
   })
-  .subscribe()
+  .subscribe();
 ```
 
 **API Client Pattern**:

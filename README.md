@@ -12,6 +12,7 @@ A modern, real-time visual social deduction game built with **Nuxt 4**, **Supaba
 ## 🎮 Project Overview
 
 **Undercolor** transposes the mechanics of linguistic social deduction games (like "Undercover") into the visual domain. Instead of words, players receive images.
+
 - **Innocents (Majority)** receive **Image A**.
 - **Imposters (Minority)** receive **Image B** (visually similar but with subtle differences).
 - **Mr. White** receives no image.

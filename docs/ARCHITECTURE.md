@@ -32,17 +32,16 @@ The adoption of Nuxt 3 is justified not only by its popularity but by its abilit
 
 The project structure must reflect the clear separation between game logic, user interface, and administration. Initialization via `npx nuxi init` must be immediately followed by the integration of essential modules for optimization and developer experience (DX).
 
-**Table 1: Recommended Nuxt Module Configuration**
+### Table 1: Recommended Nuxt Module Configuration
 
-| Module | Critical Function | Technical Justification |
-| :--- | :--- | :--- |
-| `@nuxtjs/tailwindcss` | Style Engine | Allows rapid prototyping and native integration with Shadcn. |
-| `shadcn-nuxt` | UI Components | Provides accessible and customizable components without heavy dependencies. |
-| `@nuxt/image` | Visual Optimization | Crucial for serving Image A/B in WebP/AVIF format with automatic resizing. |
-| `@vueuse/nuxt` | Composition Utilities | Window event management, clipboard (copy room link), and WebRTC. |
+| Module                | Critical Function     | Technical Justification                                                     |
+| :-------------------- | :-------------------- | :-------------------------------------------------------------------------- |
+| `@nuxtjs/tailwindcss` | Style Engine          | Allows rapid prototyping and native integration with Shadcn.                |
+| `shadcn-nuxt`         | UI Components         | Provides accessible and customizable components without heavy dependencies. |
+| `@nuxt/image`         | Visual Optimization   | Crucial for serving Image A/B in WebP/AVIF format with automatic resizing.  |
+| `@vueuse/nuxt`        | Composition Utilities | Window event management, clipboard (copy room link), and WebRTC.            |
 
 The directory structure must isolate business logic. A `composables/game` folder will group specific hooks like `useGameSocket` or `useTurnTimer`, while `server/api` will handle interactions with the Supabase database for retrieving image sets.
-
 
 ## 3. User Interface Design: Shadcn and Visual Experience
 
@@ -58,9 +57,9 @@ This approach offers total flexibility. For a game like Undercover, where visual
 
 The game interface relies on several key components that must be carefully orchestrated:
 
-*   **The Reveal Card (`RevealCard`)**: This is the central element. It must handle the "hidden" state (tap to reveal) to prevent prying eyes from seeing the image if the game is played physically with phones. Using `<NuxtImg>` inside this component ensures the image is optimally loaded (WebP format) even before the player clicks to reveal it, thanks to preloading attributes.
-*   **The Voting System (`VotingGrid`)**: During the elimination phase, players must select a suspect. A grid of avatars using Shadcn's `Avatar` component, combined with state indicators ("Voted" badges), allows clear visualization. Interaction must be fluid: one click selects, a second confirms. Shadcn's `Dialog` component is ideal for requesting final confirmation ("Are you sure you want to vote against Player X?") to avoid frequent touch errors on mobile.
-*   **The Timer (`Progress`)**: Time management is essential to maintain pace. Shadcn's `Progress` component, animated via CSS transitions, provides immediate visual feedback on remaining time for debate or voting. It must be synchronized with the server to avoid lags.
+- **The Reveal Card (`RevealCard`)**: This is the central element. It must handle the "hidden" state (tap to reveal) to prevent prying eyes from seeing the image if the game is played physically with phones. Using `<NuxtImg>` inside this component ensures the image is optimally loaded (WebP format) even before the player clicks to reveal it, thanks to preloading attributes.
+- **The Voting System (`VotingGrid`)**: During the elimination phase, players must select a suspect. A grid of avatars using Shadcn's `Avatar` component, combined with state indicators ("Voted" badges), allows clear visualization. Interaction must be fluid: one click selects, a second confirms. Shadcn's `Dialog` component is ideal for requesting final confirmation ("Are you sure you want to vote against Player X?") to avoid frequent touch errors on mobile.
+- **The Timer (`Progress`)**: Time management is essential to maintain pace. Shadcn's `Progress` component, animated via CSS transitions, provides immediate visual feedback on remaining time for debate or voting. It must be synchronized with the server to avoid lags.
 
 ### 3.3 Theming and Dark Mode
 
@@ -74,9 +73,9 @@ The functional heart of the game lies in its ability to synchronize state betwee
 
 To ensure reliability and leverage the existing Supabase infrastructure, **Supabase Realtime** is chosen. It handles WebSocket connections, broadcasting, and presence natively, simplifying the stack by removing the need for a separate Node.js WebSocket server.
 
-*   **Presence**: Used to track connected players in a room (`roomId`).
-*   **Broadcast**: Used to send game events (phase changes, timer updates) to all clients in a room.
-*   **Postgres Changes**: Can be used to listen for database updates if game state is persisted.
+- **Presence**: Used to track connected players in a room (`roomId`).
+- **Broadcast**: Used to send game events (phase changes, timer updates) to all clients in a room.
+- **Postgres Changes**: Can be used to listen for database updates if game state is persisted.
 
 ### 4.2 Room Manager Implementation
 
@@ -107,9 +106,9 @@ In a hidden role game, information is power. A critical vulnerability would be s
 
 **Principle of Least Privilege**: The server must send personalized payloads to each client.
 
-*   During role distribution (`GAME_START`), the server iterates over connected sockets in the room.
-*   To Client A (Innocent), it sends `{ role: 'CIVILIAN', image: 'url_image_A' }`.
-*   To Client B (Imposter), it sends `{ role: 'IMPOSTER', image: 'url_image_B' }`.
+- During role distribution (`GAME_START`), the server iterates over connected sockets in the room.
+- To Client A (Innocent), it sends `{ role: 'CIVILIAN', image: 'url_image_A' }`.
+- To Client B (Imposter), it sends `{ role: 'IMPOSTER', image: 'url_image_B' }`.
 
 The client never receives the full list of roles. The server manages victory logic by comparing internal votes with roles stored in memory.
 
@@ -121,16 +120,16 @@ The complexity of game phases (Lobby -> Distribution -> Description -> Vote -> R
 
 A finite state machine (FSM) explicitly defines possible states and allowed transitions.
 
-**Table 2: Game States and Transitions**
+### Table 2: Game States and Transitions
 
-| State | Description | Allowed Transitions (Events) |
-| :--- | :--- | :--- |
-| `LOBBY` | Waiting room, configuration. | `PLAYER_JOIN`, `START_GAME` (Host only) |
-| `DISTRIBUTING` | Fetching images, assigning roles. | Automatic transition to `OBSERVATION` |
-| `OBSERVATION` | Players look at their image (Short timer). | `TIMER_END` -> `DEBATE` |
-| `DEBATE` | Free discussion or turn-based. | `TIMER_END` -> `VOTING`, `FORCE_VOTE` (Admin) |
-| `VOTING` | Secret vote collection. | `CAST_VOTE` (if player alive), `ALL_VOTED` -> `RESOLVING` |
-| `RESOLVING` | Calculating eliminations and win conditions. | `GAME_OVER` (Win/Loss), `NEXT_ROUND` -> `DEBATE` |
+| State          | Description                                  | Allowed Transitions (Events)                              |
+| :------------- | :------------------------------------------- | :-------------------------------------------------------- |
+| `LOBBY`        | Waiting room, configuration.                 | `PLAYER_JOIN`, `START_GAME` (Host only)                   |
+| `DISTRIBUTING` | Fetching images, assigning roles.            | Automatic transition to `OBSERVATION`                     |
+| `OBSERVATION`  | Players look at their image (Short timer).   | `TIMER_END` -> `DEBATE`                                   |
+| `DEBATE`       | Free discussion or turn-based.               | `TIMER_END` -> `VOTING`, `FORCE_VOTE` (Admin)             |
+| `VOTING`       | Secret vote collection.                      | `CAST_VOTE` (if player alive), `ALL_VOTED` -> `RESOLVING` |
+| `RESOLVING`    | Calculating eliminations and win conditions. | `GAME_OVER` (Win/Loss), `NEXT_ROUND` -> `DEBATE`          |
 
 Integrating XState allows defining "Guards". For example, the `CAST_VOTE` transition is protected by a condition `isPlayerAlive && !hasAlreadyVoted`. If this condition is not met, the event is ignored, preventing any cheating or interface bugs.
 
@@ -145,9 +144,9 @@ A major challenge of web games is connection volatility (especially on mobile). 
 
 The role assignment logic must be fair and random. It adapts to the number of players present in the room at launch.
 
-*   **3-5 Players**: 1 Imposter.
-*   **6-8 Players**: 2 Imposters.
-*   **9+ Players**: 2 Imposters + 1 Mr. White.
+- **3-5 Players**: 1 Imposter.
+- **6-8 Players**: 2 Imposters.
+- **9+ Players**: 2 Imposters + 1 Mr. White.
 
 The algorithm uses a Fisher-Yates shuffle to randomize a pre-generated array of roles, then assigns these roles sequentially to the IDs of connected sockets. This operation is atomic and occurs in the `DISTRIBUTING` state before any communication with clients.
 
@@ -159,18 +158,18 @@ The "Admin" aspect required by the client implies a dedicated interface to manag
 
 Using **Supabase** (PostgreSQL + Storage) is ideal for this project, integrating perfectly with Nuxt.
 
-*   **Database (PostgreSQL)**:
-    *   Table `image_sets`: Contains metadata (ID, Name, Difficulty, Category).
-    *   Table `images`: Contains links to files, linked by `set_id`. Each set typically has two entries here: one marked `role: 'MAJORITY'` and the other `role: 'MINORITY'`.
-*   **Storage (S3 Compatible)**: A public or private bucket to store actual image files. To secure images (prevent someone from scanning the bucket to see all pairs), one can use signed URLs with limited duration, generated by the Nuxt server at the time of distribution.
+- **Database (PostgreSQL)**:
+  - Table `image_sets`: Contains metadata (ID, Name, Difficulty, Category).
+  - Table `images`: Contains links to files, linked by `set_id`. Each set typically has two entries here: one marked `role: 'MAJORITY'` and the other `role: 'MINORITY'`.
+- **Storage (S3 Compatible)**: A public or private bucket to store actual image files. To secure images (prevent someone from scanning the bucket to see all pairs), one can use signed URLs with limited duration, generated by the Nuxt server at the time of distribution.
 
 ### 6.2 Upload Workflow and Admin Dashboard
 
 The administration interface, built with Shadcn `DataTable` and `Dialog`, allows creating image pairs.
 
-*   The upload form must handle two files simultaneously (Image A and Image B).
-*   **Client Validation**: Before upload, the script checks that both images have similar dimensions (aspect ratio). A ratio difference (e.g., a square image vs. a portrait image) would be a fatal visual clue allowing players to guess their role without analyzing content.
-*   **Server Processing (`/server/api/upload`)**: Nuxt receives files via `readMultipartFormData`. It is crucial to rename files with random UUIDs to prevent the original filename (e.g., "lion_zoo.jpg" vs "lion_savanna.jpg") from betraying the content if a player inspects the image source.
+- The upload form must handle two files simultaneously (Image A and Image B).
+- **Client Validation**: Before upload, the script checks that both images have similar dimensions (aspect ratio). A ratio difference (e.g., a square image vs. a portrait image) would be a fatal visual clue allowing players to guess their role without analyzing content.
+- **Server Processing (`/server/api/upload`)**: Nuxt receives files via `readMultipartFormData`. It is crucial to rename files with random UUIDs to prevent the original filename (e.g., "lion_zoo.jpg" vs "lion_savanna.jpg") from betraying the content if a player inspects the image source.
 
 ### 6.3 AI Image Generation (Future Extension)
 
@@ -185,12 +184,12 @@ To satisfy the "optimization modules" requirement, several strategies specific t
 The `@nuxt/image` module is indispensable. It allows on-the-fly transformation of uploaded images (often heavy JPEGs) into WebP or AVIF formats, which are much lighter.
 
 ```html
-<NuxtImg 
-  :src="imageSecret" 
-  format="webp" 
-  quality="80" 
-  sizes="sm:100vw md:50vw lg:400px" 
-  preload 
+<NuxtImg
+  :src="imageSecret"
+  format="webp"
+  quality="80"
+  sizes="sm:100vw md:50vw lg:400px"
+  preload
 />
 ```
 
@@ -225,16 +224,16 @@ This reduces load on the Supabase database and speeds up navigation in the lobby
 
 As mentioned, DOM inspection is a threat.
 
-*   **URL Obfuscation**: Image URLs must not contain "imposter" or "civilian".
-*   **Canvas Rendering**: Instead of displaying a simple `<img>` tag, the image can be drawn into a `<canvas>` element. This prevents "right-click -> open image" and makes source URL extraction harder for a non-technical user.
-*   **Context Menu Disabling**: Preventing right-click on the image via `@contextmenu.prevent` is a simple but effective measure against quick image saving for sharing outside the game.
+- **URL Obfuscation**: Image URLs must not contain "imposter" or "civilian".
+- **Canvas Rendering**: Instead of displaying a simple `<img>` tag, the image can be drawn into a `<canvas>` element. This prevents "right-click -> open image" and makes source URL extraction harder for a non-technical user.
+- **Context Menu Disabling**: Preventing right-click on the image via `@contextmenu.prevent` is a simple but effective measure against quick image saving for sharing outside the game.
 
 ### 8.2 Rate Limiting and Validation
 
 To protect the Supabase Realtime/Server against Denial of Service (DoS) attacks or vote spamming:
 
-*   Implement a **Rate Limiter** (via `rate-limiter-flexible` and Redis/Memory) on socket events. A player cannot send more than 5 "VOTE" events per second.
-*   **Strict Payload Validation with Zod**. Each incoming event (`join_room`, `vote`, `update_settings`) is parsed by a Zod schema. If the structure is incorrect (e.g., negative vote or empty string), the event is silently rejected, protecting server logic from malformed data.
+- Implement a **Rate Limiter** (via `rate-limiter-flexible` and Redis/Memory) on socket events. A player cannot send more than 5 "VOTE" events per second.
+- **Strict Payload Validation with Zod**. Each incoming event (`join_room`, `vote`, `update_settings`) is parsed by a Zod schema. If the structure is incorrect (e.g., negative vote or empty string), the event is silently rejected, protecting server logic from malformed data.
 
 ## 9. Conclusion
 
