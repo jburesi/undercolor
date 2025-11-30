@@ -137,7 +137,14 @@ onUnmounted(() => {
             v-for="room in publicRooms"
             :key="room.roomId"
             class="hover:shadow-lg transition-shadow cursor-pointer"
-            @click="navigateTo(`/rooms/${room.roomCode}`)"
+            @click="
+              navigateTo(
+                localePath({
+                  name: 'rooms-code',
+                  params: { code: room.roomCode },
+                }),
+              )
+            "
           >
             <CardHeader>
               <div class="flex items-center justify-between">

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { PlayerRole } from "~/types/game.types";
+import { PlayerRole } from "#shared/types/game.types";
 
 definePageMeta({
   layout: "default",

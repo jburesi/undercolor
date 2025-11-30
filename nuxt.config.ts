@@ -1,3 +1,4 @@
+import { fileURLToPath } from "node:url";
 import tailwindcss from "@tailwindcss/vite";
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
@@ -49,6 +50,9 @@ export default defineNuxtConfig({
     // Note: Auto-redirects are disabled. Authentication is handled via custom middleware.
     // The auth.ts middleware protects routes that require login.
     // The admin.ts middleware protects admin-only routes.
+    types: fileURLToPath(
+      new URL("./src/shared/types/database.types.ts", import.meta.url),
+    ),
   },
   site: {
     name: "Undercolor",

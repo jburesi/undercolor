@@ -109,7 +109,7 @@ const onSubmit = handleSubmit(async (formValues) => {
     });
 
     // Navigate back to image sets list
-    await navigateTo("/admin/images");
+    await navigateTo("admin-images");
   } catch (err) {
     errorMessage.value = err instanceof Error ? err.message : t("common.error");
   } finally {

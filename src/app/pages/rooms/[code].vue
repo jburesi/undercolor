@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { toast } from "vue-sonner";
-import { GameState, PlayerRole } from "~/types/game.types";
+import { GameState, PlayerRole } from "#shared/types/game.types";
 import { useGameRoom } from "~/composables/game/useGameRoom";
 import { useGameTimer } from "~/composables/game/useGameTimer";
 

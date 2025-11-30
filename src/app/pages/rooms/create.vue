@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useForm } from "vee-validate";
 import { toast } from "vue-sonner";
-import { DEFAULT_GAME_CONFIG } from "~/types/game.types";
+import { DEFAULT_GAME_CONFIG } from "#shared/types/game.types";
 import { createRoomFormSchema } from "#shared/schemas";
 
 interface GameSession {

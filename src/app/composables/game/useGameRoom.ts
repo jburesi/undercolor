@@ -9,7 +9,11 @@
  * - Connection status tracking via Presence
  */
 
-import type { GameConfig, GameState, PlayerRole } from "~/types/game.types";
+import type {
+  GameConfig,
+  GameState,
+  PlayerRole,
+} from "#shared/types/game.types";
 
 // Session storage keys
 const SESSION_KEY = "undercolor_session";
