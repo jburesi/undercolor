@@ -113,7 +113,7 @@ onUnmounted(() => {
         <h2 class="text-xl font-semibold mb-4">{{ t("rooms.publicRooms") }}</h2>
 
         <div v-if="isLoading" class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <Card v-for="n in 6" :key="n">
+          <Card v-for="n in 3" :key="n">
             <CardHeader>
               <Skeleton class="h-6 w-32" />
             </CardHeader>
