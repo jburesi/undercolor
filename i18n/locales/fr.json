@@ -8,10 +8,242 @@
         "icon": "i-heroicons-home",
         "ariaLabel": "Accueil"
       },
-      "settings": {
-        "icon": "i-heroicons-cog",
-        "ariaLabel": "Paramètres"
+      "rooms": {
+        "ariaLabel": "Salles de jeu"
+      },
+      "login": {
+        "ariaLabel": "Connexion"
+      },
+      "register": {
+        "ariaLabel": "Inscription"
       }
+    }
+  },
+  "nav": {
+    "home": "Accueil",
+    "play": "Jouer",
+    "rooms": "Salles de jeu",
+    "howToPlay": "Comment jouer",
+    "login": "Connexion",
+    "register": "Inscription",
+    "logout": "Déconnexion",
+    "profile": "Profil",
+    "myAccount": "Mon Compte",
+    "myStats": "Mes Stats",
+    "gameHistory": "Historique",
+    "admin": "Administration",
+    "imageSets": "Ensembles d'images",
+    "dashboard": "Tableau de bord"
+  },
+  "home": {
+    "hero": {
+      "title": "Undercolor",
+      "subtitle": "Le Jeu de Déduction Sociale Visuelle",
+      "description": "Trouvez l'imposteur parmi vous. Tout le monde voit une image, mais pas la même. Décrivez, déduisez et votez contre l'intrus avant qu'il ne soit trop tard !",
+      "playNow": "Jouer maintenant",
+      "learnMore": "En savoir plus"
+    },
+    "features": {
+      "title": "Pourquoi jouer à Undercolor ?",
+      "visual": {
+        "title": "Déduction visuelle",
+        "description": "Contrairement aux jeux basés sur les mots, Undercolor utilise des images. Décrivez ce que vous voyez sans en révéler trop—ou trop peu."
+      },
+      "realtime": {
+        "title": "Multijoueur en temps réel",
+        "description": "Jouez avec 3 à 20 amis en temps réel. Parfait pour les soirées, les jeux de société ou les retrouvailles à distance."
+      },
+      "roles": {
+        "title": "Plusieurs rôles",
+        "description": "Innocents, Imposteurs et le mystérieux Mr. White. Chaque rôle apporte des défis et stratégies uniques."
+      },
+      "accessible": {
+        "title": "Jouez partout",
+        "description": "Accessible sur navigateur et mobile. Aucun téléchargement requis—partagez un code et jouez !"
+      }
+    },
+    "howToPlay": {
+      "title": "Comment jouer",
+      "step1": {
+        "title": "Créez ou rejoignez",
+        "description": "Créez une salle et partagez le code avec vos amis, ou rejoignez une partie existante avec un code."
+      },
+      "step2": {
+        "title": "Recevez votre image",
+        "description": "Tout le monde reçoit une image. Les Innocents voient l'Image A, tandis que les Imposteurs voient une Image B subtilement différente."
+      },
+      "step3": {
+        "title": "Décrivez & discutez",
+        "description": "Décrivez votre image à tour de rôle. Soyez assez vague pour ne pas aider les imposteurs, mais assez clair pour prouver votre innocence !"
+      },
+      "step4": {
+        "title": "Votez & éliminez",
+        "description": "Votez pour éliminer celui que vous pensez être l'imposteur. Les Innocents gagnent en éliminant tous les imposteurs !"
+      }
+    },
+    "roles": {
+      "title": "Les rôles",
+      "innocent": {
+        "title": "Innocent",
+        "description": "Vous voyez l'Image A. Votre objectif est d'identifier et d'éliminer les imposteurs tout en prouvant votre innocence par vos descriptions."
+      },
+      "imposter": {
+        "title": "Imposteur",
+        "description": "Vous voyez l'Image B—similaire mais différente. Fondez-vous dans la masse avec des descriptions vagues et détournez les soupçons sur les innocents."
+      },
+      "mrWhite": {
+        "title": "Mr. White",
+        "description": "Vous ne voyez rien. Utilisez l'ingénierie sociale pour survivre. Si vous êtes éliminé, devinez le thème pour gagner instantanément !"
+      }
+    },
+    "cta": {
+      "title": "Prêt à trouver l'imposteur ?",
+      "description": "Créez une salle et invitez vos amis pour une soirée jeu inoubliable !",
+      "createRoom": "Créer une salle",
+      "joinRoom": "Rejoindre une salle"
+    }
+  },
+  "rooms": {
+    "title": "Salles de jeu",
+    "create": "Créer une salle",
+    "join": "Rejoindre",
+    "joinByCode": "Rejoindre par code",
+    "enterCode": "Entrez le code de la salle",
+    "publicRooms": "Salles publiques",
+    "noRooms": "Aucune salle publique disponible",
+    "players": "joueurs",
+    "status": {
+      "lobby": "En attente",
+      "playing": "En cours",
+      "finished": "Terminée"
+    }
+  },
+  "game": {
+    "waiting": "En attente des joueurs...",
+    "starting": "La partie commence...",
+    "yourRole": "Votre rôle",
+    "yourImage": "Votre image",
+    "tapToReveal": "Appuyez pour révéler",
+    "timeRemaining": "Temps restant",
+    "debate": "Phase de débat",
+    "voting": "Phase de vote",
+    "vote": "Voter",
+    "voted": "A voté",
+    "eliminated": "Éliminé",
+    "winner": "Vainqueur",
+    "innocentsWin": "Les Innocents gagnent !",
+    "impostersWin": "Les Imposteurs gagnent !",
+    "mrWhiteWins": "Mr. White gagne !",
+    "playAgain": "Rejouer",
+    "backToLobby": "Retour au lobby",
+    "roles": {
+      "innocent": "Innocent",
+      "imposter": "Imposteur",
+      "mr_white": "Mr. White"
+    }
+  },
+  "auth": {
+    "login": "Connexion",
+    "register": "Inscription",
+    "email": "Email",
+    "password": "Mot de passe",
+    "confirmPassword": "Confirmer le mot de passe",
+    "username": "Nom d'utilisateur",
+    "forgotPassword": "Mot de passe oublié ?",
+    "noAccount": "Pas encore de compte ?",
+    "hasAccount": "Déjà un compte ?",
+    "orContinueWith": "Ou continuer avec",
+    "loginSuccess": "Bon retour !",
+    "registerSuccess": "Compte créé avec succès !",
+    "loginDescription": "Connectez-vous pour suivre vos stats et votre historique. Vous pouvez aussi jouer en invité !",
+    "registerDescription": "Créez un compte pour sauvegarder vos stats, suivre vos victoires et compétir dans les classements."
+  },
+  "user": {
+    "stats": {
+      "title": "Mes Stats",
+      "gamesPlayed": "Parties jouées",
+      "totalGames": "Total des parties",
+      "wins": "Victoires",
+      "losses": "Défaites",
+      "winRate": "Taux de victoire",
+      "asInnocent": "En tant qu'Innocent",
+      "asImposter": "En tant qu'Imposteur",
+      "asMrWhite": "En tant que Mr. White",
+      "rolePerformance": "Performance par rôle",
+      "rolePerformanceDescription": "Votre taux de victoire pour chaque rôle joué",
+      "winsGames": "victoires",
+      "games": "parties",
+      "avgDuration": "Durée moy. des parties",
+      "longestStreak": "Plus longue série",
+      "currentStreak": "Série actuelle"
+    },
+    "history": {
+      "title": "Historique des parties",
+      "description": "Voir toutes vos parties passées et résultats",
+      "noGames": "Aucune partie jouée",
+      "playFirst": "Jouez votre première partie pour voir votre historique !",
+      "backToProfile": "Retour au profil",
+      "room": "Salle",
+      "players": "joueurs",
+      "victory": "Victoire",
+      "defeat": "Défaite",
+      "empty": "Pas encore de parties",
+      "emptyDescription": "Commencez à jouer pour construire votre historique !",
+      "startPlaying": "Commencer à jouer",
+      "loadMore": "Charger plus"
+    },
+    "profile": {
+      "title": "Mon Profil",
+      "description": "Voir vos stats et performances de jeu",
+      "memberSince": "Membre depuis le",
+      "viewHistory": "Voir l'historique",
+      "editProfile": "Modifier le profil",
+      "changePassword": "Changer le mot de passe"
+    }
+  },
+  "admin": {
+    "login": {
+      "title": "Connexion Admin",
+      "description": "Connectez-vous avec des identifiants admin pour gérer le contenu du jeu."
+    },
+    "register": {
+      "title": "Inscription Admin",
+      "description": "Créez un compte admin pour gérer le contenu du jeu et les ensembles d'images."
+    },
+    "dashboard": {
+      "title": "Tableau de bord Admin",
+      "welcome": "Bienvenue, Admin !"
+    },
+    "images": {
+      "title": "Ensembles d'images",
+      "description": "Gérer les paires d'images pour le jeu",
+      "addSet": "Ajouter un ensemble",
+      "editSet": "Modifier l'ensemble",
+      "deleteSet": "Supprimer l'ensemble",
+      "innocentImage": "Image Innocent",
+      "imposterImage": "Image Imposteur",
+      "category": "Catégorie",
+      "difficulty": "Difficulté",
+      "upload": "Télécharger les images"
+    }
+  },
+  "common": {
+    "loading": "Chargement...",
+    "error": "Une erreur est survenue",
+    "retry": "Réessayer",
+    "cancel": "Annuler",
+    "confirm": "Confirmer",
+    "save": "Enregistrer",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "close": "Fermer",
+    "back": "Retour",
+    "next": "Suivant",
+    "submit": "Soumettre",
+    "time": {
+      "minutesAgo": "il y a {count} min",
+      "hoursAgo": "il y a {count}h",
+      "daysAgo": "il y a {count}j"
     }
   }
 }

@@ -6,7 +6,7 @@ const defaultOpen = useCookie<boolean>("sidebar_state", {
 
 <template>
   <SidebarProvider v-model:open="defaultOpen">
-    <!-- <AppSidebar /> -->
+    <CommonAppSidebar />
     <SidebarInset>
       <header class="flex h-16 shrink-0 items-center gap-2 border-b">
         <div class="flex items-center gap-2 px-3">

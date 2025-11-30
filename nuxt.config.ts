@@ -12,7 +12,8 @@ export default defineNuxtConfig({
     shared: "src/shared",
   },
   experimental: {
-    typedPages: true,
+    // Disabled because it conflicts with @nuxtjs/i18n's localePath
+    // typedPages: true,
   },
   modules: [
     "@nuxt/eslint",
@@ -40,19 +41,14 @@ export default defineNuxtConfig({
   },
   supabase: {
     redirect: false,
-    // Note: Supabase auto-redirects don't handle i18n properly.
-    // Either use "prefix_except_default" strategy or disable auto-redirects and use custom middleware.
-    redirectOptions: {
-      login: "/login",
-      callback: "/confirm",
-      include: ["*"],
-      exclude: ["/register", "/confirm", "/login", "/"],
-      saveRedirectToCookie: true,
-    },
+    // Note: Auto-redirects are disabled. Authentication is handled via custom middleware.
+    // The auth.ts middleware protects routes that require login.
+    // The admin.ts middleware protects admin-only routes.
   },
   site: {
-    name: "Nuxt Modules",
-    description: "A modern Nuxt Modules checker platform",
+    name: "Undercolor",
+    description:
+      "A visual social deduction game. Find the imposter among you - everyone sees an image, but not everyone sees the same one!",
   },
   i18n: {
     strategy: "prefix",

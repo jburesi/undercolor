@@ -1,0 +1,315 @@
+<script setup lang="ts">
+import { toTypedSchema } from "@vee-validate/zod";
+import { useForm } from "vee-validate";
+import { z } from "zod";
+
+definePageMeta({
+  layout: "default",
+  middleware: ["admin"],
+});
+
+const { t } = useI18n();
+const localePath = useLocalePath();
+
+const formSchema = toTypedSchema(
+  z.object({
+    name: z.string().min(2).max(100),
+    category: z.string().min(1),
+    difficulty: z.enum(["easy", "medium", "hard"]),
+  }),
+);
+
+const { handleSubmit, values, setFieldValue, errors } = useForm({
+  validationSchema: formSchema,
+  initialValues: {
+    name: "",
+    category: "",
+    difficulty: "medium" as const,
+  },
+});
+
+const isCreating = ref(false);
+const errorMessage = ref("");
+
+// File upload refs
+const innocentFile = ref<File | null>(null);
+const imposterFile = ref<File | null>(null);
+const innocentPreview = ref<string | null>(null);
+const imposterPreview = ref<string | null>(null);
+
+const categories = [
+  "Nature",
+  "Urban",
+  "Animals",
+  "Food",
+  "Art",
+  "Sports",
+  "Technology",
+  "Other",
+];
+
+const handleFileChange = (event: Event, type: "innocent" | "imposter") => {
+  const target = event.target as HTMLInputElement;
+  const file = target.files?.[0];
+
+  if (file) {
+    if (type === "innocent") {
+      innocentFile.value = file;
+      innocentPreview.value = URL.createObjectURL(file);
+    } else {
+      imposterFile.value = file;
+      imposterPreview.value = URL.createObjectURL(file);
+    }
+  }
+};
+
+const onSubmit = handleSubmit(async (formValues) => {
+  if (!innocentFile.value || !imposterFile.value) {
+    errorMessage.value = "Please upload both images";
+    return;
+  }
+
+  isCreating.value = true;
+  errorMessage.value = "";
+
+  const supabase = useSupabaseClient();
+
+  try {
+    // Generate unique file names
+    const timestamp = Date.now();
+    const innocentPath = `image-sets/${timestamp}-innocent-${innocentFile.value.name}`;
+    const imposterPath = `image-sets/${timestamp}-imposter-${imposterFile.value.name}`;
+
+    // Upload innocent image
+    const { error: innocentError } = await supabase.storage
+      .from("game-images")
+      .upload(innocentPath, innocentFile.value);
+
+    if (innocentError) throw new Error("Failed to upload innocent image");
+
+    // Upload imposter image
+    const { error: imposterError } = await supabase.storage
+      .from("game-images")
+      .upload(imposterPath, imposterFile.value);
+
+    if (imposterError) throw new Error("Failed to upload imposter image");
+
+    // Get public URLs
+    const { data: innocentUrl } = supabase.storage
+      .from("game-images")
+      .getPublicUrl(innocentPath);
+
+    const { data: imposterUrl } = supabase.storage
+      .from("game-images")
+      .getPublicUrl(imposterPath);
+
+    // Create image set via API
+    const { $api } = useNuxtApp();
+    await $api("/admin/images", {
+      method: "POST",
+      body: {
+        name: formValues.name,
+        category: formValues.category,
+        difficulty: formValues.difficulty,
+        innocentImageUrl: innocentUrl.publicUrl,
+        imposterImageUrl: imposterUrl.publicUrl,
+      },
+    });
+
+    // Navigate back to image sets list
+    await navigateTo("/admin/images");
+  } catch (err) {
+    errorMessage.value = err instanceof Error ? err.message : t("common.error");
+  } finally {
+    isCreating.value = false;
+  }
+});
+</script>
+
+<template>
+  <div class="page-admin-images-new">
+    <div class="container mx-auto px-4 py-8 max-w-2xl">
+      <!-- Header -->
+      <div class="mb-8">
+        <Button variant="ghost" as-child class="mb-4">
+          <NuxtLink :to="localePath('/admin/images')">
+            <Icon name="lucide:arrow-left" class="size-4 mr-2" />
+            {{ t("common.back") }}
+          </NuxtLink>
+        </Button>
+        <h1 class="text-3xl font-bold">{{ t("admin.images.addSet") }}</h1>
+      </div>
+
+      <Card>
+        <CardContent class="pt-6">
+          <form class="space-y-6" @submit="onSubmit">
+            <!-- Error message -->
+            <div
+              v-if="errorMessage"
+              class="p-3 rounded-lg bg-destructive/10 text-destructive text-sm"
+            >
+              {{ errorMessage }}
+            </div>
+
+            <!-- Name -->
+            <div class="space-y-2">
+              <label for="name" class="text-sm font-medium"> Set Name </label>
+              <Input
+                id="name"
+                :model-value="values.name"
+                placeholder="e.g., Beach Sunset"
+                :class="{ 'border-destructive': errors.name }"
+                @update:model-value="setFieldValue('name', String($event))"
+              />
+              <p v-if="errors.name" class="text-xs text-destructive">
+                {{ errors.name }}
+              </p>
+            </div>
+
+            <!-- Category -->
+            <div class="space-y-2">
+              <label for="category" class="text-sm font-medium">
+                {{ t("admin.images.category") }}
+              </label>
+              <select
+                id="category"
+                :value="values.category"
+                class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                @change="
+                  setFieldValue(
+                    'category',
+                    ($event.target as HTMLSelectElement).value,
+                  )
+                "
+              >
+                <option value="" disabled>Select a category</option>
+                <option v-for="cat in categories" :key="cat" :value="cat">
+                  {{ cat }}
+                </option>
+              </select>
+            </div>
+
+            <!-- Difficulty -->
+            <div class="space-y-2">
+              <label class="text-sm font-medium">
+                {{ t("admin.images.difficulty") }}
+              </label>
+              <div class="flex gap-4">
+                <label
+                  v-for="diff in ['easy', 'medium', 'hard']"
+                  :key="diff"
+                  class="flex items-center gap-2 cursor-pointer"
+                >
+                  <input
+                    type="radio"
+                    name="difficulty"
+                    :value="diff"
+                    :checked="values.difficulty === diff"
+                    class="accent-primary"
+                    @change="
+                      setFieldValue(
+                        'difficulty',
+                        diff as 'easy' | 'medium' | 'hard',
+                      )
+                    "
+                  />
+                  <span class="capitalize">{{ diff }}</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Image Uploads -->
+            <div class="grid md:grid-cols-2 gap-6">
+              <!-- Innocent Image -->
+              <div class="space-y-2">
+                <label class="text-sm font-medium">
+                  {{ t("admin.images.innocentImage") }}
+                </label>
+                <div
+                  class="relative aspect-video border-2 border-dashed rounded-lg overflow-hidden transition-colors"
+                  :class="
+                    innocentPreview
+                      ? 'border-green-500'
+                      : 'border-border hover:border-muted-foreground'
+                  "
+                >
+                  <input
+                    type="file"
+                    accept="image/*"
+                    class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                    @change="(e) => handleFileChange(e, 'innocent')"
+                  />
+                  <div v-if="innocentPreview" class="w-full h-full">
+                    <img
+                      :src="innocentPreview"
+                      alt="Innocent preview"
+                      class="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div
+                    v-else
+                    class="flex flex-col items-center justify-center h-full text-muted-foreground"
+                  >
+                    <Icon name="lucide:upload" class="size-8 mb-2" />
+                    <span class="text-sm">Upload innocent image</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Imposter Image -->
+              <div class="space-y-2">
+                <label class="text-sm font-medium">
+                  {{ t("admin.images.imposterImage") }}
+                </label>
+                <div
+                  class="relative aspect-video border-2 border-dashed rounded-lg overflow-hidden transition-colors"
+                  :class="
+                    imposterPreview
+                      ? 'border-red-500'
+                      : 'border-border hover:border-muted-foreground'
+                  "
+                >
+                  <input
+                    type="file"
+                    accept="image/*"
+                    class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                    @change="(e) => handleFileChange(e, 'imposter')"
+                  />
+                  <div v-if="imposterPreview" class="w-full h-full">
+                    <img
+                      :src="imposterPreview"
+                      alt="Imposter preview"
+                      class="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div
+                    v-else
+                    class="flex flex-col items-center justify-center h-full text-muted-foreground"
+                  >
+                    <Icon name="lucide:upload" class="size-8 mb-2" />
+                    <span class="text-sm">Upload imposter image</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <p class="text-xs text-muted-foreground">
+              Tip: Choose images that are similar but have subtle differences.
+              This makes the game more challenging and fun!
+            </p>
+
+            <Button type="submit" class="w-full" :disabled="isCreating">
+              <Icon
+                v-if="isCreating"
+                name="lucide:loader-2"
+                class="size-4 mr-2 animate-spin"
+              />
+              <Icon v-else name="lucide:save" class="size-4 mr-2" />
+              {{ t("common.save") }}
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
+    </div>
+  </div>
+</template>

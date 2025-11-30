@@ -7,7 +7,243 @@
       "index": {
         "icon": "i-heroicons-home",
         "ariaLabel": "Home"
+      },
+      "rooms": {
+        "ariaLabel": "Game Rooms"
+      },
+      "login": {
+        "ariaLabel": "Login"
+      },
+      "register": {
+        "ariaLabel": "Register"
       }
+    }
+  },
+  "nav": {
+    "home": "Home",
+    "play": "Play",
+    "rooms": "Game Rooms",
+    "howToPlay": "How to Play",
+    "login": "Login",
+    "register": "Register",
+    "logout": "Logout",
+    "profile": "Profile",
+    "myAccount": "My Account",
+    "myStats": "My Stats",
+    "gameHistory": "Game History",
+    "admin": "Administration",
+    "imageSets": "Image Sets",
+    "dashboard": "Dashboard"
+  },
+  "home": {
+    "hero": {
+      "title": "Undercolor",
+      "subtitle": "The Visual Social Deduction Game",
+      "description": "Find the imposter among you. Everyone sees an image, but not everyone sees the same one. Describe, deduce, and vote out the intruder before it's too late!",
+      "playNow": "Play Now",
+      "learnMore": "Learn More"
+    },
+    "features": {
+      "title": "Why Play Undercolor?",
+      "visual": {
+        "title": "Visual Deduction",
+        "description": "Unlike word-based games, Undercolor uses images. Describe what you see without revealing too much—or too little."
+      },
+      "realtime": {
+        "title": "Real-time Multiplayer",
+        "description": "Play with 3 to 20 friends in real-time. Perfect for parties, game nights, or remote hangouts."
+      },
+      "roles": {
+        "title": "Multiple Roles",
+        "description": "Innocents, Imposters, and the mysterious Mr. White. Each role brings unique challenges and strategies."
+      },
+      "accessible": {
+        "title": "Play Anywhere",
+        "description": "Browser-based and mobile-friendly. No downloads required—just share a room code and play!"
+      }
+    },
+    "howToPlay": {
+      "title": "How to Play",
+      "step1": {
+        "title": "Create or Join",
+        "description": "Create a room and share the code with friends, or join an existing game with a code."
+      },
+      "step2": {
+        "title": "Receive Your Image",
+        "description": "Everyone receives an image. Innocents see Image A, while Imposters see a subtly different Image B."
+      },
+      "step3": {
+        "title": "Describe & Discuss",
+        "description": "Take turns describing your image. Be vague enough to avoid helping imposters, but clear enough to prove you're innocent!"
+      },
+      "step4": {
+        "title": "Vote & Eliminate",
+        "description": "Vote to eliminate who you think is the imposter. Innocents win by eliminating all imposters!"
+      }
+    },
+    "roles": {
+      "title": "The Roles",
+      "innocent": {
+        "title": "Innocent",
+        "description": "You see Image A. Your goal is to identify and eliminate the imposters while proving your innocence through your descriptions."
+      },
+      "imposter": {
+        "title": "Imposter",
+        "description": "You see Image B—similar but different. Blend in by giving vague descriptions and deflect suspicion onto innocents."
+      },
+      "mrWhite": {
+        "title": "Mr. White",
+        "description": "You see nothing. Use social engineering to survive. If eliminated, guess the theme to win instantly!"
+      }
+    },
+    "cta": {
+      "title": "Ready to Find the Imposter?",
+      "description": "Create a room and invite your friends for an unforgettable game night!",
+      "createRoom": "Create Room",
+      "joinRoom": "Join Room"
+    }
+  },
+  "rooms": {
+    "title": "Game Rooms",
+    "create": "Create Room",
+    "join": "Join Room",
+    "joinByCode": "Join by Code",
+    "enterCode": "Enter room code",
+    "publicRooms": "Public Rooms",
+    "noRooms": "No public rooms available",
+    "players": "players",
+    "status": {
+      "lobby": "In Lobby",
+      "playing": "Playing",
+      "finished": "Finished"
+    }
+  },
+  "game": {
+    "waiting": "Waiting for players...",
+    "starting": "Game starting...",
+    "yourRole": "Your Role",
+    "yourImage": "Your Image",
+    "tapToReveal": "Tap to reveal",
+    "timeRemaining": "Time remaining",
+    "debate": "Debate Phase",
+    "voting": "Voting Phase",
+    "vote": "Vote",
+    "voted": "Voted",
+    "eliminated": "Eliminated",
+    "winner": "Winner",
+    "innocentsWin": "Innocents Win!",
+    "impostersWin": "Imposters Win!",
+    "mrWhiteWins": "Mr. White Wins!",
+    "playAgain": "Play Again",
+    "backToLobby": "Back to Lobby",
+    "roles": {
+      "innocent": "Innocent",
+      "imposter": "Imposter",
+      "mr_white": "Mr. White"
+    }
+  },
+  "auth": {
+    "login": "Login",
+    "register": "Register",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "username": "Username",
+    "forgotPassword": "Forgot password?",
+    "noAccount": "Don't have an account?",
+    "hasAccount": "Already have an account?",
+    "orContinueWith": "Or continue with",
+    "loginSuccess": "Welcome back!",
+    "registerSuccess": "Account created successfully!",
+    "loginDescription": "Sign in to track your stats and game history. You can also play as a guest!",
+    "registerDescription": "Create an account to save your stats, track your wins, and compete on leaderboards."
+  },
+  "user": {
+    "stats": {
+      "title": "My Stats",
+      "gamesPlayed": "Games Played",
+      "totalGames": "Total Games",
+      "wins": "Wins",
+      "losses": "Losses",
+      "winRate": "Win Rate",
+      "asInnocent": "As Innocent",
+      "asImposter": "As Imposter",
+      "asMrWhite": "As Mr. White",
+      "rolePerformance": "Role Performance",
+      "rolePerformanceDescription": "Your win rate for each role you've played",
+      "winsGames": "wins",
+      "games": "games",
+      "avgDuration": "Avg. Game Duration",
+      "longestStreak": "Longest Win Streak",
+      "currentStreak": "Current Streak"
+    },
+    "history": {
+      "title": "Game History",
+      "description": "View all your past games and results",
+      "noGames": "No games played yet",
+      "playFirst": "Play your first game to see your history!",
+      "backToProfile": "Back to Profile",
+      "room": "Room",
+      "players": "players",
+      "victory": "Victory",
+      "defeat": "Defeat",
+      "empty": "No games yet",
+      "emptyDescription": "Start playing to build your game history!",
+      "startPlaying": "Start Playing",
+      "loadMore": "Load More"
+    },
+    "profile": {
+      "title": "My Profile",
+      "description": "View your stats and game performance",
+      "memberSince": "Member since",
+      "viewHistory": "View Game History",
+      "editProfile": "Edit Profile",
+      "changePassword": "Change Password"
+    }
+  },
+  "admin": {
+    "login": {
+      "title": "Admin Login",
+      "description": "Sign in with admin credentials to manage game content."
+    },
+    "register": {
+      "title": "Admin Registration",
+      "description": "Create an admin account to manage game content and image sets."
+    },
+    "dashboard": {
+      "title": "Admin Dashboard",
+      "welcome": "Welcome back, Admin!"
+    },
+    "images": {
+      "title": "Image Sets",
+      "description": "Manage image pairs for the game",
+      "addSet": "Add Image Set",
+      "editSet": "Edit Image Set",
+      "deleteSet": "Delete Image Set",
+      "innocentImage": "Innocent Image",
+      "imposterImage": "Imposter Image",
+      "category": "Category",
+      "difficulty": "Difficulty",
+      "upload": "Upload Images"
+    }
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "retry": "Retry",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "close": "Close",
+    "back": "Back",
+    "next": "Next",
+    "submit": "Submit",
+    "time": {
+      "minutesAgo": "{count} min ago",
+      "hoursAgo": "{count}h ago",
+      "daysAgo": "{count}d ago"
     }
   }
 }
