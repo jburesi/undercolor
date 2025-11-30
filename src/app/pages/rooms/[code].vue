@@ -316,7 +316,9 @@ const alivePlayersForVoting = computed(() =>
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div
+                  class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"
+                >
                   <div
                     v-for="player in players"
                     :key="player.id"
@@ -513,7 +515,9 @@ const alivePlayersForVoting = computed(() =>
               </CardHeader>
               <CardContent>
                 <!-- Player list with status -->
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div
+                  class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"
+                >
                   <div
                     v-for="player in players"
                     :key="player.id"
@@ -595,7 +599,9 @@ const alivePlayersForVoting = computed(() =>
                   <p class="text-sm text-muted-foreground">
                     {{ t("game.selectPlayer") }}
                   </p>
-                  <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                  <div
+                    class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"
+                  >
                     <div
                       v-for="player in alivePlayersForVoting"
                       :key="player.id"
@@ -672,7 +678,9 @@ const alivePlayersForVoting = computed(() =>
                 </p>
 
                 <!-- Final player roles -->
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div
+                  class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"
+                >
                   <div
                     v-for="player in players"
                     :key="player.id"
