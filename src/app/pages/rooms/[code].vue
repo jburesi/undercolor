@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { toast } from "vue-sonner";
 import { GameState, PlayerRole } from "~/types/game.types";
 import { useGameRoom } from "~/composables/game/useGameRoom";
 import { useGameTimer } from "~/composables/game/useGameTimer";
@@ -9,6 +10,7 @@ definePageMeta({
 
 const route = useRoute();
 const { t } = useI18n();
+const localePath = useLocalePath();
 
 const roomCode = computed(() => (route.params.code as string).toUpperCase());
 
@@ -75,9 +77,11 @@ async function handleJoinRoom() {
 
   try {
     await joinRoom(username.value);
+    toast.success(t("toast.roomJoined"));
   } catch (err: unknown) {
     joinError.value =
       err instanceof Error ? err.message : "Failed to join room";
+    toast.error(t("toast.errorJoinRoom"));
   } finally {
     isJoining.value = false;
   }
@@ -89,8 +93,10 @@ async function handleStartGame() {
 
   try {
     await startGame();
+    toast.success(t("toast.gameStarted"));
   } catch (err: unknown) {
     console.error("Failed to start game:", err);
+    toast.error(t("toast.errorStartGame"));
   }
 }
 
@@ -103,8 +109,10 @@ async function handleVote() {
   try {
     await vote(selectedVoteTarget.value);
     selectedVoteTarget.value = null;
+    toast.success(t("toast.voteSubmitted"));
   } catch (err: unknown) {
     console.error("Failed to vote:", err);
+    toast.error(t("toast.errorVote"));
   } finally {
     isVoting.value = false;
   }
@@ -124,6 +132,7 @@ async function handleSkipPhase() {
 // Copy room code
 async function copyRoomCode() {
   await navigator.clipboard.writeText(roomCode.value);
+  toast.success(t("toast.codeCopied"));
 }
 
 // Get role badge variant
@@ -155,23 +164,37 @@ const alivePlayersForVoting = computed(() =>
         <Icon name="lucide:loader-2" class="size-8 animate-spin text-primary" />
       </div>
 
-      <!-- Error State -->
-      <Card v-else-if="error" class="max-w-md mx-auto">
-        <CardHeader>
-          <CardTitle class="text-destructive">Error</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p class="text-muted-foreground">{{ error }}</p>
-        </CardContent>
-        <CardFooter>
-          <Button as-child class="w-full">
-            <NuxtLink to="/rooms">
+      <!-- Room Not Found State -->
+      <div
+        v-else-if="error"
+        class="flex flex-col items-center justify-center min-h-[400px] text-center"
+      >
+        <div
+          class="w-24 h-24 rounded-full bg-muted flex items-center justify-center mb-6"
+        >
+          <Icon name="lucide:search-x" class="size-12 text-muted-foreground" />
+        </div>
+        <h1 class="text-2xl font-bold mb-2">
+          {{ t("rooms.notFound.title") }}
+        </h1>
+        <p class="text-muted-foreground mb-6 max-w-md">
+          {{ t("rooms.notFound.description", { code: roomCode }) }}
+        </p>
+        <div class="flex gap-3">
+          <Button variant="outline" as-child>
+            <NuxtLink :to="localePath('/rooms')">
               <Icon name="lucide:arrow-left" class="size-4 mr-2" />
-              Back to Rooms
+              {{ t("rooms.notFound.backToRooms") }}
             </NuxtLink>
           </Button>
-        </CardFooter>
-      </Card>
+          <Button as-child>
+            <NuxtLink :to="localePath('/rooms/create')">
+              <Icon name="lucide:plus" class="size-4 mr-2" />
+              {{ t("rooms.notFound.createRoom") }}
+            </NuxtLink>
+          </Button>
+        </div>
+      </div>
 
       <!-- Room Loaded -->
       <template v-else-if="room">
@@ -184,12 +207,23 @@ const alivePlayersForVoting = computed(() =>
                 {{ t("common.back") }}
               </NuxtLink>
             </Button>
-            <div class="flex items-center gap-4">
-              <h1 class="text-3xl font-bold">Room {{ roomCode }}</h1>
-              <Button variant="outline" size="sm" @click="copyRoomCode">
-                <Icon name="lucide:copy" class="size-4 mr-2" />
-                Copy Code
-              </Button>
+            <div>
+              <h1 class="text-3xl font-bold mb-2">
+                {{ t("rooms.hostGame", { name: room.hostName }) }}
+              </h1>
+              <div class="flex items-center gap-2">
+                <p class="text-sm text-muted-foreground font-mono">
+                  {{ roomCode }}
+                </p>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  class="size-6"
+                  @click="copyRoomCode"
+                >
+                  <Icon name="lucide:copy" class="size-3" />
+                </Button>
+              </div>
             </div>
           </div>
           <div class="flex items-center gap-4">
@@ -273,7 +307,7 @@ const alivePlayersForVoting = computed(() =>
                   <div
                     v-for="player in players"
                     :key="player.id"
-                    class="flex items-center gap-3 p-3 rounded-lg bg-muted"
+                    class="flex items-center gap-3 p-3 rounded-lg bg-muted min-h-[72px]"
                     :class="{
                       'ring-2 ring-primary': player.id === currentPlayer?.id,
                     }"
@@ -300,9 +334,12 @@ const alivePlayersForVoting = computed(() =>
 
                   <!-- Empty slots -->
                   <div
-                    v-for="n in Math.max(0, 4 - players.length)"
+                    v-for="n in Math.max(
+                      0,
+                      (room.config.maxPlayers || 20) - players.length,
+                    )"
                     :key="`empty-${n}`"
-                    class="flex items-center justify-center p-3 rounded-lg border-2 border-dashed border-muted-foreground/20"
+                    class="flex items-center justify-center p-3 rounded-lg border-2 border-dashed border-muted-foreground/20 min-h-[72px]"
                   >
                     <span class="text-muted-foreground text-sm">
                       {{ t("game.waiting") }}

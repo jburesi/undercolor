@@ -3,7 +3,8 @@
  */
 
 import { z } from "zod";
-import { useSupabaseAdmin } from "../../utils/supabase";
+import { serverSupabaseServiceRole } from "#supabase/server";
+import type { Database } from "#shared/types/database.types";
 
 const joinRoomSchema = z.object({
   roomCode: z.string().length(6),
@@ -24,7 +25,7 @@ export default defineEventHandler(async (event) => {
   }
 
   const { roomCode, username } = result.data;
-  const supabase = useSupabaseAdmin(event);
+  const supabase = serverSupabaseServiceRole<Database>(event);
 
   // Find room by code
   const { data: room, error: roomError } = await supabase
@@ -32,7 +33,7 @@ export default defineEventHandler(async (event) => {
     .select(
       `
       *,
-      players(*)
+      players:players!players_room_id_fkey(*)
     `,
     )
     .eq("code", roomCode.toUpperCase())
@@ -102,6 +103,9 @@ export default defineEventHandler(async (event) => {
     .select("id, username, avatar_url, is_host, is_alive, connection_status")
     .eq("room_id", room.id);
 
+  // Find the host's username
+  const hostPlayer = players?.find((p) => p.is_host);
+
   return {
     roomId: room.id,
     roomCode: room.code,
@@ -110,6 +114,7 @@ export default defineEventHandler(async (event) => {
     room: {
       roomId: room.id,
       roomCode: room.code,
+      hostName: hostPlayer?.username || "Unknown",
       hostId: room.host_id,
       state: room.state,
       config: room.config,

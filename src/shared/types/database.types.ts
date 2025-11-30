@@ -196,7 +196,7 @@ export type Database = {
           created_at: string;
           current_image_set_id: string | null;
           current_round: number;
-          host_id: string;
+          host_id: string | null;
           id: string;
           is_public: boolean;
           phase_ends_at: string | null;
@@ -211,7 +211,7 @@ export type Database = {
           created_at?: string;
           current_image_set_id?: string | null;
           current_round?: number;
-          host_id: string;
+          host_id?: string | null;
           id?: string;
           is_public?: boolean;
           phase_ends_at?: string | null;
@@ -226,7 +226,7 @@ export type Database = {
           created_at?: string;
           current_image_set_id?: string | null;
           current_round?: number;
-          host_id?: string;
+          host_id?: string | null;
           id?: string;
           is_public?: boolean;
           phase_ends_at?: string | null;
@@ -236,6 +236,13 @@ export type Database = {
           winner?: Database["public"]["Enums"]["player_role"] | null;
         };
         Relationships: [
+          {
+            foreignKeyName: "fk_rooms_host_id";
+            columns: ["host_id"];
+            isOneToOne: false;
+            referencedRelation: "players";
+            referencedColumns: ["id"];
+          },
           {
             foreignKeyName: "rooms_current_image_set_id_fkey";
             columns: ["current_image_set_id"];

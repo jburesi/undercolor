@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { toTypedSchema } from "@vee-validate/zod";
 import { useForm } from "vee-validate";
 import { z } from "zod";
+import { toast } from "vue-sonner";
 
 definePageMeta({
   layout: "default",
@@ -12,19 +12,18 @@ const { t } = useI18n();
 const localePath = useLocalePath();
 const supabase = useSupabaseClient();
 
-const formSchema = toTypedSchema(
-  z
-    .object({
-      username: z.string().min(2).max(20),
-      email: z.string().email(),
-      password: z.string().min(6),
-      confirmPassword: z.string().min(6),
-    })
-    .refine((data) => data.password === data.confirmPassword, {
-      message: "Passwords don't match",
-      path: ["confirmPassword"],
-    }),
-);
+// VeeValidate v5 supports Zod v4 natively
+const formSchema = z
+  .object({
+    username: z.string().min(2).max(20),
+    email: z.string().email(),
+    password: z.string().min(6),
+    confirmPassword: z.string().min(6),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ["confirmPassword"],
+  });
 
 const { handleSubmit, values, setFieldValue, errors } = useForm({
   validationSchema: formSchema,
@@ -58,13 +57,16 @@ const onSubmit = handleSubmit(async (formValues) => {
 
     if (error) {
       errorMessage.value = error.message;
+      toast.error(error.message);
       return;
     }
 
     successMessage.value = t("auth.registerSuccess");
+    toast.success(t("toast.registerSuccess"));
     // Optionally redirect or show confirmation message
   } catch {
     errorMessage.value = t("common.error");
+    toast.error(t("toast.errorOccurred"));
   } finally {
     isLoading.value = false;
   }

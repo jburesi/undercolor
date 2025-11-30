@@ -3,12 +3,13 @@
  */
 
 import { z } from "zod";
-import { useSupabaseAdmin } from "../../../utils/supabase";
+import { serverSupabaseServiceRole } from "#supabase/server";
 import {
   calculateVoteResults,
   checkWinCondition,
 } from "../../../utils/game-logic";
 import type { GameConfig, PlayerRole } from "#shared/types/game.types";
+import type { Database } from "#shared/types/database.types";
 
 const voteSchema = z.object({
   sessionId: z.string().uuid(),
@@ -36,7 +37,7 @@ export default defineEventHandler(async (event) => {
   }
 
   const { sessionId, targetPlayerId } = result.data;
-  const supabase = useSupabaseAdmin(event);
+  const supabase = serverSupabaseServiceRole<Database>(event);
 
   // Find room
   const { data: room, error: roomError } = await supabase
@@ -44,7 +45,7 @@ export default defineEventHandler(async (event) => {
     .select(
       `
       *,
-      players(*)
+      players:players!players_room_id_fkey(*)
     `,
     )
     .eq("code", code.toUpperCase())

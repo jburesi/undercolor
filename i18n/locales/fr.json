@@ -112,10 +112,23 @@
     "publicRooms": "Salles publiques",
     "noRooms": "Aucune salle publique disponible",
     "players": "joueurs",
+    "hostGame": "La partie de {name}",
+    "yourName": "Votre nom",
+    "yourNamePlaceholder": "Entrez votre pseudo",
+    "publicRoom": "Salle publique",
+    "publicRoomDescription": "Tout le monde peut voir et rejoindre cette salle depuis le lobby",
+    "privateRoom": "Salle privée",
+    "privateRoomDescription": "Seuls les joueurs avec le code peuvent rejoindre",
     "status": {
       "lobby": "En attente",
       "playing": "En cours",
       "finished": "Terminée"
+    },
+    "notFound": {
+      "title": "Salle introuvable",
+      "description": "La salle avec le code {code} n'existe pas ou a été fermée.",
+      "backToRooms": "Retour aux salles",
+      "createRoom": "Créer une salle"
     }
   },
   "game": {
@@ -240,10 +253,29 @@
     "back": "Retour",
     "next": "Suivant",
     "submit": "Soumettre",
+    "copy": "Copier",
     "time": {
       "minutesAgo": "il y a {count} min",
       "hoursAgo": "il y a {count}h",
       "daysAgo": "il y a {count}j"
     }
+  },
+  "toast": {
+    "roomCreated": "Salle créée avec succès !",
+    "roomJoined": "Vous avez rejoint la salle !",
+    "codeCopied": "Code copié dans le presse-papiers",
+    "gameStarted": "La partie commence !",
+    "voteSubmitted": "Votre vote a été enregistré",
+    "playerJoined": "{name} a rejoint la salle",
+    "playerLeft": "{name} a quitté la salle",
+    "loginSuccess": "Bon retour !",
+    "registerSuccess": "Compte créé ! Vérifiez votre email pour confirmer.",
+    "logoutSuccess": "Vous avez été déconnecté",
+    "errorOccurred": "Une erreur est survenue. Veuillez réessayer.",
+    "errorJoinRoom": "Impossible de rejoindre la salle",
+    "errorCreateRoom": "Impossible de créer la salle",
+    "errorStartGame": "Impossible de démarrer la partie",
+    "errorVote": "Impossible d'envoyer le vote",
+    "roomNotFound": "Salle introuvable. Vérifiez le code."
   }
 }

@@ -2,8 +2,11 @@
  * DELETE /api/admin/images/[id] - Delete an image set (admin only)
  */
 
-import { useSupabaseAdmin } from "../../../utils/supabase";
-import { serverSupabaseUser } from "#supabase/server";
+import {
+  serverSupabaseServiceRole,
+  serverSupabaseUser,
+} from "#supabase/server";
+import type { Database } from "#shared/types/database.types";
 
 export default defineEventHandler(async (event) => {
   // Verify admin access
@@ -23,7 +26,7 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  const supabase = useSupabaseAdmin(event);
+  const supabase = serverSupabaseServiceRole<Database>(event);
 
   // Delete image set
   const { error } = await supabase.from("image_sets").delete().eq("id", id);

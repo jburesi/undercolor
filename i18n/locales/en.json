@@ -112,10 +112,23 @@
     "publicRooms": "Public Rooms",
     "noRooms": "No public rooms available",
     "players": "players",
+    "hostGame": "{name}'s Game",
+    "yourName": "Your Name",
+    "yourNamePlaceholder": "Enter your username",
+    "publicRoom": "Public Room",
+    "publicRoomDescription": "Anyone can see and join this room from the lobby",
+    "privateRoom": "Private Room",
+    "privateRoomDescription": "Only players with the code can join",
     "status": {
       "lobby": "In Lobby",
       "playing": "Playing",
       "finished": "Finished"
+    },
+    "notFound": {
+      "title": "Room Not Found",
+      "description": "The room with code {code} doesn't exist or has been closed.",
+      "backToRooms": "Back to Rooms",
+      "createRoom": "Create a Room"
     }
   },
   "game": {
@@ -240,10 +253,29 @@
     "back": "Back",
     "next": "Next",
     "submit": "Submit",
+    "copy": "Copy",
     "time": {
       "minutesAgo": "{count} min ago",
       "hoursAgo": "{count}h ago",
       "daysAgo": "{count}d ago"
     }
+  },
+  "toast": {
+    "roomCreated": "Room created successfully!",
+    "roomJoined": "You joined the room!",
+    "codeCopied": "Room code copied to clipboard",
+    "gameStarted": "Game is starting!",
+    "voteSubmitted": "Your vote has been submitted",
+    "playerJoined": "{name} joined the room",
+    "playerLeft": "{name} left the room",
+    "loginSuccess": "Welcome back!",
+    "registerSuccess": "Account created! Check your email to confirm.",
+    "logoutSuccess": "You have been logged out",
+    "errorOccurred": "Something went wrong. Please try again.",
+    "errorJoinRoom": "Failed to join room",
+    "errorCreateRoom": "Failed to create room",
+    "errorStartGame": "Failed to start the game",
+    "errorVote": "Failed to submit vote",
+    "roomNotFound": "Room not found. Please check the code."
   }
 }

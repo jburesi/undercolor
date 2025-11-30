@@ -2,10 +2,11 @@
  * GET /api/admin/images - List all image sets (admin only)
  */
 
-import { useSupabaseAdmin } from "../../../utils/supabase";
+import { serverSupabaseServiceRole } from "#supabase/server";
+import type { Database } from "#shared/types/database.types";
 
 export default defineEventHandler(async (event) => {
-  const supabase = useSupabaseAdmin(event);
+  const supabase = serverSupabaseServiceRole<Database>(event);
 
   const { data: imageSets, error } = await supabase
     .from("image_sets")

@@ -1,16 +1,32 @@
 <script setup lang="ts">
+import { toast } from "vue-sonner";
+
 definePageMeta({
   layout: "default",
 });
 
 const { t } = useI18n();
 const localePath = useLocalePath();
+const { $api } = useNuxtApp();
 
 const joinCode = ref("");
+const isJoining = ref(false);
 
-const handleJoin = () => {
-  if (joinCode.value.trim()) {
-    navigateTo(localePath(`/rooms/${joinCode.value.trim().toUpperCase()}`));
+const handleJoin = async () => {
+  const code = joinCode.value.trim().toUpperCase();
+  if (!code) return;
+
+  isJoining.value = true;
+  try {
+    // Check if room exists
+    await $api(`/rooms/${code}`);
+    // Room exists, navigate to it
+    await navigateTo(localePath(`/rooms/${code}`));
+  } catch {
+    // Room doesn't exist
+    toast.error(t("toast.roomNotFound"));
+  } finally {
+    isJoining.value = false;
   }
 };
 </script>
@@ -45,13 +61,23 @@ const handleJoin = () => {
                 id="joinCode"
                 v-model="joinCode"
                 :placeholder="t('rooms.enterCode')"
-                class="text-center text-2xl uppercase tracking-widest"
+                class="text-center text-2xl tracking-widest"
                 maxlength="6"
+                :disabled="isJoining"
               />
             </div>
 
-            <Button type="submit" class="w-full" :disabled="!joinCode.trim()">
-              <Icon name="lucide:log-in" class="size-4 mr-2" />
+            <Button
+              type="submit"
+              class="w-full"
+              :disabled="!joinCode.trim() || isJoining"
+            >
+              <Icon
+                v-if="isJoining"
+                name="lucide:loader-2"
+                class="size-4 mr-2 animate-spin"
+              />
+              <Icon v-else name="lucide:log-in" class="size-4 mr-2" />
               {{ t("rooms.join") }}
             </Button>
           </form>

@@ -3,9 +3,10 @@
  */
 
 import { z } from "zod";
-import { useSupabaseAdmin } from "../../utils/supabase";
+import { serverSupabaseServiceRole } from "#supabase/server";
 import { generateRoomCode } from "../../utils/game-logic";
 import { DEFAULT_GAME_CONFIG } from "#shared/types/game.types";
+import type { Database } from "#shared/types/database.types";
 
 const createRoomSchema = z.object({
   hostUsername: z.string().min(2).max(20),
@@ -23,6 +24,9 @@ const createRoomSchema = z.object({
 });
 
 export default defineEventHandler(async (event) => {
+  console.log("Creating new room...");
+  console.log(await readBody(event));
+
   const body = await readBody(event);
 
   // Validate input
@@ -36,12 +40,14 @@ export default defineEventHandler(async (event) => {
   }
 
   const { hostUsername, isPublic, config } = result.data;
-  const supabase = useSupabaseAdmin(event);
+  const supabase = serverSupabaseServiceRole<Database>(event);
 
   // Generate unique room code
   let roomCode = generateRoomCode();
   let attempts = 0;
   const maxAttempts = 10;
+
+  console.log("Initial generated room code:", roomCode);
 
   // Ensure room code is unique
   while (attempts < maxAttempts) {
@@ -56,6 +62,8 @@ export default defineEventHandler(async (event) => {
     attempts++;
   }
 
+  console.log("Final room code after uniqueness check:", roomCode);
+
   if (attempts >= maxAttempts) {
     throw createError({
       statusCode: 500,
@@ -65,17 +73,18 @@ export default defineEventHandler(async (event) => {
 
   // Generate session ID for the host
   const sessionId = crypto.randomUUID();
-  const hostId = crypto.randomUUID();
 
   // Merge config with defaults
   const gameConfig = { ...DEFAULT_GAME_CONFIG, ...config };
 
-  // Create room
+  console.log("Creating room with config:", gameConfig);
+
+  // Create room first (without host_id, will be set after player creation)
   const { data: room, error: roomError } = await supabase
     .from("rooms")
     .insert({
       code: roomCode,
-      host_id: hostId,
+      host_id: null, // Will be set after player is created
       state: "LOBBY",
       config: gameConfig,
       is_public: isPublic,
@@ -83,6 +92,7 @@ export default defineEventHandler(async (event) => {
     .select()
     .single();
 
+  console.log("Room created:", room, "Error:", roomError);
   if (roomError || !room) {
     throw createError({
       statusCode: 500,

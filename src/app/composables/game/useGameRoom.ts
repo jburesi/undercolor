@@ -33,7 +33,8 @@ interface RoomPlayer {
 interface RoomData {
   roomId: string;
   roomCode: string;
-  hostId: string;
+  hostName: string;
+  hostId: string | null;
   state: GameState;
   config: GameConfig;
   currentRound: number;
@@ -58,8 +59,15 @@ export function useGameRoom(roomCode: string) {
   const isHost = computed(() => currentPlayer.value?.is_host === true);
   const isAlive = computed(() => currentPlayer.value?.is_alive !== false);
 
-  // Session management
-  const session = ref<GameSession | null>(null);
+  // Session management using localStorage for persistence across page refreshes
+  const storedSessions = useLocalStorage<Record<string, GameSession>>(
+    SESSION_KEY,
+    {},
+  );
+  const session = computed(() => {
+    // Return session for current room if it exists
+    return storedSessions.value[roomCode] || null;
+  });
 
   // Real-time channel - using ReturnType to avoid direct import
   let channel: ReturnType<
@@ -67,40 +75,21 @@ export function useGameRoom(roomCode: string) {
   > | null = null;
 
   /**
-   * Load session from storage
-   */
-  function loadSession(): GameSession | null {
-    if (import.meta.server) return null;
-    const stored = sessionStorage.getItem(SESSION_KEY);
-    if (stored) {
-      try {
-        const parsed = JSON.parse(stored) as GameSession;
-        if (parsed.roomCode === roomCode) {
-          return parsed;
-        }
-      } catch {
-        sessionStorage.removeItem(SESSION_KEY);
-      }
-    }
-    return null;
-  }
-
-  /**
    * Save session to storage
    */
   function saveSession(newSession: GameSession) {
-    if (import.meta.server) return;
-    sessionStorage.setItem(SESSION_KEY, JSON.stringify(newSession));
-    session.value = newSession;
+    storedSessions.value = {
+      ...storedSessions.value,
+      [newSession.roomCode]: newSession,
+    };
   }
 
   /**
    * Clear session from storage
    */
   function clearSession() {
-    if (import.meta.server) return;
-    sessionStorage.removeItem(SESSION_KEY);
-    session.value = null;
+    const { [roomCode]: _, ...rest } = storedSessions.value;
+    storedSessions.value = rest;
   }
 
   /**
@@ -191,6 +180,10 @@ export function useGameRoom(roomCode: string) {
     saveSession(newSession);
     room.value = data.room;
     players.value = data.room.players;
+
+    // Set current player
+    currentPlayer.value =
+      players.value.find((p) => p.id === data.playerId) || null;
 
     return newSession;
   }
@@ -315,7 +308,10 @@ export function useGameRoom(roomCode: string) {
         (payload) => {
           if (payload.eventType === "INSERT") {
             const newPlayer = payload.new as RoomPlayer;
-            players.value = [...players.value, newPlayer];
+            // Avoid duplicates (can happen if we just joined and realtime catches up)
+            if (!players.value.some((p) => p.id === newPlayer.id)) {
+              players.value = [...players.value, newPlayer];
+            }
           } else if (payload.eventType === "UPDATE") {
             const updated = payload.new as RoomPlayer;
             players.value = players.value.map((p) =>
@@ -348,9 +344,6 @@ export function useGameRoom(roomCode: string) {
    * Initialize the room
    */
   async function init() {
-    // Load existing session
-    session.value = loadSession();
-
     // Fetch room data
     await fetchRoom();
 

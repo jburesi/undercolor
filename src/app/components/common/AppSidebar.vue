@@ -1,12 +1,26 @@
 <script setup lang="ts">
+import { toast } from "vue-sonner";
+
 const { t } = useI18n();
 const localePath = useLocalePath();
 const user = useSupabaseUser();
+const supabase = useSupabaseClient();
 
 // Check if user is admin (based on user metadata or role)
 const isAdmin = computed(() => {
   return user.value?.user_metadata?.role === "admin";
 });
+
+// Logout function
+async function handleLogout() {
+  try {
+    await supabase.auth.signOut();
+    toast.success(t("toast.logoutSuccess"));
+    await navigateTo(localePath("/"));
+  } catch {
+    toast.error(t("toast.errorOccurred"));
+  }
+}
 
 // Navigation items
 const mainNavItems = computed(() => [
@@ -217,7 +231,7 @@ const adminNavItems = computed(() => [
                 </NuxtLink>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem class="text-destructive">
+              <DropdownMenuItem class="text-destructive" @click="handleLogout">
                 <Icon name="lucide:log-out" class="size-4 mr-2" />
                 {{ t("nav.logout") }}
               </DropdownMenuItem>

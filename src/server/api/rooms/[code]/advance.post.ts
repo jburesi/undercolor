@@ -3,8 +3,9 @@
  */
 
 import { z } from "zod";
-import { useSupabaseAdmin } from "../../../utils/supabase";
+import { serverSupabaseServiceRole } from "#supabase/server";
 import type { GameConfig, GameState } from "#shared/types/game.types";
+import type { Database } from "#shared/types/database.types";
 
 const advanceSchema = z.object({
   sessionId: z.string().uuid(),
@@ -31,7 +32,7 @@ export default defineEventHandler(async (event) => {
   }
 
   const { sessionId } = result.data;
-  const supabase = useSupabaseAdmin(event);
+  const supabase = serverSupabaseServiceRole<Database>(event);
 
   // Find room
   const { data: room, error: roomError } = await supabase
@@ -39,7 +40,7 @@ export default defineEventHandler(async (event) => {
     .select(
       `
       *,
-      players(*)
+      players:players!players_room_id_fkey(*)
     `,
     )
     .eq("code", code.toUpperCase())

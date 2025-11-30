@@ -2,7 +2,8 @@
  * GET /api/rooms/[code]/role - Get player's role and image (authenticated per session)
  */
 
-import { useSupabaseAdmin } from "../../../utils/supabase";
+import { serverSupabaseServiceRole } from "#supabase/server";
+import type { Database } from "#shared/types/database.types";
 
 export default defineEventHandler(async (event) => {
   const code = getRouterParam(event, "code");
@@ -23,7 +24,7 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  const supabase = useSupabaseAdmin(event);
+  const supabase = serverSupabaseServiceRole<Database>(event);
 
   // Find room
   const { data: room, error: roomError } = await supabase

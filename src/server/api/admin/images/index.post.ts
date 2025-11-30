@@ -3,8 +3,11 @@
  */
 
 import { z } from "zod";
-import { useSupabaseAdmin } from "../../../utils/supabase";
-import { serverSupabaseUser } from "#supabase/server";
+import {
+  serverSupabaseServiceRole,
+  serverSupabaseUser,
+} from "#supabase/server";
+import type { Database } from "#shared/types/database.types";
 
 const createImageSetSchema = z.object({
   name: z.string().min(2).max(100),
@@ -38,7 +41,7 @@ export default defineEventHandler(async (event) => {
 
   const { name, category, difficulty, innocentImageUrl, imposterImageUrl } =
     result.data;
-  const supabase = useSupabaseAdmin(event);
+  const supabase = serverSupabaseServiceRole<Database>(event);
 
   // Create image set
   const { data: imageSet, error } = await supabase

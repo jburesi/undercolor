@@ -1,8 +1,15 @@
 <script setup lang="ts">
-import { toTypedSchema } from "@vee-validate/zod";
 import { useForm } from "vee-validate";
 import { z } from "zod";
+import { toast } from "vue-sonner";
 import { DEFAULT_GAME_CONFIG } from "~/types/game.types";
+
+interface GameSession {
+  roomId: string;
+  roomCode: string;
+  playerId: string;
+  sessionId: string;
+}
 
 definePageMeta({
   layout: "default",
@@ -12,22 +19,20 @@ const { t } = useI18n();
 const localePath = useLocalePath();
 const { $api } = useNuxtApp();
 
-// Form schema
-const formSchema = toTypedSchema(
-  z.object({
-    username: z.string().min(2).max(20),
-    isPublic: z.boolean().default(true),
-    observationTime: z.number().min(5).max(60),
-    debateTime: z.number().min(30).max(300),
-    votingTime: z.number().min(10).max(120),
-    maxPlayers: z.number().min(3).max(20),
-  }),
-);
+// Form schema - VeeValidate v5 supports Zod v4 natively
+const formSchema = z.object({
+  hostUsername: z.string().min(2).max(20),
+  isPublic: z.boolean(),
+  observationTime: z.number().min(5).max(60),
+  debateTime: z.number().min(30).max(300),
+  votingTime: z.number().min(10).max(120),
+  maxPlayers: z.number().min(3).max(20),
+});
 
 const { handleSubmit, values, setFieldValue } = useForm({
   validationSchema: formSchema,
   initialValues: {
-    username: "",
+    hostUsername: "",
     isPublic: true,
     observationTime: DEFAULT_GAME_CONFIG.observationTime,
     debateTime: DEFAULT_GAME_CONFIG.debateTime,
@@ -35,6 +40,15 @@ const { handleSubmit, values, setFieldValue } = useForm({
     maxPlayers: DEFAULT_GAME_CONFIG.maxPlayers,
   },
 });
+
+// Session storage - use localStorage with map format (same as useGameRoom)
+const SESSIONS_KEY = "undercolor_session";
+
+interface SessionsMap {
+  [roomCode: string]: GameSession;
+}
+
+const storedSessions = useLocalStorage<SessionsMap>(SESSIONS_KEY, {});
 
 const isCreating = ref(false);
 const error = ref<string | null>(null);
@@ -52,7 +66,7 @@ const onSubmit = handleSubmit(async (formValues) => {
     }>("/rooms", {
       method: "POST",
       body: {
-        hostUsername: formValues.username,
+        hostUsername: formValues.hostUsername,
         isPublic: formValues.isPublic,
         config: {
           observationTime: formValues.observationTime,
@@ -63,22 +77,23 @@ const onSubmit = handleSubmit(async (formValues) => {
       },
     });
 
-    // Store session in sessionStorage
-    if (import.meta.client) {
-      sessionStorage.setItem(
-        "undercolor_session",
-        JSON.stringify({
-          roomId: response.roomId,
-          roomCode: response.roomCode,
-          playerId: response.hostId,
-          sessionId: response.sessionId,
-        }),
-      );
-    }
+    // Store session in the map format (same as useGameRoom)
+    const newSession: GameSession = {
+      roomId: response.roomId,
+      roomCode: response.roomCode,
+      playerId: response.hostId,
+      sessionId: response.sessionId,
+    };
+    storedSessions.value = {
+      ...storedSessions.value,
+      [response.roomCode]: newSession,
+    };
 
+    toast.success(t("toast.roomCreated"));
     await navigateTo(`/rooms/${response.roomCode}`);
   } catch (err: unknown) {
     error.value = err instanceof Error ? err.message : "Failed to create room";
+    toast.error(t("toast.errorCreateRoom"));
   } finally {
     isCreating.value = false;
   }
@@ -107,16 +122,44 @@ const onSubmit = handleSubmit(async (formValues) => {
         </CardHeader>
         <CardContent>
           <form class="space-y-6" @submit="onSubmit">
-            <!-- Username -->
+            <!-- Host Username (also used as room display name) -->
             <div class="space-y-2">
-              <label for="username" class="text-sm font-medium">
-                {{ t("auth.username") }}
+              <label for="hostUsername" class="text-sm font-medium">
+                {{ t("rooms.yourName") }}
               </label>
               <Input
-                id="username"
-                :model-value="values.username"
-                :placeholder="t('auth.username')"
-                @update:model-value="setFieldValue('username', String($event))"
+                id="hostUsername"
+                :model-value="values.hostUsername"
+                :placeholder="t('rooms.yourNamePlaceholder')"
+                @update:model-value="
+                  setFieldValue('hostUsername', String($event))
+                "
+              />
+            </div>
+
+            <!-- Room Visibility -->
+            <div
+              class="flex items-center justify-between p-4 rounded-lg border"
+            >
+              <div>
+                <label for="isPublic" class="text-sm font-medium">
+                  {{ t("rooms.publicRoom") }}
+                </label>
+                <p class="text-sm text-muted-foreground">
+                  {{ t("rooms.publicRoomDescription") }}
+                </p>
+              </div>
+              <input
+                id="isPublic"
+                type="checkbox"
+                :checked="values.isPublic"
+                class="size-5"
+                @change="
+                  setFieldValue(
+                    'isPublic',
+                    ($event.target as HTMLInputElement).checked,
+                  )
+                "
               />
             </div>
 

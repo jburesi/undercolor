@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { toTypedSchema } from "@vee-validate/zod";
 import { useForm } from "vee-validate";
 import { z } from "zod";
 
@@ -11,13 +10,12 @@ definePageMeta({
 const { t } = useI18n();
 const localePath = useLocalePath();
 
-const formSchema = toTypedSchema(
-  z.object({
-    name: z.string().min(2).max(100),
-    category: z.string().min(1),
-    difficulty: z.enum(["easy", "medium", "hard"]),
-  }),
-);
+// VeeValidate v5 supports Zod v4 natively
+const formSchema = z.object({
+  name: z.string().min(2).max(100),
+  category: z.string().min(1),
+  difficulty: z.enum(["easy", "medium", "hard"]),
+});
 
 const { handleSubmit, values, setFieldValue, errors } = useForm({
   validationSchema: formSchema,

@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { toTypedSchema } from "@vee-validate/zod";
 import { useForm } from "vee-validate";
 import { z } from "zod";
+import { toast } from "vue-sonner";
 
 definePageMeta({
   layout: "default",
@@ -12,12 +12,11 @@ const { t } = useI18n();
 const localePath = useLocalePath();
 const supabase = useSupabaseClient();
 
-const formSchema = toTypedSchema(
-  z.object({
-    email: z.string().email(),
-    password: z.string().min(6),
-  }),
-);
+// VeeValidate v5 supports Zod v4 natively
+const formSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(6),
+});
 
 const { handleSubmit, values, setFieldValue, errors } = useForm({
   validationSchema: formSchema,
@@ -42,13 +41,16 @@ const onSubmit = handleSubmit(async (formValues) => {
 
     if (error) {
       errorMessage.value = error.message;
+      toast.error(error.message);
       return;
     }
 
     // Redirect to home on success
+    toast.success(t("toast.loginSuccess"));
     await navigateTo(localePath("/"));
   } catch {
     errorMessage.value = t("common.error");
+    toast.error(t("toast.errorOccurred"));
   } finally {
     isLoading.value = false;
   }

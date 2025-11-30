@@ -28,6 +28,12 @@ export default defineNuxtConfig({
     "@nuxtjs/i18n",
     "@nuxtjs/seo",
   ],
+  nitro: {
+    externals: {
+      // https://github.com/nuxt-modules/supabase/issues/559
+      inline: ["@supabase/supabase-js"],
+    },
+  },
   colorMode: {
     classSuffix: "",
   },

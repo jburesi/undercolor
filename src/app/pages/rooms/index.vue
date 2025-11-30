@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { toast } from "vue-sonner";
+
 definePageMeta({
   layout: "default",
 });
@@ -11,6 +13,7 @@ const { $api } = useNuxtApp();
 interface PublicRoom {
   roomId: string;
   roomCode: string;
+  hostName: string;
   playerCount: number;
   maxPlayers: number;
   createdAt: string;
@@ -24,10 +27,23 @@ const publicRooms = computed(() => data.value?.rooms || []);
 const isLoading = computed(() => status.value === "pending");
 
 const joinCode = ref("");
+const isJoining = ref(false);
 
-const handleJoinByCode = () => {
-  if (joinCode.value.trim()) {
-    navigateTo(`/rooms/${joinCode.value.trim().toUpperCase()}`);
+const handleJoinByCode = async () => {
+  const code = joinCode.value.trim().toUpperCase();
+  if (!code) return;
+
+  isJoining.value = true;
+  try {
+    // Check if room exists
+    await $api(`/rooms/${code}`);
+    // Room exists, navigate to it
+    await navigateTo(localePath(`/rooms/${code}`));
+  } catch {
+    // Room doesn't exist
+    toast.error(t("toast.roomNotFound"));
+  } finally {
+    isJoining.value = false;
   }
 };
 
@@ -75,11 +91,17 @@ onUnmounted(() => {
             <Input
               v-model="joinCode"
               :placeholder="t('rooms.enterCode')"
-              class="max-w-xs uppercase"
+              class="max-w-xs"
               maxlength="6"
+              :disabled="isJoining"
             />
-            <Button type="submit" :disabled="!joinCode.trim()">
-              <Icon name="lucide:log-in" class="size-4 mr-2" />
+            <Button type="submit" :disabled="!joinCode.trim() || isJoining">
+              <Icon
+                v-if="isJoining"
+                name="lucide:loader-2"
+                class="size-4 mr-2 animate-spin"
+              />
+              <Icon v-else name="lucide:log-in" class="size-4 mr-2" />
               {{ t("rooms.join") }}
             </Button>
           </form>
@@ -119,7 +141,14 @@ onUnmounted(() => {
           >
             <CardHeader>
               <div class="flex items-center justify-between">
-                <CardTitle class="text-lg">{{ room.roomCode }}</CardTitle>
+                <div>
+                  <CardTitle class="text-lg">
+                    {{ t("rooms.hostGame", { name: room.hostName }) }}
+                  </CardTitle>
+                  <p class="text-sm text-muted-foreground font-mono">
+                    {{ room.roomCode }}
+                  </p>
+                </div>
                 <Badge variant="default">
                   {{ t("rooms.status.lobby") }}
                 </Badge>

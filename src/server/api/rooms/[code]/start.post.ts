@@ -3,8 +3,9 @@
  */
 
 import { z } from "zod";
-import { useSupabaseAdmin } from "../../../utils/supabase";
+import { serverSupabaseServiceRole } from "#supabase/server";
 import { assignRoles } from "../../../utils/game-logic";
+import type { Database } from "#shared/types/database.types";
 import type { GameConfig } from "#shared/types/game.types";
 
 const startGameSchema = z.object({
@@ -32,7 +33,7 @@ export default defineEventHandler(async (event) => {
   }
 
   const { sessionId } = result.data;
-  const supabase = useSupabaseAdmin(event);
+  const supabase = serverSupabaseServiceRole<Database>(event);
 
   // Find room
   const { data: room, error: roomError } = await supabase
@@ -40,7 +41,7 @@ export default defineEventHandler(async (event) => {
     .select(
       `
       *,
-      players(*)
+      players:players!players_room_id_fkey(*)
     `,
     )
     .eq("code", code.toUpperCase())

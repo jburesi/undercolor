@@ -1,6 +1,6 @@
 export default defineNuxtPlugin(() => {
   const api = $fetch.create({
-    baseURL: "https://api.nuxt.com",
+    baseURL: "http://localhost:3000/api",
     async onResponseError({ response }) {
       if (response.status === 401) {
         // Example code
