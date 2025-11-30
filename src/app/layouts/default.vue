@@ -1,6 +1,6 @@
 <script setup lang="ts">
 const defaultOpen = useCookie<boolean>("sidebar_state", {
-  default: () => true,
+  default: () => false,
 });
 </script>
 
