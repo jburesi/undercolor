@@ -117,7 +117,7 @@ const onSubmit = handleSubmit(async (formValues) => {
         <CardHeader>
           <CardTitle>{{ t("rooms.create") }}</CardTitle>
           <CardDescription>
-            Configure your game room and invite friends to play.
+            {{ t("rooms.createDescription") }}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -149,41 +149,32 @@ const onSubmit = handleSubmit(async (formValues) => {
                   {{ t("rooms.publicRoomDescription") }}
                 </p>
               </div>
-              <input
+              <Checkbox
                 id="isPublic"
-                type="checkbox"
                 :checked="values.isPublic"
-                class="size-5"
-                @change="
-                  setFieldValue(
-                    'isPublic',
-                    ($event.target as HTMLInputElement).checked,
-                  )
-                "
+                @update:checked="setFieldValue('isPublic', $event)"
               />
             </div>
 
             <!-- Game Settings -->
             <div class="space-y-4">
-              <h3 class="text-lg font-semibold">Game Settings</h3>
+              <h3 class="text-lg font-semibold">
+                {{ t("game.settings.title") }}
+              </h3>
 
               <!-- Max Players -->
               <div class="space-y-2">
                 <label for="maxPlayers" class="text-sm font-medium">
-                  Max Players: {{ values.maxPlayers }}
+                  {{ t("game.settings.maxPlayers") }}: {{ values.maxPlayers }}
                 </label>
-                <input
+                <Slider
                   id="maxPlayers"
-                  type="range"
-                  :value="values.maxPlayers"
+                  :model-value="[values.maxPlayers]"
                   :min="3"
                   :max="20"
-                  class="w-full"
-                  @input="
-                    setFieldValue(
-                      'maxPlayers',
-                      Number(($event.target as HTMLInputElement).value),
-                    )
+                  :step="1"
+                  @update:model-value="
+                    (v) => setFieldValue('maxPlayers', v?.[0] ?? 3)
                   "
                 />
               </div>
@@ -191,20 +182,17 @@ const onSubmit = handleSubmit(async (formValues) => {
               <!-- Observation Time -->
               <div class="space-y-2">
                 <label for="observationTime" class="text-sm font-medium">
-                  Observation Time: {{ values.observationTime }}s
+                  {{ t("game.settings.observationTime") }}:
+                  {{ values.observationTime }}s
                 </label>
-                <input
+                <Slider
                   id="observationTime"
-                  type="range"
-                  :value="values.observationTime"
+                  :model-value="[values.observationTime]"
                   :min="5"
                   :max="60"
-                  class="w-full"
-                  @input="
-                    setFieldValue(
-                      'observationTime',
-                      Number(($event.target as HTMLInputElement).value),
-                    )
+                  :step="5"
+                  @update:model-value="
+                    (v) => setFieldValue('observationTime', v?.[0] ?? 15)
                   "
                 />
               </div>
@@ -212,21 +200,16 @@ const onSubmit = handleSubmit(async (formValues) => {
               <!-- Debate Time -->
               <div class="space-y-2">
                 <label for="debateTime" class="text-sm font-medium">
-                  Debate Time: {{ values.debateTime }}s
+                  {{ t("game.settings.debateTime") }}: {{ values.debateTime }}s
                 </label>
-                <input
+                <Slider
                   id="debateTime"
-                  type="range"
-                  :value="values.debateTime"
+                  :model-value="[values.debateTime]"
                   :min="30"
                   :max="300"
-                  step="15"
-                  class="w-full"
-                  @input="
-                    setFieldValue(
-                      'debateTime',
-                      Number(($event.target as HTMLInputElement).value),
-                    )
+                  :step="15"
+                  @update:model-value="
+                    (v) => setFieldValue('debateTime', v?.[0] ?? 120)
                   "
                 />
               </div>
@@ -234,20 +217,16 @@ const onSubmit = handleSubmit(async (formValues) => {
               <!-- Voting Time -->
               <div class="space-y-2">
                 <label for="votingTime" class="text-sm font-medium">
-                  Voting Time: {{ values.votingTime }}s
+                  {{ t("game.settings.votingTime") }}: {{ values.votingTime }}s
                 </label>
-                <input
+                <Slider
                   id="votingTime"
-                  type="range"
-                  :value="values.votingTime"
+                  :model-value="[values.votingTime]"
                   :min="10"
                   :max="120"
-                  class="w-full"
-                  @input="
-                    setFieldValue(
-                      'votingTime',
-                      Number(($event.target as HTMLInputElement).value),
-                    )
+                  :step="5"
+                  @update:model-value="
+                    (v) => setFieldValue('votingTime', v?.[0] ?? 30)
                   "
                 />
               </div>

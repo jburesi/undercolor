@@ -232,7 +232,9 @@ const alivePlayersForVoting = computed(() =>
               v-if="timer.isRunning.value && gameState !== 'LOBBY'"
               class="text-right"
             >
-              <p class="text-sm text-muted-foreground">Time Remaining</p>
+              <p class="text-sm text-muted-foreground">
+                {{ t("game.timeRemaining") }}
+              </p>
               <p
                 class="text-2xl font-bold font-mono"
                 :class="{ 'text-destructive': timer.isLow.value }"
@@ -244,7 +246,7 @@ const alivePlayersForVoting = computed(() =>
               :variant="gameState === 'LOBBY' ? 'secondary' : 'default'"
               class="text-lg px-4 py-2"
             >
-              {{ gameState }}
+              {{ t(`rooms.status.${gameState.toLowerCase()}`) }}
             </Badge>
           </div>
         </div>
@@ -252,9 +254,9 @@ const alivePlayersForVoting = computed(() =>
         <!-- Join Form (if not joined) -->
         <Card v-if="!hasJoined" class="max-w-md mx-auto">
           <CardHeader>
-            <CardTitle>Join Game</CardTitle>
+            <CardTitle>{{ t("game.joinGame") }}</CardTitle>
             <CardDescription>
-              Enter your username to join this room.
+              {{ t("game.joinGameDescription") }}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -285,7 +287,7 @@ const alivePlayersForVoting = computed(() =>
                   class="size-4 mr-2 animate-spin"
                 />
                 <Icon v-else name="lucide:log-in" class="size-4 mr-2" />
-                Join Room
+                {{ t("game.joinRoom") }}
               </Button>
             </form>
           </CardContent>
@@ -299,7 +301,7 @@ const alivePlayersForVoting = computed(() =>
               <CardHeader>
                 <CardTitle class="flex items-center gap-2">
                   <Icon name="lucide:users" class="size-5" />
-                  Players ({{ players.length }})
+                  {{ t("rooms.playersTitle") }} ({{ players.length }})
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -323,7 +325,7 @@ const alivePlayersForVoting = computed(() =>
                         v-if="player.is_host"
                         class="text-xs text-muted-foreground"
                       >
-                        Host
+                        {{ t("game.host") }}
                       </p>
                     </div>
                     <div
@@ -354,7 +356,8 @@ const alivePlayersForVoting = computed(() =>
                   @click="handleStartGame"
                 >
                   <Icon name="lucide:play" class="size-4 mr-2" />
-                  Start Game ({{ players.length }}/3 minimum)
+                  {{ t("game.startGame") }} ({{ players.length }}/3
+                  {{ t("game.minimumPlayers") }})
                 </Button>
               </CardFooter>
             </Card>
@@ -370,7 +373,7 @@ const alivePlayersForVoting = computed(() =>
               class="size-16 text-primary animate-spin mb-4"
             />
             <p class="text-xl font-medium">{{ t("game.starting") }}</p>
-            <p class="text-muted-foreground">Assigning roles...</p>
+            <p class="text-muted-foreground">{{ t("game.assigningRoles") }}</p>
           </div>
 
           <!-- ==================== OBSERVATION STATE ==================== -->
@@ -400,9 +403,11 @@ const alivePlayersForVoting = computed(() =>
                     name="lucide:eye-off"
                     class="size-16 text-muted-foreground mx-auto mb-4"
                   />
-                  <p class="text-xl font-medium">You see nothing</p>
+                  <p class="text-xl font-medium">
+                    {{ t("game.mrWhiteNoImage") }}
+                  </p>
                   <p class="text-muted-foreground">
-                    Use your wits to blend in with the others!
+                    {{ t("game.mrWhiteHint") }}
                   </p>
                 </div>
 
@@ -441,7 +446,9 @@ const alivePlayersForVoting = computed(() =>
                       v-else
                       class="w-full h-full flex items-center justify-center"
                     >
-                      <p class="text-muted-foreground">No image available</p>
+                      <p class="text-muted-foreground">
+                        {{ t("game.noImageAvailable") }}
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -451,7 +458,7 @@ const alivePlayersForVoting = computed(() =>
             <!-- Skip button for host -->
             <div v-if="isHost" class="text-center">
               <Button variant="outline" @click="handleSkipPhase">
-                Skip to Debate
+                {{ t("game.skipToDebate") }}
               </Button>
             </div>
           </div>
@@ -465,7 +472,7 @@ const alivePlayersForVoting = computed(() =>
                   {{ t("game.debate") }}
                 </CardTitle>
                 <CardDescription>
-                  Discuss with other players and describe what you see!
+                  {{ t("game.debateDescription") }}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -502,7 +509,7 @@ const alivePlayersForVoting = computed(() =>
               <CardFooter v-if="isHost">
                 <Button class="w-full" @click="handleSkipPhase">
                   <Icon name="lucide:vote" class="size-4 mr-2" />
-                  Start Voting
+                  {{ t("game.startVoting") }}
                 </Button>
               </CardFooter>
             </Card>
@@ -517,7 +524,7 @@ const alivePlayersForVoting = computed(() =>
                   {{ t("game.voting") }}
                 </CardTitle>
                 <CardDescription>
-                  Vote for who you think is the imposter!
+                  {{ t("game.votingDescription") }}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -529,7 +536,7 @@ const alivePlayersForVoting = computed(() =>
                   />
                   <p class="text-xl font-medium">{{ t("game.voted") }}</p>
                   <p class="text-muted-foreground">
-                    Waiting for other players...
+                    {{ t("game.waitingForVotes") }}
                   </p>
                 </div>
 
@@ -539,16 +546,18 @@ const alivePlayersForVoting = computed(() =>
                     name="lucide:ghost"
                     class="size-16 text-muted-foreground mx-auto mb-4"
                   />
-                  <p class="text-xl font-medium">You are eliminated</p>
+                  <p class="text-xl font-medium">
+                    {{ t("game.youAreEliminated") }}
+                  </p>
                   <p class="text-muted-foreground">
-                    Watch the remaining players vote.
+                    {{ t("game.watchOthers") }}
                   </p>
                 </div>
 
                 <!-- Vote selection -->
                 <div v-else class="space-y-4">
                   <p class="text-sm text-muted-foreground">
-                    Select a player to vote for elimination:
+                    {{ t("game.selectPlayer") }}
                   </p>
                   <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
                     <div
@@ -616,7 +625,7 @@ const alivePlayersForVoting = computed(() =>
               </CardHeader>
               <CardContent>
                 <p class="text-muted-foreground mb-6">
-                  Your role was:
+                  {{ t("game.yourRoleWas") }}
                   <Badge
                     v-if="myRole"
                     :variant="getRoleBadgeVariant(myRole)"
