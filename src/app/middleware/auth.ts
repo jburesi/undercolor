@@ -4,6 +4,6 @@ export default defineNuxtRouteMiddleware(() => {
 
   // If user is not authenticated, redirect to login
   if (!user.value) {
-    return navigateTo(localePath("/login"), { replace: true });
+    return navigateTo(localePath({ path: "/login" }), { replace: true });
   }
 });

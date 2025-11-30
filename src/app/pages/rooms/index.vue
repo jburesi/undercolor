@@ -38,7 +38,7 @@ const handleJoinByCode = async () => {
     // Check if room exists
     await $api(`/rooms/${code}`);
     // Room exists, navigate to it
-    await navigateTo(localePath(`/rooms/${code}`));
+    await navigateTo(localePath({ path: `/rooms/${code}` }));
   } catch {
     // Room doesn't exist
     toast.error(t("toast.roomNotFound"));
@@ -73,10 +73,10 @@ onUnmounted(() => {
         </div>
         <div class="flex gap-3">
           <Button as-child>
-            <NuxtLink :to="localePath('/rooms/create')">
+            <NuxtLinkLocale to="rooms-create">
               <Icon name="lucide:plus" class="size-4 mr-2" />
               {{ t("rooms.create") }}
-            </NuxtLink>
+            </NuxtLinkLocale>
           </Button>
         </div>
       </div>

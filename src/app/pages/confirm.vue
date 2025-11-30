@@ -2,8 +2,6 @@
 definePageMeta({
   layout: "default",
 });
-
-const localePath = useLocalePath();
 </script>
 
 <template>
@@ -22,10 +20,10 @@ const localePath = useLocalePath();
       </div>
 
       <Button as-child>
-        <NuxtLink :to="localePath('/')">
+        <NuxtLinkLocale to="index">
           <Icon name="lucide:home" class="size-4 mr-2" />
           Go to Home
-        </NuxtLink>
+        </NuxtLinkLocale>
       </Button>
     </div>
   </div>

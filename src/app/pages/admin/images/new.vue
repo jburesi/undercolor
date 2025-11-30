@@ -8,7 +8,6 @@ definePageMeta({
 });
 
 const { t } = useI18n();
-const localePath = useLocalePath();
 
 const form = useForm({
   validationSchema: imageSetFormSchema,
@@ -125,10 +124,10 @@ const onSubmit = handleSubmit(async (formValues) => {
       <!-- Header -->
       <div class="mb-8">
         <Button variant="ghost" as-child class="mb-4">
-          <NuxtLink :to="localePath('/admin/images')">
+          <NuxtLinkLocale to="admin-images">
             <Icon name="lucide:arrow-left" class="size-4 mr-2" />
             {{ t("common.back") }}
-          </NuxtLink>
+          </NuxtLinkLocale>
         </Button>
         <h1 class="text-3xl font-bold">{{ t("admin.images.addSet") }}</h1>
       </div>

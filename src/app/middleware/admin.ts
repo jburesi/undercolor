@@ -4,7 +4,7 @@ export default defineNuxtRouteMiddleware(() => {
 
   // If user is not authenticated, redirect to login
   if (!user.value) {
-    return navigateTo(localePath("/login"), { replace: true });
+    return navigateTo(localePath({ path: "/login" }), { replace: true });
   }
 
   // Check if user has admin role
@@ -12,6 +12,6 @@ export default defineNuxtRouteMiddleware(() => {
 
   if (!isAdmin) {
     // Non-admin users cannot access admin routes
-    return navigateTo(localePath("/"), { replace: true });
+    return navigateTo(localePath({ path: "/" }), { replace: true });
   }
 });

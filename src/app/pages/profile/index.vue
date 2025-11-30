@@ -5,7 +5,6 @@ definePageMeta({
 });
 
 const { t } = useI18n();
-const localePath = useLocalePath();
 const user = useSupabaseUser();
 
 // Mock user stats
@@ -209,11 +208,11 @@ const stats = ref({
 
     <!-- View History Link -->
     <div class="mt-8 text-center">
-      <NuxtLink :to="localePath('/profile/history')">
+      <NuxtLinkLocale to="profile-history">
         <Button variant="outline">
           {{ t("user.profile.viewHistory") }}
         </Button>
-      </NuxtLink>
+      </NuxtLinkLocale>
     </div>
   </div>
 </template>

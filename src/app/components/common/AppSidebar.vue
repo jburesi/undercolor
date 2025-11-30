@@ -16,7 +16,7 @@ async function handleLogout() {
   try {
     await supabase.auth.signOut();
     toast.success(t("toast.logoutSuccess"));
-    await navigateTo(localePath("/"));
+    await navigateTo(localePath({ path: "/" }));
   } catch {
     toast.error(t("toast.errorOccurred"));
   }
@@ -27,12 +27,12 @@ const mainNavItems = computed(() => [
   {
     title: t("nav.home"),
     icon: "lucide:home",
-    to: localePath("/"),
+    to: localePath({ path: "/" }),
   },
   {
     title: t("nav.rooms"),
     icon: "lucide:gamepad-2",
-    to: localePath("/rooms"),
+    to: localePath({ path: "/rooms" }),
   },
 ]);
 
@@ -40,12 +40,12 @@ const gameNavItems = computed(() => [
   {
     title: t("rooms.create"),
     icon: "lucide:plus-circle",
-    to: localePath("/rooms/create"),
+    to: localePath({ path: "/rooms/create" }),
   },
   {
     title: t("rooms.join"),
     icon: "lucide:log-in",
-    to: localePath("/rooms/join"),
+    to: localePath({ path: "/rooms/join" }),
   },
 ]);
 
@@ -54,12 +54,12 @@ const userNavItems = computed(() => [
   {
     title: t("nav.profile"),
     icon: "lucide:user",
-    to: localePath("/profile"),
+    to: localePath({ path: "/profile" }),
   },
   {
     title: t("nav.gameHistory"),
     icon: "lucide:history",
-    to: localePath("/profile/history"),
+    to: localePath({ path: "/profile/history" }),
   },
 ]);
 
@@ -68,12 +68,12 @@ const adminNavItems = computed(() => [
   {
     title: t("nav.imageSets"),
     icon: "lucide:images",
-    to: localePath("/admin/images"),
+    to: localePath({ path: "/admin/images" }),
   },
   {
     title: t("nav.dashboard"),
     icon: "lucide:layout-dashboard",
-    to: localePath("/admin"),
+    to: localePath({ path: "/admin" }),
   },
 ]);
 </script>
@@ -84,7 +84,7 @@ const adminNavItems = computed(() => [
       <SidebarMenu>
         <SidebarMenuItem>
           <SidebarMenuButton size="lg" as-child>
-            <NuxtLink :to="localePath('/')">
+            <NuxtLinkLocale to="index">
               <div
                 class="flex aspect-square size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground"
               >
@@ -96,7 +96,7 @@ const adminNavItems = computed(() => [
                   Visual Deduction
                 </span>
               </div>
-            </NuxtLink>
+            </NuxtLinkLocale>
           </SidebarMenuButton>
         </SidebarMenuItem>
       </SidebarMenu>
@@ -225,10 +225,10 @@ const adminNavItems = computed(() => [
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem as-child>
-                <NuxtLink :to="localePath('/profile')">
+                <NuxtLinkLocale to="profile">
                   <Icon name="lucide:user" class="size-4 mr-2" />
                   {{ t("nav.profile") }}
-                </NuxtLink>
+                </NuxtLinkLocale>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem class="text-destructive" @click="handleLogout">
@@ -240,10 +240,10 @@ const adminNavItems = computed(() => [
 
           <!-- If user is not logged in - show login link -->
           <SidebarMenuButton v-else as-child>
-            <NuxtLink :to="localePath('/login')">
+            <NuxtLinkLocale to="login">
               <Icon name="lucide:log-in" class="size-4" />
               <span>{{ t("nav.login") }}</span>
-            </NuxtLink>
+            </NuxtLinkLocale>
           </SidebarMenuButton>
         </SidebarMenuItem>
       </SidebarMenu>

@@ -9,7 +9,6 @@ definePageMeta({
 });
 
 const { t } = useI18n();
-const localePath = useLocalePath();
 const supabase = useSupabaseClient();
 
 // VeeValidate v5 supports Zod v4 natively
@@ -229,12 +228,9 @@ const signUpWithProvider = async (provider: "google" | "github") => {
         <CardFooter class="justify-center">
           <p class="text-sm text-muted-foreground">
             {{ t("auth.hasAccount") }}
-            <NuxtLink
-              :to="localePath('/login')"
-              class="text-primary hover:underline"
-            >
+            <NuxtLinkLocale to="login" class="text-primary hover:underline">
               {{ t("auth.login") }}
-            </NuxtLink>
+            </NuxtLinkLocale>
           </p>
         </CardFooter>
       </Card>

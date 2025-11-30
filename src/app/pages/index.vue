@@ -4,7 +4,6 @@ definePageMeta({
 });
 
 const { t } = useI18n();
-const localePath = useLocalePath();
 
 // Features data
 const features = computed(() => [
@@ -134,10 +133,10 @@ const roles = computed(() => [
 
         <div class="flex flex-col sm:flex-row gap-4 justify-center">
           <Button size="lg" as-child>
-            <NuxtLink :to="localePath('/rooms')">
+            <NuxtLinkLocale to="rooms">
               <Icon name="lucide:play" class="size-5 mr-2" />
               {{ t("home.hero.playNow") }}
-            </NuxtLink>
+            </NuxtLinkLocale>
           </Button>
           <Button variant="outline" size="lg" as-child>
             <a href="#how-to-play">
@@ -276,16 +275,16 @@ const roles = computed(() => [
           <CardContent>
             <div class="flex flex-col sm:flex-row gap-4 justify-center">
               <Button size="lg" as-child>
-                <NuxtLink :to="localePath('/rooms/create')">
+                <NuxtLinkLocale to="rooms-create">
                   <Icon name="lucide:plus" class="size-5 mr-2" />
                   {{ t("home.cta.createRoom") }}
-                </NuxtLink>
+                </NuxtLinkLocale>
               </Button>
               <Button variant="outline" size="lg" as-child>
-                <NuxtLink :to="localePath('/rooms/join')">
+                <NuxtLinkLocale to="rooms-join">
                   <Icon name="lucide:log-in" class="size-5 mr-2" />
                   {{ t("home.cta.joinRoom") }}
-                </NuxtLink>
+                </NuxtLinkLocale>
               </Button>
             </div>
           </CardContent>

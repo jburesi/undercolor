@@ -5,7 +5,6 @@ definePageMeta({
 });
 
 const { t } = useI18n();
-const localePath = useLocalePath();
 
 // Mock stats
 const stats = ref({
@@ -76,16 +75,16 @@ const stats = ref({
         <CardContent>
           <div class="flex flex-wrap gap-4">
             <Button as-child>
-              <NuxtLink :to="localePath('/admin/images')">
+              <NuxtLinkLocale to="admin-images">
                 <Icon name="lucide:images" class="size-4 mr-2" />
                 {{ t("admin.images.title") }}
-              </NuxtLink>
+              </NuxtLinkLocale>
             </Button>
             <Button variant="outline" as-child>
-              <NuxtLink :to="localePath('/admin/images/new')">
+              <NuxtLinkLocale to="admin-images-new">
                 <Icon name="lucide:plus" class="size-4 mr-2" />
                 {{ t("admin.images.addSet") }}
-              </NuxtLink>
+              </NuxtLinkLocale>
             </Button>
           </div>
         </CardContent>

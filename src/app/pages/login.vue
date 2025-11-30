@@ -49,7 +49,7 @@ const onSubmit = handleSubmit(async (formValues) => {
 
     // Redirect to home on success
     toast.success(t("toast.loginSuccess"));
-    await navigateTo(localePath("/"));
+    await navigateTo(localePath({ path: "/" }));
   } catch {
     errorMessage.value = t("common.error");
     toast.error(t("toast.errorOccurred"));
@@ -121,7 +121,7 @@ const signInWithProvider = async (provider: "google" | "github") => {
                 <div class="flex items-center justify-between">
                   <FormLabel>{{ t("auth.password") }}</FormLabel>
                   <NuxtLink
-                    :to="localePath('/forgot-password')"
+                    :to="localePath({ path: '/forgot-password' })"
                     class="text-xs text-primary hover:underline"
                   >
                     {{ t("auth.forgotPassword") }}
@@ -183,12 +183,9 @@ const signInWithProvider = async (provider: "google" | "github") => {
         <CardFooter class="justify-center">
           <p class="text-sm text-muted-foreground">
             {{ t("auth.noAccount") }}
-            <NuxtLink
-              :to="localePath('/register')"
-              class="text-primary hover:underline"
-            >
+            <NuxtLinkLocale to="register" class="text-primary hover:underline">
               {{ t("auth.register") }}
-            </NuxtLink>
+            </NuxtLinkLocale>
           </p>
         </CardFooter>
       </Card>

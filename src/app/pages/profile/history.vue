@@ -7,7 +7,6 @@ definePageMeta({
 });
 
 const { t } = useI18n();
-const localePath = useLocalePath();
 
 // Mock game history data
 const gameHistory = ref([
@@ -103,11 +102,11 @@ const formatRelativeTime = (date: Date) => {
           {{ t("user.history.description") }}
         </p>
       </div>
-      <NuxtLink :to="localePath('/profile')">
+      <NuxtLinkLocale to="profile">
         <Button variant="outline">
           {{ t("user.history.backToProfile") }}
         </Button>
-      </NuxtLink>
+      </NuxtLinkLocale>
     </div>
 
     <!-- Game History List -->
@@ -208,9 +207,9 @@ const formatRelativeTime = (date: Date) => {
         <p class="text-muted-foreground mb-4">
           {{ t("user.history.emptyDescription") }}
         </p>
-        <NuxtLink :to="localePath('/rooms')">
+        <NuxtLinkLocale to="rooms">
           <Button>{{ t("user.history.startPlaying") }}</Button>
-        </NuxtLink>
+        </NuxtLinkLocale>
       </CardContent>
     </Card>
 

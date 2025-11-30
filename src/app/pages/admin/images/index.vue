@@ -5,7 +5,6 @@ definePageMeta({
 });
 
 const { t } = useI18n();
-const localePath = useLocalePath();
 const { $api } = useNuxtApp();
 
 interface ImageSet {
@@ -82,10 +81,10 @@ const handleDelete = async () => {
       >
         <div>
           <Button variant="ghost" as-child class="mb-2">
-            <NuxtLink :to="localePath('/admin')">
+            <NuxtLinkLocale to="admin">
               <Icon name="lucide:arrow-left" class="size-4 mr-2" />
               {{ t("common.back") }}
-            </NuxtLink>
+            </NuxtLinkLocale>
           </Button>
           <h1 class="text-3xl font-bold">{{ t("admin.images.title") }}</h1>
           <p class="text-muted-foreground">
@@ -93,10 +92,10 @@ const handleDelete = async () => {
           </p>
         </div>
         <Button as-child>
-          <NuxtLink :to="localePath('/admin/images/new')">
+          <NuxtLinkLocale to="admin-images-new">
             <Icon name="lucide:plus" class="size-4 mr-2" />
             {{ t("admin.images.addSet") }}
-          </NuxtLink>
+          </NuxtLinkLocale>
         </Button>
       </div>
 
@@ -121,10 +120,10 @@ const handleDelete = async () => {
           Create your first image set to start games.
         </p>
         <Button as-child>
-          <NuxtLink :to="localePath('/admin/images/new')">
+          <NuxtLinkLocale to="admin-images-new">
             <Icon name="lucide:plus" class="size-4 mr-2" />
             {{ t("admin.images.addSet") }}
-          </NuxtLink>
+          </NuxtLinkLocale>
         </Button>
       </div>
 
@@ -176,10 +175,15 @@ const handleDelete = async () => {
               <!-- Actions -->
               <div class="flex gap-2">
                 <Button variant="outline" size="sm" class="flex-1" as-child>
-                  <NuxtLink :to="localePath(`/admin/images/${imageSet.id}`)">
+                  <NuxtLinkLocale
+                    :to="{
+                      name: 'admin-images-id',
+                      params: { id: imageSet.id },
+                    }"
+                  >
                     <Icon name="lucide:edit" class="size-4 mr-2" />
                     {{ t("common.edit") }}
-                  </NuxtLink>
+                  </NuxtLinkLocale>
                 </Button>
                 <Button
                   variant="outline"

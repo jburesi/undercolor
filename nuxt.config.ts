@@ -12,8 +12,7 @@ export default defineNuxtConfig({
     shared: "src/shared",
   },
   experimental: {
-    // Disabled because it conflicts with @nuxtjs/i18n's localePath
-    // typedPages: true,
+    typedPages: true,
   },
   modules: [
     "@nuxt/eslint",

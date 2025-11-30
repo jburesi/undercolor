@@ -16,7 +16,6 @@ definePageMeta({
 });
 
 const { t } = useI18n();
-const localePath = useLocalePath();
 const { $api } = useNuxtApp();
 
 const form = useForm({
@@ -95,10 +94,10 @@ const onSubmit = form.handleSubmit(async (formValues) => {
     <div class="container mx-auto px-4 py-8 max-w-2xl">
       <div class="mb-8">
         <Button variant="ghost" as-child class="mb-4">
-          <NuxtLink :to="localePath('/rooms')">
+          <NuxtLinkLocale to="rooms">
             <Icon name="lucide:arrow-left" class="size-4 mr-2" />
             {{ t("common.back") }}
-          </NuxtLink>
+          </NuxtLinkLocale>
         </Button>
         <h1 class="text-3xl font-bold">{{ t("rooms.create") }}</h1>
       </div>

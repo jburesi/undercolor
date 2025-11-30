@@ -10,7 +10,6 @@ definePageMeta({
 
 const route = useRoute();
 const { t } = useI18n();
-const localePath = useLocalePath();
 
 const roomCode = computed(() => (route.params.code as string).toUpperCase());
 
@@ -194,16 +193,16 @@ const alivePlayersForVoting = computed(() =>
         </p>
         <div class="flex gap-3">
           <Button variant="outline" as-child>
-            <NuxtLink :to="localePath('/rooms')">
+            <NuxtLinkLocale to="rooms">
               <Icon name="lucide:arrow-left" class="size-4 mr-2" />
               {{ t("rooms.notFound.backToRooms") }}
-            </NuxtLink>
+            </NuxtLinkLocale>
           </Button>
           <Button as-child>
-            <NuxtLink :to="localePath('/rooms/create')">
+            <NuxtLinkLocale to="rooms-create">
               <Icon name="lucide:plus" class="size-4 mr-2" />
               {{ t("rooms.notFound.createRoom") }}
-            </NuxtLink>
+            </NuxtLinkLocale>
           </Button>
         </div>
       </div>
@@ -214,10 +213,10 @@ const alivePlayersForVoting = computed(() =>
         <div class="flex items-center justify-between mb-8">
           <div>
             <Button variant="ghost" as-child class="mb-2">
-              <NuxtLink to="/rooms">
+              <NuxtLinkLocale to="rooms">
                 <Icon name="lucide:arrow-left" class="size-4 mr-2" />
                 {{ t("common.back") }}
-              </NuxtLink>
+              </NuxtLinkLocale>
             </Button>
             <div>
               <h1 class="text-3xl font-bold mb-2">
@@ -690,9 +689,9 @@ const alivePlayersForVoting = computed(() =>
               </CardContent>
               <CardFooter class="flex gap-4 justify-center">
                 <Button variant="outline" as-child>
-                  <NuxtLink to="/rooms">
+                  <NuxtLinkLocale to="rooms">
                     {{ t("game.backToLobby") }}
-                  </NuxtLink>
+                  </NuxtLinkLocale>
                 </Button>
               </CardFooter>
             </Card>
