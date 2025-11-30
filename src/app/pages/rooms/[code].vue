@@ -51,6 +51,18 @@ const canStartGame = computed(
     isHost.value && players.value.length >= 3 && gameState.value === "LOBBY",
 );
 
+// Dynamic page title - update when room is loaded
+watch(
+  () => room.value?.hostName,
+  (hostName) => {
+    if (hostName) {
+      const title = t("rooms.hostGame", { name: hostName });
+      useHead({ title });
+    }
+  },
+  { immediate: true },
+);
+
 // Watch for phase changes to update timer
 watch(
   () => room.value?.phaseEndsAt,
@@ -328,10 +340,35 @@ const alivePlayersForVoting = computed(() =>
                         {{ t("game.host") }}
                       </p>
                     </div>
-                    <div
-                      v-if="player.connection_status === 'CONNECTED'"
-                      class="w-2 h-2 rounded-full bg-green-500"
-                    />
+                    <Tooltip>
+                      <TooltipTrigger as-child>
+                        <div class="relative">
+                          <div
+                            :class="[
+                              'w-2.5 h-2.5 rounded-full',
+                              player.connection_status === 'CONNECTED'
+                                ? 'bg-green-500'
+                                : player.connection_status === 'RECONNECTING'
+                                  ? 'bg-yellow-500'
+                                  : 'bg-red-500',
+                            ]"
+                          />
+                          <div
+                            v-if="player.connection_status === 'CONNECTED'"
+                            class="absolute inset-0 w-2.5 h-2.5 rounded-full bg-green-500 animate-ping opacity-75"
+                          />
+                        </div>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>
+                          {{
+                            t(
+                              `game.connectionStatus.${player.connection_status}`,
+                            )
+                          }}
+                        </p>
+                      </TooltipContent>
+                    </Tooltip>
                   </div>
 
                   <!-- Empty slots -->

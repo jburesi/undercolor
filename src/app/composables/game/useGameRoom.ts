@@ -6,12 +6,16 @@
  * - Player session management
  * - Real-time subscriptions via Supabase
  * - Game state synchronization
+ * - Connection status tracking via Presence
  */
 
 import type { GameConfig, GameState, PlayerRole } from "~/types/game.types";
 
 // Session storage keys
 const SESSION_KEY = "undercolor_session";
+
+// Presence heartbeat interval (ms)
+const PRESENCE_HEARTBEAT_INTERVAL = 10000;
 
 interface GameSession {
   roomId: string;
@@ -27,7 +31,13 @@ interface RoomPlayer {
   is_host: boolean;
   is_alive: boolean;
   has_voted: boolean;
-  connection_status: string;
+  connection_status: "CONNECTED" | "DISCONNECTED" | "RECONNECTING";
+}
+
+interface PresenceState {
+  playerId: string;
+  username: string;
+  online_at: string;
 }
 
 interface RoomData {
@@ -59,6 +69,15 @@ export function useGameRoom(roomCode: string) {
   const isHost = computed(() => currentPlayer.value?.is_host === true);
   const isAlive = computed(() => currentPlayer.value?.is_alive !== false);
 
+  // Sorted players with host always first
+  const sortedPlayers = computed(() =>
+    [...players.value].sort((a, b) => {
+      if (a.is_host && !b.is_host) return -1;
+      if (!a.is_host && b.is_host) return 1;
+      return 0;
+    }),
+  );
+
   // Session management using localStorage for persistence across page refreshes
   const storedSessions = useLocalStorage<Record<string, GameSession>>(
     SESSION_KEY,
@@ -73,6 +92,7 @@ export function useGameRoom(roomCode: string) {
   let channel: ReturnType<
     ReturnType<typeof useSupabaseClient>["channel"]
   > | null = null;
+  let presenceHeartbeat: ReturnType<typeof setInterval> | null = null;
 
   /**
    * Save session to storage
@@ -253,14 +273,37 @@ export function useGameRoom(roomCode: string) {
   }
 
   /**
+   * Update connection status on the server
+   */
+  async function updateConnectionStatus(
+    status: "CONNECTED" | "DISCONNECTED" | "RECONNECTING",
+  ) {
+    if (!session.value) return;
+
+    try {
+      await $api(`/rooms/${roomCode}/connection`, {
+        method: "POST",
+        body: {
+          sessionId: session.value.sessionId,
+          status,
+        },
+      });
+    } catch (err) {
+      console.error("Failed to update connection status:", err);
+    }
+  }
+
+  /**
    * Subscribe to real-time room updates
    */
   function subscribeToRoom() {
     if (!room.value) return;
 
-    // Subscribe to room changes
+    const channelName = `room:${room.value.roomId}`;
+
+    // Subscribe to room changes with presence
     channel = supabase
-      .channel(`room:${room.value.roomId}`)
+      .channel(channelName)
       .on(
         "postgres_changes",
         {
@@ -327,13 +370,75 @@ export function useGameRoom(roomCode: string) {
           }
         },
       )
-      .subscribe();
+      .on("presence", { event: "sync" }, () => {
+        // Get all presence states
+        const state = channel?.presenceState<PresenceState>();
+        if (!state) return;
+
+        // Get online player IDs from presence
+        const onlinePlayerIds = new Set<string>();
+        Object.values(state).forEach((presences) => {
+          (presences as PresenceState[]).forEach((p) => {
+            onlinePlayerIds.add(p.playerId);
+          });
+        });
+
+        // Update local player connection status based on presence
+        players.value = players.value.map((player) => ({
+          ...player,
+          connection_status: onlinePlayerIds.has(player.id)
+            ? "CONNECTED"
+            : "DISCONNECTED",
+        }));
+
+        // Update current player status too
+        if (currentPlayer.value) {
+          currentPlayer.value = {
+            ...currentPlayer.value,
+            connection_status: onlinePlayerIds.has(currentPlayer.value.id)
+              ? "CONNECTED"
+              : "DISCONNECTED",
+          };
+        }
+      })
+      .subscribe(async (status) => {
+        if (status === "SUBSCRIBED" && session.value) {
+          // Track presence when subscribed
+          await channel?.track({
+            playerId: session.value.playerId,
+            username: currentPlayer.value?.username || "Unknown",
+            online_at: new Date().toISOString(),
+          });
+
+          // Update connection status to CONNECTED
+          await updateConnectionStatus("CONNECTED");
+
+          // Set up heartbeat to keep connection status updated
+          presenceHeartbeat = setInterval(async () => {
+            if (session.value) {
+              await updateConnectionStatus("CONNECTED");
+            }
+          }, PRESENCE_HEARTBEAT_INTERVAL);
+        }
+      });
   }
 
   /**
    * Unsubscribe from real-time updates
    */
-  function unsubscribe() {
+  async function unsubscribe() {
+    // Clear heartbeat
+    if (presenceHeartbeat) {
+      clearInterval(presenceHeartbeat);
+      presenceHeartbeat = null;
+    }
+
+    // Update connection status to DISCONNECTED
+    if (session.value) {
+      await updateConnectionStatus("DISCONNECTED");
+    }
+
+    // Remove channel
     if (channel) {
       supabase.removeChannel(channel);
       channel = null;
@@ -359,8 +464,8 @@ export function useGameRoom(roomCode: string) {
   /**
    * Leave the room
    */
-  function leaveRoom() {
-    unsubscribe();
+  async function leaveRoom() {
+    await unsubscribe();
     clearSession();
     room.value = null;
     players.value = [];
@@ -371,13 +476,41 @@ export function useGameRoom(roomCode: string) {
 
   // Cleanup on unmount
   onUnmounted(() => {
+    // Fire and forget - can't await in onUnmounted
     unsubscribe();
   });
+
+  // Handle page unload (tab close, navigation away)
+  if (import.meta.client) {
+    const handleBeforeUnload = () => {
+      // Use sendBeacon for reliable delivery on page unload
+      if (session.value) {
+        const blob = new Blob(
+          [
+            JSON.stringify({
+              sessionId: session.value.sessionId,
+              status: "DISCONNECTED",
+            }),
+          ],
+          { type: "application/json" },
+        );
+        navigator.sendBeacon(`/api/rooms/${roomCode}/connection`, blob);
+      }
+    };
+
+    onMounted(() => {
+      window.addEventListener("beforeunload", handleBeforeUnload);
+    });
+
+    onUnmounted(() => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    });
+  }
 
   return {
     // State
     room,
-    players,
+    players: sortedPlayers,
     currentPlayer,
     myRole,
     myImageUrl,

@@ -184,7 +184,13 @@
       "innocent": "Innocent",
       "imposter": "Imposteur",
       "mr_white": "Mr. White"
-    }
+    },
+    "connectionStatus": {
+      "CONNECTED": "Connecté",
+      "DISCONNECTED": "Déconnecté",
+      "RECONNECTING": "Reconnexion..."
+    },
+    "playersTitle": "Joueurs"
   },
   "auth": {
     "login": "Connexion",

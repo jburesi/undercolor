@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Toaster } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import "vue-sonner/style.css";
 
 const colorMode = useColorMode();
@@ -22,7 +23,7 @@ const toasterTheme = computed(() => {
 </script>
 
 <template>
-  <div>
+  <TooltipProvider :delay-duration="200">
     <NuxtRouteAnnouncer />
     <NuxtLoadingIndicator />
     <NuxtLayout>
@@ -34,5 +35,5 @@ const toasterTheme = computed(() => {
       :theme="toasterTheme"
       position="top-right"
     />
-  </div>
+  </TooltipProvider>
 </template>
