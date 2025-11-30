@@ -1,6 +1,5 @@
 <script setup lang="ts">
 const { locales } = useI18n();
-const switchLocalePath = useSwitchLocalePath();
 </script>
 
 <template>
@@ -13,9 +12,9 @@ const switchLocalePath = useSwitchLocalePath();
     </DropdownMenuTrigger>
     <DropdownMenuContent align="end">
       <DropdownMenuItem v-for="loc in locales" :key="loc.code" as-child>
-        <NuxtLink :to="switchLocalePath(loc.code)">
+        <SwitchLocalePathLink :locale="loc.code">
           {{ loc.name }}
-        </NuxtLink>
+        </SwitchLocalePathLink>
       </DropdownMenuItem>
     </DropdownMenuContent>
   </DropdownMenu>

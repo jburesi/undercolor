@@ -38,7 +38,7 @@ const handleJoinByCode = async () => {
     // Check if room exists
     await $api(`/rooms/${code}`);
     // Room exists, navigate to it
-    await navigateTo(localePath({ path: `/rooms/${code}` }));
+    await navigateTo(localePath({ name: "rooms-code", params: { code } }));
   } catch {
     // Room doesn't exist
     toast.error(t("toast.roomNotFound"));

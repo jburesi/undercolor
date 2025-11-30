@@ -16,6 +16,7 @@ definePageMeta({
 });
 
 const { t } = useI18n();
+const localePath = useLocalePath();
 const { $api } = useNuxtApp();
 
 const form = useForm({
@@ -79,7 +80,9 @@ const onSubmit = form.handleSubmit(async (formValues) => {
     };
 
     toast.success(t("toast.roomCreated"));
-    await navigateTo(`/rooms/${response.roomCode}`);
+    await navigateTo(
+      localePath({ name: "rooms-code", params: { code: response.roomCode } }),
+    );
   } catch (err: unknown) {
     error.value = err instanceof Error ? err.message : "Failed to create room";
     toast.error(t("toast.errorCreateRoom"));
