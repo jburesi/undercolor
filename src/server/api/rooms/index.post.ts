@@ -15,7 +15,7 @@ const createRoomSchema = z.object({
     .object({
       observationTime: z.number().min(5).max(60).optional(),
       debateTime: z.number().min(30).max(300).optional(),
-      votingTime: z.number().min(10).max(60).optional(),
+      votingTime: z.number().min(10).max(120).optional(),
       includeMrWhite: z.boolean().optional(),
       minPlayers: z.number().min(3).max(20).optional(),
       maxPlayers: z.number().min(3).max(20).optional(),
@@ -32,6 +32,7 @@ export default defineEventHandler(async (event) => {
   // Validate input
   const result = createRoomSchema.safeParse(body);
   if (!result.success) {
+    console.error("Validation error:", result.error.flatten());
     throw createError({
       statusCode: 400,
       message: "Invalid request body",

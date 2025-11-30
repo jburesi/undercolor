@@ -25,7 +25,7 @@ const formSchema = z
     path: ["confirmPassword"],
   });
 
-const { handleSubmit, values, setFieldValue, errors } = useForm({
+const form = useForm({
   validationSchema: formSchema,
   initialValues: {
     username: "",
@@ -34,6 +34,8 @@ const { handleSubmit, values, setFieldValue, errors } = useForm({
     confirmPassword: "",
   },
 });
+
+const { handleSubmit } = form;
 
 const isLoading = ref(false);
 const errorMessage = ref("");
@@ -123,78 +125,64 @@ const signUpWithProvider = async (provider: "google" | "github") => {
             </div>
 
             <!-- Username -->
-            <div class="space-y-2">
-              <label for="username" class="text-sm font-medium">
-                {{ t("auth.username") }}
-              </label>
-              <Input
-                id="username"
-                :model-value="values.username"
-                :placeholder="t('auth.username')"
-                :class="{ 'border-destructive': errors.username }"
-                maxlength="20"
-                @update:model-value="setFieldValue('username', String($event))"
-              />
-              <p v-if="errors.username" class="text-xs text-destructive">
-                {{ errors.username }}
-              </p>
-            </div>
+            <FormField v-slot="{ componentField }" name="username">
+              <FormItem>
+                <FormLabel>{{ t("auth.username") }}</FormLabel>
+                <FormControl>
+                  <Input
+                    :placeholder="t('auth.username')"
+                    maxlength="20"
+                    v-bind="componentField"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            </FormField>
 
             <!-- Email -->
-            <div class="space-y-2">
-              <label for="email" class="text-sm font-medium">
-                {{ t("auth.email") }}
-              </label>
-              <Input
-                id="email"
-                type="email"
-                :model-value="values.email"
-                :placeholder="t('auth.email')"
-                :class="{ 'border-destructive': errors.email }"
-                @update:model-value="setFieldValue('email', String($event))"
-              />
-              <p v-if="errors.email" class="text-xs text-destructive">
-                {{ errors.email }}
-              </p>
-            </div>
+            <FormField v-slot="{ componentField }" name="email">
+              <FormItem>
+                <FormLabel>{{ t("auth.email") }}</FormLabel>
+                <FormControl>
+                  <Input
+                    type="email"
+                    :placeholder="t('auth.email')"
+                    v-bind="componentField"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            </FormField>
 
             <!-- Password -->
-            <div class="space-y-2">
-              <label for="password" class="text-sm font-medium">
-                {{ t("auth.password") }}
-              </label>
-              <Input
-                id="password"
-                type="password"
-                :model-value="values.password"
-                :placeholder="t('auth.password')"
-                :class="{ 'border-destructive': errors.password }"
-                @update:model-value="setFieldValue('password', String($event))"
-              />
-              <p v-if="errors.password" class="text-xs text-destructive">
-                {{ errors.password }}
-              </p>
-            </div>
+            <FormField v-slot="{ componentField }" name="password">
+              <FormItem>
+                <FormLabel>{{ t("auth.password") }}</FormLabel>
+                <FormControl>
+                  <Input
+                    type="password"
+                    :placeholder="t('auth.password')"
+                    v-bind="componentField"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            </FormField>
 
             <!-- Confirm Password -->
-            <div class="space-y-2">
-              <label for="confirmPassword" class="text-sm font-medium">
-                {{ t("auth.confirmPassword") }}
-              </label>
-              <Input
-                id="confirmPassword"
-                type="password"
-                :model-value="values.confirmPassword"
-                :placeholder="t('auth.confirmPassword')"
-                :class="{ 'border-destructive': errors.confirmPassword }"
-                @update:model-value="
-                  setFieldValue('confirmPassword', String($event))
-                "
-              />
-              <p v-if="errors.confirmPassword" class="text-xs text-destructive">
-                {{ errors.confirmPassword }}
-              </p>
-            </div>
+            <FormField v-slot="{ componentField }" name="confirmPassword">
+              <FormItem>
+                <FormLabel>{{ t("auth.confirmPassword") }}</FormLabel>
+                <FormControl>
+                  <Input
+                    type="password"
+                    :placeholder="t('auth.confirmPassword')"
+                    v-bind="componentField"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            </FormField>
 
             <Button type="submit" class="w-full" :disabled="isLoading">
               <Icon

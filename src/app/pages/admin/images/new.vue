@@ -17,7 +17,7 @@ const formSchema = z.object({
   difficulty: z.enum(["easy", "medium", "hard"]),
 });
 
-const { handleSubmit, values, setFieldValue, errors } = useForm({
+const form = useForm({
   validationSchema: formSchema,
   initialValues: {
     name: "",
@@ -25,6 +25,8 @@ const { handleSubmit, values, setFieldValue, errors } = useForm({
     difficulty: "medium" as const,
   },
 });
+
+const { handleSubmit, values, setFieldValue } = form;
 
 const isCreating = ref(false);
 const errorMessage = ref("");
@@ -150,71 +152,69 @@ const onSubmit = handleSubmit(async (formValues) => {
             </div>
 
             <!-- Name -->
-            <div class="space-y-2">
-              <label for="name" class="text-sm font-medium"> Set Name </label>
-              <Input
-                id="name"
-                :model-value="values.name"
-                placeholder="e.g., Beach Sunset"
-                :class="{ 'border-destructive': errors.name }"
-                @update:model-value="setFieldValue('name', String($event))"
-              />
-              <p v-if="errors.name" class="text-xs text-destructive">
-                {{ errors.name }}
-              </p>
-            </div>
+            <FormField v-slot="{ componentField }" name="name">
+              <FormItem>
+                <FormLabel>Set Name</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="e.g., Beach Sunset"
+                    v-bind="componentField"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            </FormField>
 
             <!-- Category -->
-            <div class="space-y-2">
-              <label for="category" class="text-sm font-medium">
-                {{ t("admin.images.category") }}
-              </label>
-              <select
-                id="category"
-                :value="values.category"
-                class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-                @change="
-                  setFieldValue(
-                    'category',
-                    ($event.target as HTMLSelectElement).value,
-                  )
-                "
-              >
-                <option value="" disabled>Select a category</option>
-                <option v-for="cat in categories" :key="cat" :value="cat">
-                  {{ cat }}
-                </option>
-              </select>
-            </div>
+            <FormField v-slot="{ componentField }" name="category">
+              <FormItem>
+                <FormLabel>{{ t("admin.images.category") }}</FormLabel>
+                <FormControl>
+                  <select
+                    v-bind="componentField"
+                    class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                  >
+                    <option value="" disabled>Select a category</option>
+                    <option v-for="cat in categories" :key="cat" :value="cat">
+                      {{ cat }}
+                    </option>
+                  </select>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            </FormField>
 
             <!-- Difficulty -->
-            <div class="space-y-2">
-              <label class="text-sm font-medium">
-                {{ t("admin.images.difficulty") }}
-              </label>
-              <div class="flex gap-4">
-                <label
-                  v-for="diff in ['easy', 'medium', 'hard']"
-                  :key="diff"
-                  class="flex items-center gap-2 cursor-pointer"
-                >
-                  <input
-                    type="radio"
-                    name="difficulty"
-                    :value="diff"
-                    :checked="values.difficulty === diff"
-                    class="accent-primary"
-                    @change="
-                      setFieldValue(
-                        'difficulty',
-                        diff as 'easy' | 'medium' | 'hard',
-                      )
-                    "
-                  />
-                  <span class="capitalize">{{ diff }}</span>
-                </label>
-              </div>
-            </div>
+            <FormField name="difficulty">
+              <FormItem>
+                <FormLabel>{{ t("admin.images.difficulty") }}</FormLabel>
+                <FormControl>
+                  <div class="flex gap-4">
+                    <label
+                      v-for="diff in ['easy', 'medium', 'hard']"
+                      :key="diff"
+                      class="flex items-center gap-2 cursor-pointer"
+                    >
+                      <input
+                        type="radio"
+                        name="difficulty"
+                        :value="diff"
+                        :checked="values.difficulty === diff"
+                        class="accent-primary"
+                        @change="
+                          setFieldValue(
+                            'difficulty',
+                            diff as 'easy' | 'medium' | 'hard',
+                          )
+                        "
+                      />
+                      <span class="capitalize">{{ diff }}</span>
+                    </label>
+                  </div>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            </FormField>
 
             <!-- Image Uploads -->
             <div class="grid md:grid-cols-2 gap-6">

@@ -19,7 +19,7 @@ const { t } = useI18n();
 const localePath = useLocalePath();
 const { $api } = useNuxtApp();
 
-// Form schema - VeeValidate v5 supports Zod v4 natively
+// Form schema - VeeValidate v5 supports Zod natively
 const formSchema = z.object({
   hostUsername: z.string().min(2).max(20),
   isPublic: z.boolean(),
@@ -29,7 +29,7 @@ const formSchema = z.object({
   maxPlayers: z.number().min(3).max(20),
 });
 
-const { handleSubmit, values, setFieldValue } = useForm({
+const form = useForm({
   validationSchema: formSchema,
   initialValues: {
     hostUsername: "",
@@ -53,7 +53,7 @@ const storedSessions = useLocalStorage<SessionsMap>(SESSIONS_KEY, {});
 const isCreating = ref(false);
 const error = ref<string | null>(null);
 
-const onSubmit = handleSubmit(async (formValues) => {
+const onSubmit = form.handleSubmit(async (formValues) => {
   isCreating.value = true;
   error.value = null;
 
@@ -123,38 +123,36 @@ const onSubmit = handleSubmit(async (formValues) => {
         <CardContent>
           <form class="space-y-6" @submit="onSubmit">
             <!-- Host Username (also used as room display name) -->
-            <div class="space-y-2">
-              <label for="hostUsername" class="text-sm font-medium">
-                {{ t("rooms.yourName") }}
-              </label>
-              <Input
-                id="hostUsername"
-                :model-value="values.hostUsername"
-                :placeholder="t('rooms.yourNamePlaceholder')"
-                @update:model-value="
-                  setFieldValue('hostUsername', String($event))
-                "
-              />
-            </div>
+            <FormField v-slot="{ componentField }" name="hostUsername">
+              <FormItem>
+                <FormLabel>{{ t("rooms.yourName") }}</FormLabel>
+                <FormControl>
+                  <Input
+                    type="text"
+                    :placeholder="t('rooms.yourNamePlaceholder')"
+                    v-bind="componentField"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            </FormField>
 
             <!-- Room Visibility -->
-            <div
-              class="flex items-center justify-between p-4 rounded-lg border"
-            >
-              <div>
-                <label for="isPublic" class="text-sm font-medium">
-                  {{ t("rooms.publicRoom") }}
-                </label>
-                <p class="text-sm text-muted-foreground">
-                  {{ t("rooms.publicRoomDescription") }}
-                </p>
-              </div>
-              <Checkbox
-                id="isPublic"
-                :checked="values.isPublic"
-                @update:checked="setFieldValue('isPublic', $event)"
-              />
-            </div>
+            <FormField v-slot="{ value, handleChange }" name="isPublic">
+              <FormItem
+                class="flex items-center justify-between p-4 rounded-lg border"
+              >
+                <div class="space-y-0.5">
+                  <FormLabel>{{ t("rooms.publicRoom") }}</FormLabel>
+                  <FormDescription>
+                    {{ t("rooms.publicRoomDescription") }}
+                  </FormDescription>
+                </div>
+                <FormControl>
+                  <Checkbox :checked="value" @update:checked="handleChange" />
+                </FormControl>
+              </FormItem>
+            </FormField>
 
             <!-- Game Settings -->
             <div class="space-y-4">
@@ -163,73 +161,83 @@ const onSubmit = handleSubmit(async (formValues) => {
               </h3>
 
               <!-- Max Players -->
-              <div class="space-y-2">
-                <label for="maxPlayers" class="text-sm font-medium">
-                  {{ t("game.settings.maxPlayers") }}: {{ values.maxPlayers }}
-                </label>
-                <Slider
-                  id="maxPlayers"
-                  :model-value="[values.maxPlayers]"
-                  :min="3"
-                  :max="20"
-                  :step="1"
-                  @update:model-value="
-                    (v) => setFieldValue('maxPlayers', v?.[0] ?? 3)
-                  "
-                />
-              </div>
+              <FormField v-slot="{ value, handleChange }" name="maxPlayers">
+                <FormItem>
+                  <FormLabel>
+                    {{ t("game.settings.maxPlayers") }}: {{ value }}
+                  </FormLabel>
+                  <FormControl>
+                    <Slider
+                      :model-value="[value]"
+                      :min="3"
+                      :max="20"
+                      :step="1"
+                      @update:model-value="(v) => handleChange(v?.[0] ?? 3)"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              </FormField>
 
               <!-- Observation Time -->
-              <div class="space-y-2">
-                <label for="observationTime" class="text-sm font-medium">
-                  {{ t("game.settings.observationTime") }}:
-                  {{ values.observationTime }}s
-                </label>
-                <Slider
-                  id="observationTime"
-                  :model-value="[values.observationTime]"
-                  :min="5"
-                  :max="60"
-                  :step="5"
-                  @update:model-value="
-                    (v) => setFieldValue('observationTime', v?.[0] ?? 15)
-                  "
-                />
-              </div>
+              <FormField
+                v-slot="{ value, handleChange }"
+                name="observationTime"
+              >
+                <FormItem>
+                  <FormLabel>
+                    {{ t("game.settings.observationTime") }}: {{ value }}s
+                  </FormLabel>
+                  <FormControl>
+                    <Slider
+                      :model-value="[value]"
+                      :min="5"
+                      :max="60"
+                      :step="5"
+                      @update:model-value="(v) => handleChange(v?.[0] ?? 15)"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              </FormField>
 
               <!-- Debate Time -->
-              <div class="space-y-2">
-                <label for="debateTime" class="text-sm font-medium">
-                  {{ t("game.settings.debateTime") }}: {{ values.debateTime }}s
-                </label>
-                <Slider
-                  id="debateTime"
-                  :model-value="[values.debateTime]"
-                  :min="30"
-                  :max="300"
-                  :step="15"
-                  @update:model-value="
-                    (v) => setFieldValue('debateTime', v?.[0] ?? 120)
-                  "
-                />
-              </div>
+              <FormField v-slot="{ value, handleChange }" name="debateTime">
+                <FormItem>
+                  <FormLabel>
+                    {{ t("game.settings.debateTime") }}: {{ value }}s
+                  </FormLabel>
+                  <FormControl>
+                    <Slider
+                      :model-value="[value]"
+                      :min="30"
+                      :max="300"
+                      :step="15"
+                      @update:model-value="(v) => handleChange(v?.[0] ?? 120)"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              </FormField>
 
               <!-- Voting Time -->
-              <div class="space-y-2">
-                <label for="votingTime" class="text-sm font-medium">
-                  {{ t("game.settings.votingTime") }}: {{ values.votingTime }}s
-                </label>
-                <Slider
-                  id="votingTime"
-                  :model-value="[values.votingTime]"
-                  :min="10"
-                  :max="120"
-                  :step="5"
-                  @update:model-value="
-                    (v) => setFieldValue('votingTime', v?.[0] ?? 30)
-                  "
-                />
-              </div>
+              <FormField v-slot="{ value, handleChange }" name="votingTime">
+                <FormItem>
+                  <FormLabel>
+                    {{ t("game.settings.votingTime") }}: {{ value }}s
+                  </FormLabel>
+                  <FormControl>
+                    <Slider
+                      :model-value="[value]"
+                      :min="10"
+                      :max="120"
+                      :step="5"
+                      @update:model-value="(v) => handleChange(v?.[0] ?? 30)"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              </FormField>
             </div>
 
             <Button type="submit" class="w-full" :disabled="isCreating">

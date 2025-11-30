@@ -18,13 +18,15 @@ const formSchema = z.object({
   password: z.string().min(6),
 });
 
-const { handleSubmit, values, setFieldValue, errors } = useForm({
+const form = useForm({
   validationSchema: formSchema,
   initialValues: {
     email: "",
     password: "",
   },
 });
+
+const { handleSubmit } = form;
 
 const isLoading = ref(false);
 const errorMessage = ref("");
@@ -99,48 +101,42 @@ const signInWithProvider = async (provider: "google" | "github") => {
             </div>
 
             <!-- Email -->
-            <div class="space-y-2">
-              <label for="email" class="text-sm font-medium">
-                {{ t("auth.email") }}
-              </label>
-              <Input
-                id="email"
-                type="email"
-                :model-value="values.email"
-                :placeholder="t('auth.email')"
-                :class="{ 'border-destructive': errors.email }"
-                @update:model-value="setFieldValue('email', String($event))"
-              />
-              <p v-if="errors.email" class="text-xs text-destructive">
-                {{ errors.email }}
-              </p>
-            </div>
+            <FormField v-slot="{ componentField }" name="email">
+              <FormItem>
+                <FormLabel>{{ t("auth.email") }}</FormLabel>
+                <FormControl>
+                  <Input
+                    type="email"
+                    :placeholder="t('auth.email')"
+                    v-bind="componentField"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            </FormField>
 
             <!-- Password -->
-            <div class="space-y-2">
-              <div class="flex items-center justify-between">
-                <label for="password" class="text-sm font-medium">
-                  {{ t("auth.password") }}
-                </label>
-                <NuxtLink
-                  :to="localePath('/forgot-password')"
-                  class="text-xs text-primary hover:underline"
-                >
-                  {{ t("auth.forgotPassword") }}
-                </NuxtLink>
-              </div>
-              <Input
-                id="password"
-                type="password"
-                :model-value="values.password"
-                :placeholder="t('auth.password')"
-                :class="{ 'border-destructive': errors.password }"
-                @update:model-value="setFieldValue('password', String($event))"
-              />
-              <p v-if="errors.password" class="text-xs text-destructive">
-                {{ errors.password }}
-              </p>
-            </div>
+            <FormField v-slot="{ componentField }" name="password">
+              <FormItem>
+                <div class="flex items-center justify-between">
+                  <FormLabel>{{ t("auth.password") }}</FormLabel>
+                  <NuxtLink
+                    :to="localePath('/forgot-password')"
+                    class="text-xs text-primary hover:underline"
+                  >
+                    {{ t("auth.forgotPassword") }}
+                  </NuxtLink>
+                </div>
+                <FormControl>
+                  <Input
+                    type="password"
+                    :placeholder="t('auth.password')"
+                    v-bind="componentField"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            </FormField>
 
             <Button type="submit" class="w-full" :disabled="isLoading">
               <Icon
