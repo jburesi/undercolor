@@ -101,14 +101,6 @@ const roles = computed(() => [
   <div class="page-index">
     <!-- Hero Section -->
     <section class="relative py-20 md:py-32 overflow-hidden">
-      <!-- Background gradient -->
-      <div
-        class="absolute inset-0 bg-linear-to-br from-primary/5 via-background to-secondary/10 -z-10"
-      />
-      <div
-        class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/5 rounded-full blur-3xl -z-10"
-      />
-
       <div class="container mx-auto px-4 text-center">
         <Badge variant="secondary" class="mb-4">
           <Icon name="lucide:sparkles" class="size-3 mr-1" />
