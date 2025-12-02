@@ -26,6 +26,7 @@ export function useProfile() {
 
   // Store the decoded role from JWT
   const jwtRole = ref<UserRole>("user");
+  const roleLoaded = ref(false);
 
   /**
    * Decode JWT and extract user_role claim
@@ -46,7 +47,20 @@ export function useProfile() {
     } catch (err) {
       console.error("Failed to decode JWT:", err);
       jwtRole.value = "user";
+    } finally {
+      roleLoaded.value = true;
     }
+  }
+
+  /**
+   * Ensure the role has been loaded from JWT.
+   * Use this in middleware to wait for role initialization.
+   */
+  async function ensureRoleLoaded(): Promise<UserRole> {
+    if (!roleLoaded.value) {
+      await decodeJwtRole();
+    }
+    return jwtRole.value;
   }
 
   // Computed properties for easy access
@@ -148,8 +162,8 @@ export function useProfile() {
     { immediate: true },
   );
 
-  // Also listen for auth state changes to update the role
-  onMounted(() => {
+  // Listen for auth state changes to update the role (only in component context)
+  if (getCurrentInstance()) {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (_event, session) => {
@@ -167,7 +181,7 @@ export function useProfile() {
     onUnmounted(() => {
       subscription.unsubscribe();
     });
-  });
+  }
 
   return {
     // State
@@ -185,5 +199,6 @@ export function useProfile() {
     // Actions
     fetchProfile,
     updateProfile,
+    ensureRoleLoaded,
   };
 }
