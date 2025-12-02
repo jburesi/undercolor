@@ -20,8 +20,6 @@ export function generatePageTitle(
   const baseName = getRouteBaseName(route) || "index";
   const translationKey = `breadcrumb.items.${baseName}.ariaLabel`;
 
-  console.log("Generating page title for route:", route.path);
-
   // Check if translation exists
   if (te(translationKey)) {
     return t(translationKey);

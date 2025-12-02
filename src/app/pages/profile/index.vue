@@ -6,6 +6,7 @@ definePageMeta({
 
 const { t } = useI18n();
 const user = useSupabaseUser();
+const { username, avatarUrl } = useProfile();
 
 // Mock user stats
 const stats = ref({
@@ -41,20 +42,17 @@ const stats = ref({
         <div class="flex items-center gap-4">
           <Avatar class="h-16 w-16">
             <AvatarImage
-              :src="user?.user_metadata?.avatar_url"
-              :alt="user?.user_metadata?.full_name || user?.email"
+              v-if="avatarUrl"
+              :src="avatarUrl"
+              :alt="username || user?.email || 'User'"
             />
             <AvatarFallback class="text-xl">
-              {{
-                (user?.user_metadata?.full_name || user?.email || "U")
-                  .charAt(0)
-                  .toUpperCase()
-              }}
+              {{ (username || user?.email || "U").charAt(0).toUpperCase() }}
             </AvatarFallback>
           </Avatar>
           <div>
             <CardTitle class="text-xl">
-              {{ user?.user_metadata?.full_name || user?.email }}
+              {{ username || user?.email }}
             </CardTitle>
             <CardDescription>
               {{ t("user.profile.memberSince") }}

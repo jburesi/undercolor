@@ -18,6 +18,7 @@ definePageMeta({
 const { t } = useI18n();
 const localePath = useLocalePath();
 const { $api } = useNuxtApp();
+const { username: profileUsername } = useProfile();
 
 const form = useForm({
   validationSchema: createRoomFormSchema,
@@ -30,6 +31,17 @@ const form = useForm({
     maxPlayers: DEFAULT_GAME_CONFIG.maxPlayers,
   },
 });
+
+// Pre-fill username from profile when available
+watch(
+  profileUsername,
+  (newUsername) => {
+    if (newUsername && !form.values.hostUsername) {
+      form.setFieldValue("hostUsername", newUsername);
+    }
+  },
+  { immediate: true },
+);
 
 // Session storage - use localStorage with map format (same as useGameRoom)
 const SESSIONS_KEY = "undercolor_session";

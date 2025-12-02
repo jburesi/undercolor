@@ -36,6 +36,8 @@ export type Database = {
     Tables: {
       game_history: {
         Row: {
+          created_at: string;
+          created_by: string | null;
           duration_seconds: number | null;
           id: string;
           image_set_name: string | null;
@@ -49,6 +51,8 @@ export type Database = {
           username: string;
         };
         Insert: {
+          created_at?: string;
+          created_by?: string | null;
           duration_seconds?: number | null;
           id?: string;
           image_set_name?: string | null;
@@ -62,6 +66,8 @@ export type Database = {
           username: string;
         };
         Update: {
+          created_at?: string;
+          created_by?: string | null;
           duration_seconds?: number | null;
           id?: string;
           image_set_name?: string | null;
@@ -96,6 +102,7 @@ export type Database = {
           is_active: boolean;
           name: string;
           updated_at: string;
+          updated_by: string | null;
         };
         Insert: {
           category?: string;
@@ -108,6 +115,7 @@ export type Database = {
           is_active?: boolean;
           name: string;
           updated_at?: string;
+          updated_by?: string | null;
         };
         Update: {
           category?: string;
@@ -120,6 +128,7 @@ export type Database = {
           is_active?: boolean;
           name?: string;
           updated_at?: string;
+          updated_by?: string | null;
         };
         Relationships: [];
       };
@@ -128,6 +137,7 @@ export type Database = {
           avatar_url: string | null;
           connection_status: Database["public"]["Enums"]["connection_status"];
           created_at: string;
+          created_by: string | null;
           has_voted: boolean;
           id: string;
           is_alive: boolean;
@@ -136,6 +146,7 @@ export type Database = {
           room_id: string;
           session_id: string;
           updated_at: string;
+          updated_by: string | null;
           user_id: string | null;
           username: string;
           vote_target_id: string | null;
@@ -144,6 +155,7 @@ export type Database = {
           avatar_url?: string | null;
           connection_status?: Database["public"]["Enums"]["connection_status"];
           created_at?: string;
+          created_by?: string | null;
           has_voted?: boolean;
           id?: string;
           is_alive?: boolean;
@@ -152,6 +164,7 @@ export type Database = {
           room_id: string;
           session_id: string;
           updated_at?: string;
+          updated_by?: string | null;
           user_id?: string | null;
           username: string;
           vote_target_id?: string | null;
@@ -160,6 +173,7 @@ export type Database = {
           avatar_url?: string | null;
           connection_status?: Database["public"]["Enums"]["connection_status"];
           created_at?: string;
+          created_by?: string | null;
           has_voted?: boolean;
           id?: string;
           is_alive?: boolean;
@@ -168,6 +182,7 @@ export type Database = {
           room_id?: string;
           session_id?: string;
           updated_at?: string;
+          updated_by?: string | null;
           user_id?: string | null;
           username?: string;
           vote_target_id?: string | null;
@@ -189,11 +204,42 @@ export type Database = {
           },
         ];
       };
+      profiles: {
+        Row: {
+          avatar_url: string | null;
+          created_at: string;
+          created_by: string | null;
+          id: string;
+          updated_at: string;
+          updated_by: string | null;
+          username: string;
+        };
+        Insert: {
+          avatar_url?: string | null;
+          created_at?: string;
+          created_by?: string | null;
+          id: string;
+          updated_at?: string;
+          updated_by?: string | null;
+          username: string;
+        };
+        Update: {
+          avatar_url?: string | null;
+          created_at?: string;
+          created_by?: string | null;
+          id?: string;
+          updated_at?: string;
+          updated_by?: string | null;
+          username?: string;
+        };
+        Relationships: [];
+      };
       rooms: {
         Row: {
           code: string;
           config: Json;
           created_at: string;
+          created_by: string | null;
           current_image_set_id: string | null;
           current_round: number;
           host_id: string | null;
@@ -203,12 +249,14 @@ export type Database = {
           phase_started_at: string | null;
           state: Database["public"]["Enums"]["game_state"];
           updated_at: string;
+          updated_by: string | null;
           winner: Database["public"]["Enums"]["player_role"] | null;
         };
         Insert: {
           code: string;
           config?: Json;
           created_at?: string;
+          created_by?: string | null;
           current_image_set_id?: string | null;
           current_round?: number;
           host_id?: string | null;
@@ -218,12 +266,14 @@ export type Database = {
           phase_started_at?: string | null;
           state?: Database["public"]["Enums"]["game_state"];
           updated_at?: string;
+          updated_by?: string | null;
           winner?: Database["public"]["Enums"]["player_role"] | null;
         };
         Update: {
           code?: string;
           config?: Json;
           created_at?: string;
+          created_by?: string | null;
           current_image_set_id?: string | null;
           current_round?: number;
           host_id?: string | null;
@@ -233,6 +283,7 @@ export type Database = {
           phase_started_at?: string | null;
           state?: Database["public"]["Enums"]["game_state"];
           updated_at?: string;
+          updated_by?: string | null;
           winner?: Database["public"]["Enums"]["player_role"] | null;
         };
         Relationships: [
@@ -252,14 +303,51 @@ export type Database = {
           },
         ];
       };
+      user_roles: {
+        Row: {
+          created_at: string;
+          created_by: string | null;
+          id: number;
+          role: Database["public"]["Enums"]["app_role"];
+          updated_at: string;
+          updated_by: string | null;
+          user_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          created_by?: string | null;
+          id?: number;
+          role?: Database["public"]["Enums"]["app_role"];
+          updated_at?: string;
+          updated_by?: string | null;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          created_by?: string | null;
+          id?: number;
+          role?: Database["public"]["Enums"]["app_role"];
+          updated_at?: string;
+          updated_by?: string | null;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
     };
     Views: {
       [_ in never]: never;
     };
     Functions: {
+      custom_access_token_hook: { Args: { event: Json }; Returns: Json };
       generate_room_code: { Args: never; Returns: string };
+      get_my_role: {
+        Args: never;
+        Returns: Database["public"]["Enums"]["app_role"];
+      };
+      is_admin: { Args: never; Returns: boolean };
     };
     Enums: {
+      app_role: "user" | "admin";
       connection_status: "CONNECTED" | "DISCONNECTED" | "RECONNECTING";
       difficulty_level: "easy" | "medium" | "hard";
       game_state:
@@ -404,6 +492,7 @@ export const Constants = {
   },
   public: {
     Enums: {
+      app_role: ["user", "admin"],
       connection_status: ["CONNECTED", "DISCONNECTED", "RECONNECTING"],
       difficulty_level: ["easy", "medium", "hard"],
       game_state: [

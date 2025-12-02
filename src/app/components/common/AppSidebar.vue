@@ -13,11 +13,7 @@ const { t } = useI18n();
 const localePath = useLocalePath();
 const user = useSupabaseUser();
 const supabase = useSupabaseClient();
-
-// Check if user is admin (based on user metadata or role)
-const isAdmin = computed(() => {
-  return user.value?.user_metadata?.role === "admin";
-});
+const { username, isAdmin } = useProfile();
 
 // Logout function
 async function handleLogout() {
@@ -197,7 +193,7 @@ const adminNavItems = computed<NavItem[]>(() => [
                 </Avatar>
                 <div class="grid flex-1 text-left text-sm leading-tight">
                   <span class="truncate font-semibold">
-                    {{ user.user_metadata?.username || user.email }}
+                    {{ username || user.email }}
                   </span>
                   <span class="truncate text-xs text-muted-foreground">
                     {{ user.email }}
@@ -223,7 +219,7 @@ const adminNavItems = computed<NavItem[]>(() => [
                   </Avatar>
                   <div class="grid flex-1 text-left text-sm leading-tight">
                     <span class="truncate font-semibold">
-                      {{ user.user_metadata?.username || user.email }}
+                      {{ username || user.email }}
                     </span>
                     <span class="truncate text-xs text-muted-foreground">
                       {{ user.email }}

@@ -10,6 +10,7 @@ definePageMeta({
 
 const route = useRoute();
 const { t } = useI18n();
+const { username: profileUsername } = useProfile();
 
 const roomCode = computed(() => (route.params.code as string).toUpperCase());
 
@@ -41,6 +42,17 @@ const joinError = ref<string | null>(null);
 const selectedVoteTarget = ref<string | null>(null);
 const isVoting = ref(false);
 const roleRevealed = ref(false);
+
+// Pre-fill username from profile when available
+watch(
+  profileUsername,
+  (newUsername) => {
+    if (newUsername && !username.value) {
+      username.value = newUsername;
+    }
+  },
+  { immediate: true },
+);
 
 // Computed
 const hasJoined = computed(() => !!session.value);

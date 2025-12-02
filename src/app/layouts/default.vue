@@ -1,10 +1,6 @@
 <script setup lang="ts">
 const user = useSupabaseUser();
-
-// Check if user is admin
-const isAdmin = computed(() => {
-  return user.value?.user_metadata?.role === "admin" || true;
-});
+const { isAdmin } = useProfile();
 
 const defaultOpen = useCookie<boolean>("sidebar_state", {
   default: () => false,
