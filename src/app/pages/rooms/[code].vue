@@ -278,6 +278,12 @@ const alivePlayersForVoting = computed(() =>
             >
               <Icon name="lucide:play" class="size-4 mr-2" />
               {{ t("game.startGame") }}
+              <span
+                v-if="players.length < room.config.minPlayers"
+                class="text-xs opacity-75"
+              >
+                ({{ players.length }}/{{ room.config.minPlayers }})
+              </span>
             </Button>
           </div>
         </div>
@@ -333,8 +339,8 @@ const alivePlayersForVoting = computed(() =>
                 <CardTitle class="flex items-center gap-2">
                   <Icon name="lucide:users" class="size-5" />
                   {{ t("rooms.playersTitle") }} ({{ players.length }}/{{
-                    room.config.minPlayers
-                  }}-{{ room.config.maxPlayers }})
+                    room.config.maxPlayers
+                  }})
                 </CardTitle>
               </CardHeader>
               <CardContent>
