@@ -42,20 +42,14 @@ onUnmounted(() => {
   <div class="page-rooms">
     <div class="container mx-auto px-4 py-8">
       <!-- Header -->
-      <div
-        class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8"
-      >
-        <div>
-          <h1 class="text-3xl font-bold">{{ t("rooms.title") }}</h1>
-        </div>
-        <div class="flex gap-3">
-          <Button as-child>
-            <NuxtLinkLocale to="rooms-create">
-              <Icon name="lucide:plus" class="size-4 mr-2" />
-              {{ t("rooms.create") }}
-            </NuxtLinkLocale>
-          </Button>
-        </div>
+      <div class="flex items-center justify-between gap-4 mb-8">
+        <h1 class="text-3xl font-bold">{{ t("rooms.title") }}</h1>
+        <Button as-child>
+          <NuxtLinkLocale to="rooms-create">
+            <Icon name="lucide:plus" class="size-4 md:mr-2" />
+            <span class="hidden md:inline">{{ t("rooms.create") }}</span>
+          </NuxtLinkLocale>
+        </Button>
       </div>
 
       <!-- Join by Code -->
