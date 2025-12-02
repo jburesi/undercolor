@@ -232,8 +232,9 @@ const alivePlayersForVoting = computed(() =>
               <h1 class="text-3xl font-bold">
                 {{ t("rooms.hostGame", { name: room.hostName }) }}
               </h1>
+              <!-- Badge à gauche avec le titre sur mobile, à droite sur desktop pour non-hôte -->
               <Badge
-                class="text-sm px-4 py-1.5"
+                :class="['text-sm px-4 py-1.5', !isHost ? 'sm:hidden' : '']"
                 :variant="gameState === 'LOBBY' ? 'secondary' : 'default'"
               >
                 {{ t(`rooms.status.${gameState.toLowerCase()}`) }}
@@ -254,6 +255,14 @@ const alivePlayersForVoting = computed(() =>
             </div>
           </div>
           <div class="flex items-center gap-3">
+            <!-- Badge à droite pour les non-hôtes sur desktop uniquement -->
+            <Badge
+              v-if="!isHost"
+              class="hidden sm:inline-flex text-sm px-4 py-1.5"
+              :variant="gameState === 'LOBBY' ? 'secondary' : 'default'"
+            >
+              {{ t(`rooms.status.${gameState.toLowerCase()}`) }}
+            </Badge>
             <!-- Timer -->
             <div
               v-if="timer.isRunning.value && gameState !== 'LOBBY'"
