@@ -63,7 +63,7 @@ export const DEFAULT_GAME_CONFIG: GameConfig = {
   votingTime: 30,
   includeMrWhite: false,
   minPlayers: 3,
-  maxPlayers: 20,
+  maxPlayers: 5,
 };
 
 /** Player data structure */
