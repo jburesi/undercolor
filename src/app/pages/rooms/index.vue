@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { toast } from "vue-sonner";
-
 definePageMeta({
   layout: "default",
 });
@@ -25,27 +23,6 @@ const { data, status, refresh } = await useAsyncData("public-rooms", () =>
 
 const publicRooms = computed(() => data.value?.rooms || []);
 const isLoading = computed(() => status.value === "pending");
-
-const joinCode = ref("");
-const isJoining = ref(false);
-
-const handleJoinByCode = async () => {
-  const code = joinCode.value.trim().toUpperCase();
-  if (!code) return;
-
-  isJoining.value = true;
-  try {
-    // Check if room exists
-    await $api(`/rooms/${code}`);
-    // Room exists, navigate to it
-    await navigateTo(localePath({ name: "rooms-code", params: { code } }));
-  } catch {
-    // Room doesn't exist
-    toast.error(t("toast.roomNotFound"));
-  } finally {
-    isJoining.value = false;
-  }
-};
 
 // Refresh rooms every 10 seconds
 const refreshInterval = ref<ReturnType<typeof setInterval> | null>(null);
@@ -82,31 +59,7 @@ onUnmounted(() => {
       </div>
 
       <!-- Join by Code -->
-      <Card class="mb-8">
-        <CardHeader>
-          <CardTitle class="text-lg">{{ t("rooms.joinByCode") }}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <form class="flex gap-3" @submit.prevent="handleJoinByCode">
-            <Input
-              v-model="joinCode"
-              :placeholder="t('rooms.enterCode')"
-              class="max-w-xs"
-              maxlength="6"
-              :disabled="isJoining"
-            />
-            <Button type="submit" :disabled="!joinCode.trim() || isJoining">
-              <Icon
-                v-if="isJoining"
-                name="lucide:loader-2"
-                class="size-4 mr-2 animate-spin"
-              />
-              <Icon v-else name="lucide:log-in" class="size-4 mr-2" />
-              {{ t("rooms.join") }}
-            </Button>
-          </form>
-        </CardContent>
-      </Card>
+      <RoomsJoinCard class="mb-8" />
 
       <!-- Public Rooms -->
       <div>

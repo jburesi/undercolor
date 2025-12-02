@@ -121,6 +121,11 @@
     @apply bg-background text-foreground;
   }
 
+  /* Form label spacing */
+  [data-slot="form-label"] {
+    @apply mb-1;
+  }
+
   /* Add cursor pointer to enabled buttons */
   button:not([disabled]),
   [role="button"]:not([disabled]) {

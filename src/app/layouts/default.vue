@@ -20,8 +20,6 @@ const defaultOpen = useCookie<boolean>("sidebar_state", {
         <!-- Left: Sidebar trigger + Breadcrumb -->
         <div class="flex-1 flex items-center gap-2">
           <SidebarTrigger />
-          <Separator orientation="vertical" class="h-4" />
-          <CommonBreadcrumb />
         </div>
 
         <!-- Center: Logo -->
