@@ -210,55 +210,63 @@ const alivePlayersForVoting = computed(() =>
       <!-- Room Loaded -->
       <template v-else-if="room">
         <!-- Header -->
-        <div class="flex items-center justify-between mb-8">
+        <div
+          class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-6 mb-8"
+        >
           <div>
-            <Button variant="ghost" as-child class="mb-2">
-              <NuxtLinkLocale to="rooms">
-                <Icon name="lucide:arrow-left" class="size-4 mr-2" />
-                {{ t("common.back") }}
-              </NuxtLinkLocale>
-            </Button>
-            <div>
-              <h1 class="text-3xl font-bold mb-2">
+            <div
+              class="flex items-center justify-between sm:justify-start gap-3 mb-1"
+            >
+              <h1 class="text-3xl font-bold">
                 {{ t("rooms.hostGame", { name: room.hostName }) }}
               </h1>
-              <div class="flex items-center gap-2">
-                <p class="text-sm text-muted-foreground font-mono">
-                  {{ roomCode }}
-                </p>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  class="size-6"
-                  @click="copyRoomCode"
-                >
-                  <Icon name="lucide:copy" class="size-3" />
-                </Button>
-              </div>
+              <Badge
+                class="text-sm px-4 py-1.5"
+                :variant="gameState === 'LOBBY' ? 'secondary' : 'default'"
+              >
+                {{ t(`rooms.status.${gameState.toLowerCase()}`) }}
+              </Badge>
+            </div>
+            <div class="flex items-center gap-2">
+              <p class="text-sm text-muted-foreground font-mono">
+                {{ roomCode }}
+              </p>
+              <Button
+                variant="ghost"
+                size="icon"
+                class="size-6"
+                @click="copyRoomCode"
+              >
+                <Icon name="lucide:copy" class="size-3" />
+              </Button>
             </div>
           </div>
-          <div class="flex items-center gap-4">
+          <div class="flex items-center gap-3">
             <!-- Timer -->
             <div
               v-if="timer.isRunning.value && gameState !== 'LOBBY'"
-              class="text-right"
+              class="text-left sm:text-right"
             >
               <p class="text-sm text-muted-foreground">
                 {{ t("game.timeRemaining") }}
               </p>
               <p
-                class="text-2xl font-bold font-mono"
+                class="text-xl sm:text-2xl font-bold font-mono"
                 :class="{ 'text-destructive': timer.isLow.value }"
               >
                 {{ timer.formattedTime.value }}
               </p>
             </div>
-            <Badge
-              :variant="gameState === 'LOBBY' ? 'secondary' : 'default'"
-              class="text-lg px-4 py-2"
+            <!-- Start Game Button (Host only, Lobby state) -->
+            <Button
+              v-if="isHost && gameState === 'LOBBY'"
+              :disabled="!canStartGame"
+              class="w-full sm:w-auto"
+              @click="handleStartGame"
             >
-              {{ t(`rooms.status.${gameState.toLowerCase()}`) }}
-            </Badge>
+              <Icon name="lucide:play" class="size-4 mr-2" />
+              {{ t("game.startGame") }}
+            </Button>
           </div>
         </div>
 
@@ -312,7 +320,9 @@ const alivePlayersForVoting = computed(() =>
               <CardHeader>
                 <CardTitle class="flex items-center gap-2">
                   <Icon name="lucide:users" class="size-5" />
-                  {{ t("rooms.playersTitle") }} ({{ players.length }})
+                  {{ t("rooms.playersTitle") }} ({{ players.length }}/{{
+                    room.config.minPlayers
+                  }}-{{ room.config.maxPlayers }})
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -387,17 +397,6 @@ const alivePlayersForVoting = computed(() =>
                   </div>
                 </div>
               </CardContent>
-              <CardFooter v-if="isHost">
-                <Button
-                  class="w-full"
-                  :disabled="!canStartGame"
-                  @click="handleStartGame"
-                >
-                  <Icon name="lucide:play" class="size-4 mr-2" />
-                  {{ t("game.startGame") }} ({{ players.length }}/3
-                  {{ t("game.minimumPlayers") }})
-                </Button>
-              </CardFooter>
             </Card>
           </div>
 
