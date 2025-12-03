@@ -18,7 +18,7 @@ const form = useForm({
   },
 });
 
-const { handleSubmit, values, setFieldValue } = form;
+const { handleSubmit } = form;
 
 const isCreating = ref(false);
 const errorMessage = ref("");
@@ -76,6 +76,11 @@ const onSubmit = handleSubmit(async (formValues) => {
     const { error: innocentError } = await supabase.storage
       .from("game-images")
       .upload(innocentPath, innocentFile.value);
+
+    console.error(
+      "Supabase storage upload response for innocent image:",
+      innocentError,
+    );
 
     if (innocentError) throw new Error("Failed to upload innocent image");
 
@@ -161,48 +166,51 @@ const onSubmit = handleSubmit(async (formValues) => {
             <FormField v-slot="{ componentField }" name="category">
               <FormItem>
                 <FormLabel>{{ t("admin.images.category") }}</FormLabel>
-                <FormControl>
-                  <select
-                    v-bind="componentField"
-                    class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-                  >
-                    <option value="" disabled>Select a category</option>
-                    <option v-for="cat in categories" :key="cat" :value="cat">
-                      {{ cat }}
-                    </option>
-                  </select>
-                </FormControl>
+                <Select v-bind="componentField">
+                  <FormControl>
+                    <SelectTrigger class="w-full">
+                      <SelectValue placeholder="Select a category" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectItem
+                        v-for="cat in categories"
+                        :key="cat"
+                        :value="cat"
+                      >
+                        {{ cat }}
+                      </SelectItem>
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
                 <FormMessage />
               </FormItem>
             </FormField>
 
             <!-- Difficulty -->
-            <FormField name="difficulty">
+            <FormField v-slot="{ componentField }" name="difficulty">
               <FormItem>
                 <FormLabel>{{ t("admin.images.difficulty") }}</FormLabel>
                 <FormControl>
-                  <div class="flex gap-4">
-                    <label
+                  <RadioGroup class="flex gap-4" v-bind="componentField">
+                    <div
                       v-for="diff in ['easy', 'medium', 'hard']"
                       :key="diff"
-                      class="flex items-center gap-2 cursor-pointer"
+                      class="flex items-center gap-2"
                     >
-                      <input
-                        type="radio"
-                        name="difficulty"
+                      <RadioGroupItem
+                        :id="`difficulty-${diff}`"
                         :value="diff"
-                        :checked="values.difficulty === diff"
-                        class="accent-primary"
-                        @change="
-                          setFieldValue(
-                            'difficulty',
-                            diff as 'easy' | 'medium' | 'hard',
-                          )
-                        "
                       />
-                      <span class="capitalize">{{ diff }}</span>
-                    </label>
-                  </div>
+                      <Label
+                        :for="`difficulty-${diff}`"
+                        class="capitalize cursor-pointer"
+                      >
+                        {{ diff }}
+                      </Label>
+                    </div>
+                  </RadioGroup>
                 </FormControl>
                 <FormMessage />
               </FormItem>
