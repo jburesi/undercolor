@@ -359,11 +359,14 @@ const alivePlayersForVoting = computed(() =>
                   <div
                     v-for="player in players"
                     :key="player.id"
-                    class="flex items-center gap-3 p-3 rounded-lg bg-muted min-h-[72px]"
-                    :class="{
-                      'ring-2 ring-primary': player.id === currentPlayer?.id,
-                    }"
+                    class="relative flex items-center gap-3 p-3 rounded-lg bg-muted min-h-[72px]"
                   >
+                    <Badge
+                      v-if="player.id === currentPlayer?.id"
+                      class="absolute -top-2 -left-2 text-[10px] px-1.5 py-0.5"
+                    >
+                      {{ t("game.you") }}
+                    </Badge>
                     <Avatar>
                       <AvatarFallback>
                         {{ player.username.substring(0, 2).toUpperCase() }}
@@ -547,14 +550,17 @@ const alivePlayersForVoting = computed(() =>
                   <div
                     v-for="player in players"
                     :key="player.id"
-                    class="flex items-center gap-3 p-3 rounded-lg"
-                    :class="[
-                      player.is_alive ? 'bg-muted' : 'bg-muted/50 opacity-50',
-                      player.id === currentPlayer?.id
-                        ? 'ring-2 ring-primary'
-                        : '',
-                    ]"
+                    class="relative flex items-center gap-3 p-3 rounded-lg"
+                    :class="
+                      player.is_alive ? 'bg-muted' : 'bg-muted/50 opacity-50'
+                    "
                   >
+                    <Badge
+                      v-if="player.id === currentPlayer?.id"
+                      class="absolute -top-2 -right-2 text-[10px] px-1.5 py-0.5"
+                    >
+                      {{ t("game.you") }}
+                    </Badge>
                     <Avatar>
                       <AvatarFallback>
                         {{ player.username.substring(0, 2).toUpperCase() }}

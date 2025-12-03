@@ -139,6 +139,7 @@
     }
   },
   "game": {
+    "you": "Me",
     "waiting": "Waiting...",
     "starting": "Game starting...",
     "assigningRoles": "Assigning roles...",

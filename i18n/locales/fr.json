@@ -139,6 +139,7 @@
     }
   },
   "game": {
+    "you": "Moi",
     "waiting": "En attente...",
     "starting": "La partie commence...",
     "assigningRoles": "Attribution des rôles...",
