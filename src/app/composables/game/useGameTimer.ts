@@ -75,9 +75,9 @@ export function useGameTimer() {
   });
 
   /**
-   * Check if time is running low (less than 10 seconds)
+   * Check if time is running low (less than 10 seconds) or finished
    */
-  const isLow = computed(() => timeRemaining.value <= 10 && isRunning.value);
+  const isLow = computed(() => timeRemaining.value <= 10);
 
   // Cleanup on unmount
   onUnmounted(() => {

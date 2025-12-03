@@ -36,6 +36,7 @@ interface RoomPlayer {
   is_alive: boolean;
   has_voted: boolean;
   connection_status: "CONNECTED" | "DISCONNECTED" | "RECONNECTING";
+  role?: PlayerRole; // Only populated when game is FINISHED
 }
 
 interface PresenceState {

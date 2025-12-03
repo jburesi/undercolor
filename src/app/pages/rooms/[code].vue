@@ -170,6 +170,31 @@ function getRoleBadgeVariant(role: PlayerRole) {
   }
 }
 
+// Check if current player won
+const didIWin = computed(() => {
+  if (!room.value?.winner || !myRole.value) return false;
+
+  if (
+    room.value.winner === "INNOCENT" &&
+    myRole.value === PlayerRole.INNOCENT
+  ) {
+    return true;
+  }
+  if (
+    room.value.winner === "IMPOSTER" &&
+    myRole.value === PlayerRole.IMPOSTER
+  ) {
+    return true;
+  }
+  if (
+    room.value.winner === "MR_WHITE" &&
+    myRole.value === PlayerRole.MR_WHITE
+  ) {
+    return true;
+  }
+  return false;
+});
+
 // Get alive players for voting
 const alivePlayersForVoting = computed(() =>
   players.value.filter((p) => p.is_alive && p.id !== currentPlayer.value?.id),
@@ -221,66 +246,49 @@ const alivePlayersForVoting = computed(() =>
 
       <!-- Room Loaded -->
       <template v-else-if="room">
-        <!-- Header -->
+        <!-- Header: LOBBY layout (badge + button on right) -->
         <div
-          class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-6 mb-8"
+          v-if="gameState === 'LOBBY'"
+          class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-8"
         >
-          <div>
-            <div
-              class="flex items-center justify-between sm:justify-start gap-3 mb-1"
-            >
-              <h1 class="text-3xl font-bold">
+          <!-- Left: Title + Code -->
+          <div class="flex items-start justify-between gap-4">
+            <div>
+              <h1 class="text-3xl font-bold mb-1">
                 {{ t("rooms.hostGame", { name: room.hostName }) }}
               </h1>
-              <!-- Badge à gauche avec le titre sur mobile, à droite sur desktop pour non-hôte -->
-              <Badge
-                :class="['text-sm px-4 py-1.5', !isHost ? 'sm:hidden' : '']"
-                :variant="gameState === 'LOBBY' ? 'secondary' : 'default'"
-              >
-                {{ t(`rooms.status.${gameState.toLowerCase()}`) }}
-              </Badge>
+              <div class="flex items-center gap-2">
+                <p class="text-sm text-muted-foreground font-mono">
+                  {{ roomCode }}
+                </p>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  class="size-6"
+                  @click="copyRoomCode"
+                >
+                  <Icon name="lucide:copy" class="size-3" />
+                </Button>
+              </div>
             </div>
-            <div class="flex items-center gap-2">
-              <p class="text-sm text-muted-foreground font-mono">
-                {{ roomCode }}
-              </p>
-              <Button
-                variant="ghost"
-                size="icon"
-                class="size-6"
-                @click="copyRoomCode"
-              >
-                <Icon name="lucide:copy" class="size-3" />
-              </Button>
-            </div>
+            <!-- Badge: mobile only -->
+            <Badge class="text-sm px-4 py-1.5 sm:hidden" variant="secondary">
+              {{ t(`rooms.status.${gameState.toLowerCase()}`) }}
+            </Badge>
           </div>
-          <div class="flex items-center gap-3">
-            <!-- Badge à droite pour les non-hôtes sur desktop uniquement -->
+
+          <!-- Right: Badge (desktop) / Button -->
+          <div class="flex flex-col sm:items-end gap-2">
+            <!-- Badge: desktop only -->
             <Badge
-              v-if="!isHost"
               class="hidden sm:inline-flex text-sm px-4 py-1.5"
-              :variant="gameState === 'LOBBY' ? 'secondary' : 'default'"
+              variant="secondary"
             >
               {{ t(`rooms.status.${gameState.toLowerCase()}`) }}
             </Badge>
-            <!-- Timer -->
-            <div
-              v-if="timer.isRunning.value && gameState !== 'LOBBY'"
-              class="text-left sm:text-right"
-            >
-              <p class="text-sm text-muted-foreground">
-                {{ t("game.timeRemaining") }}
-              </p>
-              <p
-                class="text-xl sm:text-2xl font-bold font-mono"
-                :class="{ 'text-destructive': timer.isLow.value }"
-              >
-                {{ timer.formattedTime.value }}
-              </p>
-            </div>
-            <!-- Start Game Button (Host only, Lobby state) -->
+            <!-- Start Game Button (Host only) -->
             <Button
-              v-if="isHost && gameState === 'LOBBY'"
+              v-if="isHost"
               :disabled="!canStartGame"
               class="w-full sm:w-auto"
               @click="handleStartGame"
@@ -294,6 +302,76 @@ const alivePlayersForVoting = computed(() =>
                 ({{ players.length }}/{{ room.config.minPlayers }})
               </span>
             </Button>
+          </div>
+        </div>
+
+        <!-- Header: OTHER STATES layout (badge next to title, timer on right) -->
+        <div v-else class="mb-8">
+          <!-- Row 1: Title + Badge | Timer -->
+          <div class="flex items-start justify-between gap-4">
+            <!-- Left: Title + Badge -->
+            <div class="flex-1">
+              <div
+                class="flex items-center gap-3 mb-1"
+                :class="
+                  gameState === 'FINISHED'
+                    ? 'justify-between'
+                    : 'justify-between sm:justify-start'
+                "
+              >
+                <h1 class="text-3xl font-bold">
+                  {{ t("rooms.hostGame", { name: room.hostName }) }}
+                </h1>
+                <Badge class="text-sm px-4 py-1.5">
+                  {{ t(`rooms.status.${gameState.toLowerCase()}`) }}
+                </Badge>
+              </div>
+              <div class="flex items-center gap-2">
+                <p class="text-sm text-muted-foreground font-mono">
+                  {{ roomCode }}
+                </p>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  class="size-6"
+                  @click="copyRoomCode"
+                >
+                  <Icon name="lucide:copy" class="size-3" />
+                </Button>
+              </div>
+            </div>
+
+            <!-- Right: Timer (desktop only) -->
+            <div
+              v-if="gameState !== 'FINISHED' && gameState !== 'DISTRIBUTING'"
+              class="hidden sm:block text-right"
+            >
+              <p class="text-sm text-muted-foreground">
+                {{ t("game.timeRemaining") }}
+              </p>
+              <p
+                class="text-2xl font-bold font-mono"
+                :class="{ 'text-destructive': timer.isLow.value }"
+              >
+                {{ timer.formattedTime.value }}
+              </p>
+            </div>
+          </div>
+
+          <!-- Row 2: Timer (mobile only) -->
+          <div
+            v-if="gameState !== 'FINISHED' && gameState !== 'DISTRIBUTING'"
+            class="sm:hidden mt-3"
+          >
+            <p class="text-sm text-muted-foreground">
+              {{ t("game.timeRemaining") }}
+            </p>
+            <p
+              class="text-xl font-bold font-mono"
+              :class="{ 'text-destructive': timer.isLow.value }"
+            >
+              {{ timer.formattedTime.value }}
+            </p>
           </div>
         </div>
 
@@ -356,61 +434,13 @@ const alivePlayersForVoting = computed(() =>
                 <div
                   class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"
                 >
-                  <div
+                  <RoomsPlayerCard
                     v-for="player in players"
                     :key="player.id"
-                    class="relative flex items-center gap-3 p-3 rounded-lg bg-muted min-h-[72px]"
-                  >
-                    <Badge
-                      v-if="player.id === currentPlayer?.id"
-                      class="absolute -top-2 -left-2 text-[10px] px-1.5 py-0.5"
-                    >
-                      {{ t("game.you") }}
-                    </Badge>
-                    <Avatar>
-                      <AvatarFallback>
-                        {{ player.username.substring(0, 2).toUpperCase() }}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div class="flex-1 min-w-0">
-                      <p class="font-medium truncate">{{ player.username }}</p>
-                      <p
-                        v-if="player.is_host"
-                        class="text-xs text-muted-foreground"
-                      >
-                        {{ t("game.host") }}
-                      </p>
-                    </div>
-                    <Tooltip>
-                      <TooltipTrigger as-child>
-                        <div class="relative">
-                          <div
-                            :class="[
-                              'w-2.5 h-2.5 rounded-full',
-                              player.connection_status === 'CONNECTED'
-                                ? 'bg-green-500'
-                                : player.connection_status === 'RECONNECTING'
-                                  ? 'bg-yellow-500'
-                                  : 'bg-red-500',
-                            ]"
-                          />
-                          <div
-                            v-if="player.connection_status === 'CONNECTED'"
-                            class="absolute inset-0 w-2.5 h-2.5 rounded-full bg-green-500 animate-ping opacity-75"
-                          />
-                        </div>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>
-                          {{
-                            t(
-                              `game.connectionStatus.${player.connection_status}`,
-                            )
-                          }}
-                        </p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </div>
+                    :player="player"
+                    :is-me="player.id === currentPlayer?.id"
+                    show-connection-status
+                  />
 
                   <!-- Empty slots -->
                   <div
@@ -451,14 +481,7 @@ const alivePlayersForVoting = computed(() =>
             <!-- Role Card -->
             <Card class="overflow-hidden">
               <CardHeader class="text-center">
-                <CardTitle>{{ t("game.yourRole") }}</CardTitle>
-                <Badge
-                  v-if="myRole"
-                  :variant="getRoleBadgeVariant(myRole)"
-                  class="w-fit mx-auto text-lg px-4 py-1"
-                >
-                  {{ myRole }}
-                </Badge>
+                <CardTitle>{{ t("game.yourImage") }}</CardTitle>
               </CardHeader>
               <CardContent>
                 <!-- Mr. White sees nothing -->
@@ -480,9 +503,6 @@ const alivePlayersForVoting = computed(() =>
 
                 <!-- Image for Innocent/Imposter -->
                 <div v-else class="text-center">
-                  <p class="text-muted-foreground mb-4">
-                    {{ t("game.yourImage") }}
-                  </p>
                   <!-- Reveal button -->
                   <div
                     v-if="!roleRevealed"
@@ -547,35 +567,12 @@ const alivePlayersForVoting = computed(() =>
                 <div
                   class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"
                 >
-                  <div
+                  <RoomsPlayerCard
                     v-for="player in players"
                     :key="player.id"
-                    class="relative flex items-center gap-3 p-3 rounded-lg"
-                    :class="
-                      player.is_alive ? 'bg-muted' : 'bg-muted/50 opacity-50'
-                    "
-                  >
-                    <Badge
-                      v-if="player.id === currentPlayer?.id"
-                      class="absolute -top-2 -left-2 text-[10px] px-1.5 py-0.5"
-                    >
-                      {{ t("game.you") }}
-                    </Badge>
-                    <Avatar>
-                      <AvatarFallback>
-                        {{ player.username.substring(0, 2).toUpperCase() }}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div class="flex-1 min-w-0">
-                      <p class="font-medium truncate">{{ player.username }}</p>
-                      <p
-                        v-if="!player.is_alive"
-                        class="text-xs text-destructive"
-                      >
-                        {{ t("game.eliminated") }}
-                      </p>
-                    </div>
-                  </div>
+                    :player="player"
+                    :is-me="player.id === currentPlayer?.id"
+                  />
                 </div>
               </CardContent>
               <CardFooter v-if="isHost">
@@ -634,33 +631,14 @@ const alivePlayersForVoting = computed(() =>
                   <div
                     class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"
                   >
-                    <div
+                    <RoomsPlayerCard
                       v-for="player in alivePlayersForVoting"
                       :key="player.id"
-                      class="flex items-center gap-3 p-4 rounded-lg border-2 cursor-pointer transition-colors"
-                      :class="[
-                        selectedVoteTarget === player.id
-                          ? 'border-primary bg-primary/10'
-                          : 'border-muted hover:border-primary/50',
-                      ]"
-                      @click="selectedVoteTarget = player.id"
-                    >
-                      <Avatar>
-                        <AvatarFallback>
-                          {{ player.username.substring(0, 2).toUpperCase() }}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div class="flex-1 min-w-0">
-                        <p class="font-medium truncate">
-                          {{ player.username }}
-                        </p>
-                      </div>
-                      <Icon
-                        v-if="selectedVoteTarget === player.id"
-                        name="lucide:check"
-                        class="size-5 text-primary"
-                      />
-                    </div>
+                      :player="player"
+                      selectable
+                      :selected="selectedVoteTarget === player.id"
+                      @select="selectedVoteTarget = player.id"
+                    />
                   </div>
 
                   <Button
@@ -686,45 +664,31 @@ const alivePlayersForVoting = computed(() =>
             <Card class="text-center">
               <CardHeader>
                 <CardTitle class="text-3xl">
-                  <template v-if="room.winner === 'INNOCENT'">
-                    🎉 {{ t("game.innocentsWin") }}
-                  </template>
-                  <template v-else-if="room.winner === 'IMPOSTER'">
-                    😈 {{ t("game.impostersWin") }}
-                  </template>
-                  <template v-else-if="room.winner === 'MR_WHITE'">
-                    👻 {{ t("game.mrWhiteWins") }}
-                  </template>
+                  {{ didIWin ? t("game.youWon") : t("game.youLost") }}
                 </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p class="text-muted-foreground mb-6">
+                <CardDescription>
                   {{ t("game.yourRoleWas") }}
                   <Badge
                     v-if="myRole"
                     :variant="getRoleBadgeVariant(myRole)"
-                    class="ml-2"
+                    class="ml-1 mt-2"
                   >
-                    {{ myRole }}
+                    {{ t(`game.roles.${myRole.toLowerCase()}`) }}
                   </Badge>
-                </p>
-
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
                 <!-- Final player roles -->
-                <div
-                  class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"
-                >
-                  <div
+                <div class="flex flex-wrap justify-center gap-4">
+                  <RoomsPlayerCard
                     v-for="player in players"
                     :key="player.id"
-                    class="flex flex-col items-center gap-2 p-3 rounded-lg bg-muted"
-                  >
-                    <Avatar>
-                      <AvatarFallback>
-                        {{ player.username.substring(0, 2).toUpperCase() }}
-                      </AvatarFallback>
-                    </Avatar>
-                    <p class="font-medium text-sm">{{ player.username }}</p>
-                  </div>
+                    :player="player"
+                    :is-me="player.id === currentPlayer?.id"
+                    class="w-full sm:w-[calc(50%-0.5rem)] md:w-[calc(33.333%-0.75rem)] lg:w-[calc(25%-0.75rem)]"
+                    show-role
+                    compact
+                  />
                 </div>
               </CardContent>
               <CardFooter class="flex gap-4 justify-center">

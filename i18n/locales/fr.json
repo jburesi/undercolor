@@ -162,6 +162,8 @@
     "innocentsWin": "Les Innocents gagnent !",
     "impostersWin": "Les Imposteurs gagnent !",
     "mrWhiteWins": "Mr. White gagne !",
+    "youWon": "Vous avez gagné ! 🎉",
+    "youLost": "Vous avez perdu 😢",
     "yourRoleWas": "Votre rôle était :",
     "playAgain": "Rejouer",
     "backToLobby": "Retour au lobby",

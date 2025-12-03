@@ -40,7 +40,8 @@ export default defineEventHandler(async (event) => {
         is_host,
         is_alive,
         has_voted,
-        connection_status
+        connection_status,
+        role
       )
     `,
     )
@@ -56,6 +57,19 @@ export default defineEventHandler(async (event) => {
 
   const hostUsername = room.host?.username;
 
+  // Only expose player roles when game is finished
+  const players = room.players.map((player) => ({
+    id: player.id,
+    username: player.username,
+    avatar_url: player.avatar_url,
+    is_host: player.is_host,
+    is_alive: player.is_alive,
+    has_voted: player.has_voted,
+    connection_status: player.connection_status,
+    // Only include role if game is finished
+    ...(room.state === "FINISHED" && { role: player.role }),
+  }));
+
   return {
     roomId: room.id,
     roomCode: room.code,
@@ -67,7 +81,7 @@ export default defineEventHandler(async (event) => {
     phaseStartedAt: room.phase_started_at,
     phaseEndsAt: room.phase_ends_at,
     winner: room.winner,
-    players: room.players,
+    players,
     createdAt: room.created_at,
   };
 });
