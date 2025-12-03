@@ -77,11 +77,6 @@ const onSubmit = handleSubmit(async (formValues) => {
       .from("game-images")
       .upload(innocentPath, innocentFile.value);
 
-    console.error(
-      "Supabase storage upload response for innocent image:",
-      innocentError,
-    );
-
     if (innocentError) throw new Error("Failed to upload innocent image");
 
     // Upload imposter image

@@ -2,22 +2,14 @@
  * POST /api/admin/images - Create a new image set (admin only)
  */
 
-import {
-  serverSupabaseServiceRole,
-  serverSupabaseUser,
-} from "#supabase/server";
+import { serverSupabaseServiceRole } from "#supabase/server";
 import type { Database } from "#shared/types/database.types";
 import { createImageSetSchema } from "#shared/schemas";
+import { requireAdmin } from "../../../utils/admin";
 
 export default defineEventHandler(async (event) => {
-  // Verify admin access
-  const user = await serverSupabaseUser(event);
-  if (!user || user.app_metadata?.role !== "admin") {
-    throw createError({
-      statusCode: 403,
-      message: "Admin access required",
-    });
-  }
+  // Verify admin access using user_roles table
+  const user = await requireAdmin(event);
 
   const body = await readBody(event);
 

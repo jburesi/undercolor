@@ -31,6 +31,31 @@ COMMENT ON TABLE public.user_roles IS 'Application roles for each user. Only adm
 CREATE INDEX idx_user_roles_user_id ON public.user_roles(user_id);
 
 -- ============================================================================
+-- HELPER FUNCTION TO CHECK ADMIN STATUS (BYPASSES RLS)
+-- ============================================================================
+-- This function uses SECURITY DEFINER to bypass RLS and avoid infinite recursion
+-- Users can only check their own admin status (no parameter allowed)
+
+CREATE OR REPLACE FUNCTION public.is_admin()
+RETURNS BOOLEAN
+LANGUAGE plpgsql
+STABLE
+SECURITY DEFINER
+SET search_path = ''
+AS $$
+BEGIN
+  RETURN EXISTS (
+    SELECT 1 FROM public.user_roles
+    WHERE user_id = auth.uid()
+    AND role = 'admin'
+  );
+END;
+$$;
+
+-- Grant execute to authenticated users
+GRANT EXECUTE ON FUNCTION public.is_admin TO authenticated;
+
+-- ============================================================================
 -- ROW LEVEL SECURITY - VERY RESTRICTIVE
 -- ============================================================================
 
@@ -43,44 +68,26 @@ CREATE POLICY "Users can view their own role"
   TO authenticated
   USING (auth.uid() = user_id);
 
--- Only admins can view all roles
+-- Only admins can view all roles (uses helper function to avoid recursion)
 CREATE POLICY "Admins can view all roles"
   ON public.user_roles
   FOR SELECT
   TO authenticated
-  USING (
-    EXISTS (
-      SELECT 1 FROM public.user_roles ur
-      WHERE ur.user_id = auth.uid()
-      AND ur.role = 'admin'
-    )
-  );
+  USING (public.is_admin());
 
 -- Only admins can insert new roles
 CREATE POLICY "Admins can insert roles"
   ON public.user_roles
   FOR INSERT
   TO authenticated
-  WITH CHECK (
-    EXISTS (
-      SELECT 1 FROM public.user_roles ur
-      WHERE ur.user_id = auth.uid()
-      AND ur.role = 'admin'
-    )
-  );
+  WITH CHECK (public.is_admin());
 
 -- Only admins can update roles (and cannot demote themselves)
 CREATE POLICY "Admins can update roles"
   ON public.user_roles
   FOR UPDATE
   TO authenticated
-  USING (
-    EXISTS (
-      SELECT 1 FROM public.user_roles ur
-      WHERE ur.user_id = auth.uid()
-      AND ur.role = 'admin'
-    )
-  )
+  USING (public.is_admin())
   WITH CHECK (
     -- Prevent admin from demoting themselves
     NOT (user_id = auth.uid() AND role != 'admin')
@@ -92,11 +99,7 @@ CREATE POLICY "Admins can delete roles except their own"
   FOR DELETE
   TO authenticated
   USING (
-    EXISTS (
-      SELECT 1 FROM public.user_roles ur
-      WHERE ur.user_id = auth.uid()
-      AND ur.role = 'admin'
-    )
+    public.is_admin()
     AND user_id != auth.uid()
   );
 
