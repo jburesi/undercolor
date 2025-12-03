@@ -557,7 +557,7 @@ const alivePlayersForVoting = computed(() =>
                   >
                     <Badge
                       v-if="player.id === currentPlayer?.id"
-                      class="absolute -top-2 -right-2 text-[10px] px-1.5 py-0.5"
+                      class="absolute -top-2 -left-2 text-[10px] px-1.5 py-0.5"
                     >
                       {{ t("game.you") }}
                     </Badge>
