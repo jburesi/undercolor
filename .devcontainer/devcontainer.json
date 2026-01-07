@@ -1,0 +1,63 @@
+{
+  "name": "Nuxt 4 Development Container",
+  "image": "mcr.microsoft.com/vscode/devcontainers/typescript-node:24",
+  "features": {
+    "ghcr.io/devcontainers-extra/features/supabase-cli": {},
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {
+      "moby": "false"
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "vivaxy.vscode-conventional-commits",
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "EditorConfig.EditorConfig",
+        "Vue.volar",
+        "antfu.iconify",
+        "antfu.goto-alias",
+        "Lokalise.i18n-ally",
+        "Selemondev.shadcn-vue",
+        "bradlc.vscode-tailwindcss",
+        "GitHub.vscode-pull-request-github",
+        "alefragnani.Bookmarks",
+        "formulahendry.auto-rename-tag",
+        "formulahendry.auto-close-tag",
+        "Upstash.context7-mcp",
+        "github.vscode-github-actions",
+        "SanjulaGanepola.github-local-actions",
+        "DavidAnson.vscode-markdownlint",
+        "christian-kohler.path-intellisense",
+        "SonarSource.sonarlint-vscode",
+        "Gruntfuggly.todo-tree"
+      ]
+    }
+  },
+
+  "portsAttributes": {
+    "3000": {
+      "label": "Nuxt Application",
+      "onAutoForward": "notify"
+    },
+    "54321": {
+      "label": "Supabase API",
+      "onAutoForward": "ignore"
+    },
+    "54322": {
+      "label": "Supabase DB",
+      "onAutoForward": "ignore"
+    },
+    "54323": {
+      "label": "Supabase Studio",
+      "onAutoForward": "notify"
+    },
+    "54324": {
+      "label": "Supabase Mailpit",
+      "onAutoForward": "ignore"
+    }
+  },
+
+  "mounts": ["type=volume,target=${containerWorkspaceFolder}/node_modules"],
+  "postCreateCommand": "sudo chown node node_modules"
+}
