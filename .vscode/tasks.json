@@ -71,7 +71,7 @@
       "label": "Supabase: Start Local",
       "detail": "Start Supabase local development stack ▶️",
       "runOptions": {
-        "runOn": "folderOpen",
+        "runOn": "default",
         "instancePolicy": "warn"
       },
       "presentation": {
