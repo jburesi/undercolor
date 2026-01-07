@@ -58,5 +58,5 @@
 
   "mounts": ["type=volume,target=${containerWorkspaceFolder}/node_modules"],
   "postCreateCommand": "sudo chown node node_modules",
-  "postStartCommand": "supabase start"
+  "postStartCommand": "pnpm install"
 }
