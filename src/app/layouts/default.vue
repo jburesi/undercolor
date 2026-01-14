@@ -1,4 +1,10 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+const route = useRoute();
+const routeBaseName = useRouteBaseName();
+const baseRouteName = computed(() => routeBaseName(route));
+
+const isIndexPage = computed(() => baseRouteName.value === "index");
+</script>
 
 <template>
   <!-- Regular layout without sidebar -->
@@ -10,7 +16,11 @@
       </div>
 
       <!-- Center: Logo -->
-      <NuxtLinkLocale to="index" class="flex items-center gap-2">
+      <NuxtLinkLocale
+        v-if="!isIndexPage"
+        to="index"
+        class="flex items-center gap-2"
+      >
         <div
           class="flex aspect-square size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground"
         >
@@ -18,6 +28,7 @@
         </div>
         <span class="font-semibold">Undercolor</span>
       </NuxtLinkLocale>
+      <div v-else class="flex-1" />
 
       <!-- Right: User menu -->
       <div class="flex-1 flex items-center justify-end">
