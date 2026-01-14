@@ -123,6 +123,8 @@
     "publicRoomDescription": "Anyone can see and join this room from the lobby",
     "privateRoom": "Private Room",
     "privateRoomDescription": "Only players with the code can join",
+    "browsePublicRooms": "Browse available public rooms",
+    "createOwn": "Create Your Own",
     "status": {
       "lobby": "Lobby",
       "distributing": "Distributing",
@@ -299,6 +301,8 @@
     "next": "Next",
     "submit": "Submit",
     "copy": "Copy",
+    "or": "or",
+    "browse": "Browse Rooms",
     "time": {
       "minutesAgo": "{count} min ago",
       "hoursAgo": "{count}h ago",

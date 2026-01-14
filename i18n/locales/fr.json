@@ -123,6 +123,8 @@
     "publicRoomDescription": "Tout le monde peut voir et rejoindre cette salle depuis le lobby",
     "privateRoom": "Salle privée",
     "privateRoomDescription": "Seuls les joueurs avec le code peuvent rejoindre",
+    "browsePublicRooms": "Parcourir les salles publiques disponibles",
+    "createOwn": "Créer la vôtre",
     "status": {
       "lobby": "En attente",
       "distributing": "Distribution",
@@ -299,6 +301,8 @@
     "next": "Suivant",
     "submit": "Soumettre",
     "copy": "Copier",
+    "or": "ou",
+    "browse": "Parcourir les salles",
     "time": {
       "minutesAgo": "il y a {count} min",
       "hoursAgo": "il y a {count}h",
