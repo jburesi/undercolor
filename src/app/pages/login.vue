@@ -14,7 +14,7 @@ const supabase = useSupabaseClient();
 
 // VeeValidate v5 supports Zod v4 natively
 const formSchema = z.object({
-  email: z.string().email(),
+  email: z.email(),
   password: z.string().min(6),
 });
 
@@ -29,11 +29,9 @@ const form = useForm({
 const { handleSubmit } = form;
 
 const isLoading = ref(false);
-const errorMessage = ref("");
 
 const onSubmit = handleSubmit(async (formValues) => {
   isLoading.value = true;
-  errorMessage.value = "";
 
   try {
     const { error } = await supabase.auth.signInWithPassword({
@@ -42,7 +40,6 @@ const onSubmit = handleSubmit(async (formValues) => {
     });
 
     if (error) {
-      errorMessage.value = error.message;
       toast.error(error.message);
       return;
     }
@@ -51,7 +48,6 @@ const onSubmit = handleSubmit(async (formValues) => {
     toast.success(t("toast.loginSuccess"));
     await navigateTo(localePath("index"));
   } catch {
-    errorMessage.value = t("common.error");
     toast.error(t("toast.errorOccurred"));
   } finally {
     isLoading.value = false;
@@ -68,7 +64,7 @@ const signInWithProvider = async (provider: "google" | "github") => {
       },
     });
   } catch {
-    errorMessage.value = t("common.error");
+    toast.error(t("toast.errorOccurred"));
   } finally {
     isLoading.value = false;
   }
@@ -92,14 +88,6 @@ const signInWithProvider = async (provider: "google" | "github") => {
         </CardHeader>
         <CardContent>
           <form class="space-y-4" @submit="onSubmit">
-            <!-- Error message -->
-            <div
-              v-if="errorMessage"
-              class="p-3 rounded-lg bg-destructive/10 text-destructive text-sm"
-            >
-              {{ errorMessage }}
-            </div>
-
             <!-- Email -->
             <FormField v-slot="{ componentField }" name="email">
               <FormItem>
@@ -109,6 +97,7 @@ const signInWithProvider = async (provider: "google" | "github") => {
                     type="email"
                     :placeholder="t('auth.email')"
                     v-bind="componentField"
+                    autocomplete="email"
                   />
                 </FormControl>
                 <FormMessage />
@@ -131,6 +120,7 @@ const signInWithProvider = async (provider: "google" | "github") => {
                   <Input
                     type="password"
                     :placeholder="t('auth.password')"
+                    autocomplete="current-password"
                     v-bind="componentField"
                   />
                 </FormControl>

@@ -15,7 +15,7 @@ const supabase = useSupabaseClient();
 const formSchema = z
   .object({
     username: z.string().min(2).max(20),
-    email: z.string().email(),
+    email: z.email(),
     password: z.string().min(6),
     confirmPassword: z.string().min(6),
   })
@@ -37,13 +37,9 @@ const form = useForm({
 const { handleSubmit } = form;
 
 const isLoading = ref(false);
-const errorMessage = ref("");
-const successMessage = ref("");
 
 const onSubmit = handleSubmit(async (formValues) => {
   isLoading.value = true;
-  errorMessage.value = "";
-  successMessage.value = "";
 
   try {
     const { error } = await supabase.auth.signUp({
@@ -57,16 +53,13 @@ const onSubmit = handleSubmit(async (formValues) => {
     });
 
     if (error) {
-      errorMessage.value = error.message;
       toast.error(error.message);
       return;
     }
 
-    successMessage.value = t("auth.registerSuccess");
     toast.success(t("toast.registerSuccess"));
     // Optionally redirect or show confirmation message
   } catch {
-    errorMessage.value = t("common.error");
     toast.error(t("toast.errorOccurred"));
   } finally {
     isLoading.value = false;
@@ -83,7 +76,7 @@ const signUpWithProvider = async (provider: "google" | "github") => {
       },
     });
   } catch {
-    errorMessage.value = t("common.error");
+    toast.error(t("toast.errorOccurred"));
   } finally {
     isLoading.value = false;
   }
@@ -107,22 +100,6 @@ const signUpWithProvider = async (provider: "google" | "github") => {
         </CardHeader>
         <CardContent>
           <form class="space-y-4" @submit="onSubmit">
-            <!-- Success message -->
-            <div
-              v-if="successMessage"
-              class="p-3 rounded-lg bg-green-500/10 text-green-600 dark:text-green-400 text-sm"
-            >
-              {{ successMessage }}
-            </div>
-
-            <!-- Error message -->
-            <div
-              v-if="errorMessage"
-              class="p-3 rounded-lg bg-destructive/10 text-destructive text-sm"
-            >
-              {{ errorMessage }}
-            </div>
-
             <!-- Username -->
             <FormField v-slot="{ componentField }" name="username">
               <FormItem>
@@ -131,6 +108,7 @@ const signUpWithProvider = async (provider: "google" | "github") => {
                   <Input
                     :placeholder="t('auth.username')"
                     maxlength="20"
+                    autocomplete="username"
                     v-bind="componentField"
                   />
                 </FormControl>
@@ -146,6 +124,7 @@ const signUpWithProvider = async (provider: "google" | "github") => {
                   <Input
                     type="email"
                     :placeholder="t('auth.email')"
+                    autocomplete="email"
                     v-bind="componentField"
                   />
                 </FormControl>
@@ -160,6 +139,7 @@ const signUpWithProvider = async (provider: "google" | "github") => {
                 <FormControl>
                   <Input
                     type="password"
+                    autocomplete="new-password"
                     :placeholder="t('auth.password')"
                     v-bind="componentField"
                   />
@@ -175,6 +155,7 @@ const signUpWithProvider = async (provider: "google" | "github") => {
                 <FormControl>
                   <Input
                     type="password"
+                    autocomplete="new-password"
                     :placeholder="t('auth.confirmPassword')"
                     v-bind="componentField"
                   />
