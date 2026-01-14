@@ -83,7 +83,8 @@ const signInWithProvider = async (provider: "google" | "github") => {
           </div>
           <CardTitle class="text-2xl">{{ t("auth.login") }}</CardTitle>
           <CardDescription>
-            {{ t("auth.loginDescription") }}
+            {{ t("auth.loginDescription.viewStats") }}
+            {{ t("auth.loginDescription.asGuest") }}
           </CardDescription>
         </CardHeader>
         <CardContent>

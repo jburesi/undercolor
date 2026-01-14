@@ -1,6 +1,6 @@
 {
   "languageSwitcher": {
-    "toggleLanguage": "Changer de langue"
+    "toggleLanguage": "Langue du site"
   },
   "breadcrumb": {
     "items": {
@@ -210,7 +210,10 @@
     "orContinueWith": "Ou continuer avec",
     "loginSuccess": "Bon retour !",
     "registerSuccess": "Compte créé avec succès !",
-    "loginDescription": "Connectez-vous pour suivre vos stats et votre historique. Vous pouvez aussi jouer en invité !",
+    "loginDescription": {
+      "viewStats": "Connectez-vous pour suivre vos stats et votre historique",
+      "asGuest": "Vous pouvez aussi jouer en invité !"
+    },
     "registerDescription": "Créez un compte pour sauvegarder vos stats, suivre vos victoires et compétir dans les classements."
   },
   "user": {

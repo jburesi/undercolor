@@ -1,6 +1,6 @@
 {
   "languageSwitcher": {
-    "toggleLanguage": "Toggle language"
+    "toggleLanguage": "Site Language"
   },
   "breadcrumb": {
     "items": {
@@ -210,7 +210,10 @@
     "orContinueWith": "Or continue with",
     "loginSuccess": "Welcome back!",
     "registerSuccess": "Account created successfully!",
-    "loginDescription": "Sign in to track your stats and game history. You can also play as a guest!",
+    "loginDescription": {
+      "viewStats": "Sign in to track your stats and game history.",
+      "asGuest": "You can also play as a guest!"
+    },
     "registerDescription": "Create an account to save your stats, track your wins, and compete on leaderboards."
   },
   "user": {
