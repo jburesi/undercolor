@@ -190,7 +190,7 @@
     "roles": {
       "innocent": "Innocent",
       "imposter": "Imposteur",
-      "mr_white": "Mr. White"
+      "mrWhite": "Mr. White"
     },
     "connectionStatus": {
       "CONNECTED": "Connecté",
