@@ -13,15 +13,21 @@ export default defineEventHandler(async (event) => {
   const body = await readBody(event);
 
   if (!code) {
+    console.error("No room code provided in request");
+
     throw createError({
       statusCode: 400,
       message: "Invalid room code",
     });
   }
 
+  console.log("Starting game for room code:", code);
+
   // Validate input
   const result = startGameSchema.safeParse(body);
   if (!result.success) {
+    console.error("Invalid request body:", result.error);
+
     throw createError({
       statusCode: 400,
       message: "Invalid request body",
@@ -44,6 +50,8 @@ export default defineEventHandler(async (event) => {
     .single();
 
   if (roomError || !room) {
+    console.error("Room not found:", roomError);
+
     throw createError({
       statusCode: 404,
       message: "Room not found",
@@ -56,6 +64,8 @@ export default defineEventHandler(async (event) => {
       p.session_id === sessionId && p.is_host,
   );
   if (!host) {
+    console.error("Requester is not the host");
+
     throw createError({
       statusCode: 403,
       message: "Only the host can start the game",
@@ -64,6 +74,8 @@ export default defineEventHandler(async (event) => {
 
   // Check room state
   if (room.state !== "LOBBY") {
+    console.error("Game has already started or is in progress");
+
     throw createError({
       statusCode: 400,
       message: "Game has already started",
@@ -74,6 +86,10 @@ export default defineEventHandler(async (event) => {
   const config = room.config as unknown as GameConfig;
   const minPlayers = config.minPlayers || 3;
   if (room.players.length < minPlayers) {
+    console.error(
+      `Not enough players to start the game: ${room.players.length} present, ${minPlayers} required`,
+    );
+
     throw createError({
       statusCode: 400,
       message: `Need at least ${minPlayers} players to start`,
@@ -87,6 +103,8 @@ export default defineEventHandler(async (event) => {
     .eq("is_active", true);
 
   if (imageError || !imageSets || imageSets.length === 0) {
+    console.error("No active image sets found, error:", imageError);
+
     throw createError({
       statusCode: 500,
       message: "No image sets available",
@@ -127,6 +145,8 @@ export default defineEventHandler(async (event) => {
     .eq("id", room.id);
 
   if (updateError) {
+    console.error("Failed to update room state:", updateError);
+
     throw createError({
       statusCode: 500,
       message: "Failed to start game",
