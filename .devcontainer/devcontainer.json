@@ -40,11 +40,11 @@
     },
     "54321": {
       "label": "Supabase API",
-      "onAutoForward": "ignore"
+      "onAutoForward": "silent"
     },
     "54322": {
       "label": "Supabase DB",
-      "onAutoForward": "ignore"
+      "onAutoForward": "silent"
     },
     "54323": {
       "label": "Supabase Studio",
@@ -52,7 +52,7 @@
     },
     "54324": {
       "label": "Supabase Mailpit",
-      "onAutoForward": "ignore"
+      "onAutoForward": "silent"
     }
   },
 
