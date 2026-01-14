@@ -29,11 +29,6 @@ const toasterTheme = computed(() => {
     <NuxtLayout>
       <NuxtPage />
     </NuxtLayout>
-    <Toaster
-      class="fixed top-0 right-0 z-50"
-      rich-colors
-      :theme="toasterTheme"
-      position="top-right"
-    />
+    <Toaster rich-colors :theme="toasterTheme" position="bottom-right" />
   </TooltipProvider>
 </template>
