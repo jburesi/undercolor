@@ -1,0 +1,6 @@
+[phases.setup]
+nixPkgs = ['nodejs_24', 'pnpm']
+nixpkgsArchive = '50a648d88844b1e3a302d2b5d70cf54a25b47253'  # Has Node 24
+
+[start]
+cmd = 'node .output/server/index.mjs'
