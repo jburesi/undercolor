@@ -1,11 +1,9 @@
 services:
   undercolor:
     image: ghcr.io/jburesi/undercolor:latest
-    container_name: undercolor
     restart: unless-stopped
-    ports:
-      - "${PORT:-3000}:3000"
     environment:
+      - SERVICE_FQDN_UNDERCOLOR_3000
       # Supabase configuration (used by @nuxtjs/supabase)
       - SUPABASE_URL=${SUPABASE_URL}
       - SUPABASE_KEY=${SUPABASE_KEY}
