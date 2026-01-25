@@ -3,7 +3,6 @@ services:
     image: ghcr.io/jburesi/undercolor:latest
     restart: unless-stopped
     environment:
-      - SERVICE_FQDN_UNDERCOLOR_3000
       # Supabase configuration (used by @nuxtjs/supabase)
       - SUPABASE_URL=${SUPABASE_URL}
       - SUPABASE_KEY=${SUPABASE_KEY}
