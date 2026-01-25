@@ -53,6 +53,4 @@ jobs:
       - name: Deploy to Coolify
         run: |
           curl --request GET '${{ secrets.COOLIFY_WEBHOOK }}' \
-               --header 'Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}' \
-               --header 'CF-Access-Client-Id: ${{ secrets.CF_ACCESS_CLIENT_ID }}' \
-               --header 'CF-Access-Client-Secret: ${{ secrets.CF_ACCESS_CLIENT_SECRET }}'
+               --header 'Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}'
