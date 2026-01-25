@@ -2,15 +2,17 @@ services:
   undercolor:
     image: ghcr.io/jburesi/undercolor:latest
     restart: unless-stopped
+    ports:
+      - "3000:3000"
     environment:
       # Supabase configuration (used by @nuxtjs/supabase)
-      - SUPABASE_URL=${SUPABASE_URL}
-      - SUPABASE_KEY=${SUPABASE_KEY}
-      - SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY}
+      - NUXT_PUBLIC_SUPABASE_URL=${NUXT_PUBLIC_SUPABASE_URL}
+      - NUXT_PUBLIC_SUPABASE_KEY=${NUXT_PUBLIC_SUPABASE_KEY}
+      - NUXT_SUPABASE_SECRET_KEY=${NUXT_SUPABASE_SECRET_KEY}
     healthcheck:
       test:
         - CMD
-        - /beszel
+        - /api
         - health
         - "--url"
         - "http://localhost:3000"
