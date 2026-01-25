@@ -1,6 +1,6 @@
 [phases.setup]
 nixPkgs = ['nodejs_24', 'pnpm_10']
-# nixpkgsArchive = '50a648d88844b1e3a302d2b5d70cf54a25b47253'  # Has Node 24
+nixpkgsArchive = '50a648d88844b1e3a302d2b5d70cf54a25b47253'  # Has Node 24
 # How to find nixpkgsArchive: go to https://github.com/NixOS/nixpkgs search for the version needed, copy the commit id
 
 [start]
