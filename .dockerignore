@@ -1,0 +1,68 @@
+# Dependencies
+node_modules
+.pnpm-store
+
+# Build outputs
+.output
+.nuxt
+dist
+
+# Development files
+.nuxt
+.nitro
+.cache
+
+# IDE and editor files
+.vscode
+.idea
+*.swp
+*.swo
+
+# Git
+.git
+.gitignore
+
+# Docker files (avoid infinite loop)
+Dockerfile*
+docker-compose*.yml
+
+# Documentation
+docs/
+*.md
+!README.md
+
+# Tests
+*.test.ts
+*.spec.ts
+__tests__
+coverage
+
+# Environment files (will be passed at runtime)
+.env*
+!.env.example
+
+# Supabase local development
+supabase/.branches
+supabase/.temp
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# Misc
+*.local
+.eslintcache
+
+# GitHub
+.github
+
+# Husky hooks (not needed in container)
+.husky
+
+# Type generation scripts
+supabase/
