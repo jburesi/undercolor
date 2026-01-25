@@ -3,7 +3,7 @@
 # =============================================================================
 # Stage 1: Base image with pnpm
 # =============================================================================
-FROM node:24-alpine AS base
+FROM node:24-slim AS base
 
 # Install pnpm globally
 ENV PNPM_HOME="/pnpm"
@@ -44,7 +44,7 @@ RUN pnpm build
 # =============================================================================
 # Stage 4: Production image
 # =============================================================================
-FROM node:24-alpine AS production
+FROM node:24-slim AS production
 
 # OCI labels for better traceability
 LABEL org.opencontainers.image.source="https://github.com/jburesi/undercolor"
