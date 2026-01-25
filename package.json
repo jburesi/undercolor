@@ -69,5 +69,6 @@
     "prettier": "3.7.4",
     "supabase": "^2.72.7",
     "typescript": "^5.9.3"
-  }
+  },
+  "packageManager": "pnpm@latest"
 }
