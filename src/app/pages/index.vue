@@ -104,7 +104,7 @@ const roles = computed(() => [
       <div class="container mx-auto px-4 text-center">
         <Badge variant="secondary" class="mb-4">
           <Icon name="lucide:sparkles" class="size-3 mr-1" />
-          Visual Social Deduction
+          The Visual Social Deduction Game
         </Badge>
 
         <h1
