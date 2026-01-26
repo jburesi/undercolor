@@ -68,7 +68,7 @@ EXPOSE 3000
 
 # Configure healthcheck
 HEALTHCHECK --interval=5s --timeout=5s --retries=10 \
-    CMD curl -f http://localhost:3000/ || exit 1
+    CMD ["curl", "-sf", "http://localhost:3000/"]
 
 # Start the application
 CMD ["node", ".output/server/index.mjs"]
