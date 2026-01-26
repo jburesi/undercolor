@@ -2,19 +2,8 @@ services:
   undercolor:
     image: ghcr.io/jburesi/undercolor:latest
     restart: unless-stopped
-    ports:
-      - "3000:3000"
     environment:
       # Supabase configuration (used by @nuxtjs/supabase)
       - NUXT_PUBLIC_SUPABASE_URL=${NUXT_PUBLIC_SUPABASE_URL}
       - NUXT_PUBLIC_SUPABASE_KEY=${NUXT_PUBLIC_SUPABASE_KEY}
       - NUXT_SUPABASE_SECRET_KEY=${NUXT_SUPABASE_SECRET_KEY}
-    healthcheck:
-      test:
-        - CMD
-        - /api
-        - health
-        - "--url"
-        - "http://localhost:3000"
-      start_period: 10s
-      interval: 30s
