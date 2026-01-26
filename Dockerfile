@@ -50,22 +50,15 @@ FROM node:24 AS production
 RUN apt-get update && apt-get install -y --no-install-recommends curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Add non-root user for security
-RUN addgroup --system --gid 1001 nodejs && \
-    adduser --system --uid 1001 nuxtjs
-
 WORKDIR /app
 
 # Copy built application from builder stage
-COPY --from=builder --chown=nuxtjs:nodejs /app/.output ./.output
+COPY --from=builder /app/.output ./.output
 
 # Copy Supabase configuration and migrations
-COPY --from=builder --chown=nuxtjs:nodejs /app/supabase ./supabase
+COPY --from=builder /app/supabase ./supabase
 
 ENV NODE_ENV=production
-
-# Switch to non-root user
-USER nuxtjs
 
 # Expose the port
 EXPOSE 3000
