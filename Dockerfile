@@ -46,10 +46,6 @@ RUN pnpm build
 # =============================================================================
 FROM node:24-slim AS production
 
-# OCI labels for better traceability
-LABEL org.opencontainers.image.source="https://github.com/jburesi/undercolor"
-LABEL org.opencontainers.image.description="Undercolor - Visual Social Deduction Game"
-
 # Add non-root user for security
 RUN addgroup --system --gid 1001 nodejs && \
     adduser --system --uid 1001 nuxtjs
@@ -66,10 +62,6 @@ USER nuxtjs
 
 # Expose the port
 EXPOSE 3000
-
-# Health check
-HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-    CMD curl -f http://localhost:3000/ || exit 1
 
 # Start the application
 CMD ["node", ".output/server/index.mjs"]
