@@ -3,7 +3,7 @@
 # =============================================================================
 # Stage 1: Base image with pnpm
 # =============================================================================
-FROM node:24-alpine AS base
+FROM node:24 AS base
 
 # Install pnpm globally
 ENV PNPM_HOME="/pnpm"
@@ -44,10 +44,11 @@ RUN pnpm build
 # =============================================================================
 # Stage 4: Production image
 # =============================================================================
-FROM node:24-alpine AS production
+FROM node:24 AS production
 
 # Install curl for healthcheck
-RUN apk add --no-cache curl
+RUN apt-get update && apt-get install -y --no-install-recommends curl \
+    && rm -rf /var/lib/apt/lists/*
 
 # Add non-root user for security
 RUN addgroup --system --gid 1001 nodejs && \
