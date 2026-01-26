@@ -59,6 +59,9 @@ WORKDIR /app
 # Copy built application from builder stage
 COPY --from=builder --chown=nuxtjs:nodejs /app/.output ./.output
 
+# Copy Supabase configuration and migrations
+COPY --from=builder --chown=nuxtjs:nodejs /app/supabase ./supabase
+
 ENV NODE_ENV=production
 
 # Switch to non-root user
