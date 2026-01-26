@@ -3,7 +3,7 @@
 # =============================================================================
 # Stage 1: Base image with pnpm
 # =============================================================================
-FROM node:24-slim AS base
+FROM node:24-alpine AS base
 
 # Install pnpm globally
 ENV PNPM_HOME="/pnpm"
@@ -44,7 +44,10 @@ RUN pnpm build
 # =============================================================================
 # Stage 4: Production image
 # =============================================================================
-FROM node:24-slim AS production
+FROM node:24-alpine AS production
+
+# Install curl for healthcheck
+RUN apk add --no-cache curl
 
 # Add non-root user for security
 RUN addgroup --system --gid 1001 nodejs && \
@@ -62,6 +65,10 @@ USER nuxtjs
 
 # Expose the port
 EXPOSE 3000
+
+# Configure healthcheck
+HEALTHCHECK --interval=5s --timeout=5s --retries=10 \
+    CMD curl -f http://localhost:3000/ || exit 1
 
 # Start the application
 CMD ["node", ".output/server/index.mjs"]
