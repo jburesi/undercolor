@@ -63,6 +63,3 @@ pnpm-debug.log*
 
 # Husky hooks (not needed in container)
 .husky
-
-# Type generation scripts
-supabase/
