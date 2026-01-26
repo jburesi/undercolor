@@ -65,7 +65,7 @@ const onSubmit = form.handleSubmit(async (formValues) => {
       roomCode: string;
       hostId: string;
       sessionId: string;
-    }>("/rooms", {
+    }>("/api/rooms", {
       method: "POST",
       body: {
         hostUsername: formValues.hostUsername,

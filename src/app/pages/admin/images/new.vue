@@ -97,7 +97,7 @@ const onSubmit = handleSubmit(async (formValues) => {
 
     // Create image set via API
     const { $api } = useNuxtApp();
-    await $api("/admin/images", {
+    await $api("/api/admin/images", {
       method: "POST",
       body: {
         name: formValues.name,

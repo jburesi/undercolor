@@ -18,7 +18,7 @@ interface PublicRoom {
 }
 
 const { data, status, refresh } = await useAsyncData("public-rooms", () =>
-  $api<{ rooms: PublicRoom[] }>("/rooms"),
+  $api<{ rooms: PublicRoom[] }>("/api/rooms"),
 );
 
 const publicRooms = computed(() => data.value?.rooms || []);

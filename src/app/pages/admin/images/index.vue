@@ -20,7 +20,7 @@ interface ImageSet {
 
 // Fetch image sets from API
 const { data, status, refresh } = await useAsyncData("admin-image-sets", () =>
-  $api<{ imageSets: ImageSet[] }>("/admin/images"),
+  $api<{ imageSets: ImageSet[] }>("/api/admin/images"),
 );
 
 const imageSets = computed(() => data.value?.imageSets || []);
@@ -55,7 +55,7 @@ const handleDelete = async () => {
   isDeleting.value = true;
 
   try {
-    await $api(`/admin/images/${imageSetToDelete.value.id}`, {
+    await $api(`/api/admin/images/${imageSetToDelete.value.id}`, {
       method: "DELETE",
     });
 

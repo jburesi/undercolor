@@ -125,7 +125,7 @@ export function useGameRoom(roomCode: string) {
       isLoading.value = true;
       error.value = null;
 
-      const data = await $api<RoomData>(`/rooms/${roomCode}`);
+      const data = await $api<RoomData>(`/api/rooms/${roomCode}`);
       room.value = data;
       players.value = data.players;
 
@@ -158,7 +158,7 @@ export function useGameRoom(roomCode: string) {
       roomCode: string;
       hostId: string;
       sessionId: string;
-    }>("/rooms", {
+    }>("/api/rooms", {
       method: "POST",
       body: {
         hostUsername,
@@ -187,7 +187,7 @@ export function useGameRoom(roomCode: string) {
       playerId: string;
       sessionId: string;
       room: RoomData;
-    }>("/rooms/join", {
+    }>("/api/rooms/join", {
       method: "POST",
       body: {
         roomCode: roomCode.toUpperCase(),
@@ -221,7 +221,7 @@ export function useGameRoom(roomCode: string) {
       throw new Error("Not in a room");
     }
 
-    await $api(`/rooms/${roomCode}/start`, {
+    await $api(`/api/rooms/${roomCode}/start`, {
       method: "POST",
       body: {
         sessionId: session.value.sessionId,
@@ -238,7 +238,7 @@ export function useGameRoom(roomCode: string) {
     const data = await $api<{
       role: PlayerRole;
       imageUrl: string | null;
-    }>(`/rooms/${roomCode}/role?sessionId=${session.value.sessionId}`);
+    }>(`/api/rooms/${roomCode}/role?sessionId=${session.value.sessionId}`);
 
     myRole.value = data.role;
     myImageUrl.value = data.imageUrl;
@@ -252,7 +252,7 @@ export function useGameRoom(roomCode: string) {
       throw new Error("Not in a room");
     }
 
-    await $api(`/rooms/${roomCode}/vote`, {
+    await $api(`/api/rooms/${roomCode}/vote`, {
       method: "POST",
       body: {
         sessionId: session.value.sessionId,
@@ -269,7 +269,7 @@ export function useGameRoom(roomCode: string) {
       throw new Error("Not in a room");
     }
 
-    await $api(`/rooms/${roomCode}/advance`, {
+    await $api(`/api/rooms/${roomCode}/advance`, {
       method: "POST",
       body: {
         sessionId: session.value.sessionId,
@@ -286,7 +286,7 @@ export function useGameRoom(roomCode: string) {
     if (!session.value) return;
 
     try {
-      await $api(`/rooms/${roomCode}/connection`, {
+      await $api(`/api/rooms/${roomCode}/connection`, {
         method: "POST",
         body: {
           sessionId: session.value.sessionId,
