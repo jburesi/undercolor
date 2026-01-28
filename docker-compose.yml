@@ -2,6 +2,7 @@ services:
   undercolor:
     image: ghcr.io/jburesi/undercolor:latest
     restart: unless-stopped
+    pull_policy: always
     environment:
       # Supabase configuration (used by @nuxtjs/supabase)
       - NUXT_PUBLIC_SUPABASE_URL=${NUXT_PUBLIC_SUPABASE_URL}

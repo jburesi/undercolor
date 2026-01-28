@@ -3,12 +3,12 @@
 # =============================================================================
 # Stage 1: Base image with pnpm
 # =============================================================================
-FROM node:24 AS base
+FROM node:24-alpine AS base
 
 # Install pnpm globally
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
-RUN corepack enable && corepack prepare pnpm@latest --activate
+RUN corepack enable
 
 # Set working directory
 WORKDIR /app
@@ -44,21 +44,23 @@ RUN pnpm build
 # =============================================================================
 # Stage 4: Production image
 # =============================================================================
-FROM node:24 AS production
+FROM node:24-alpine AS production
 
 # Install curl for healthcheck
-RUN apt-get update && apt-get install -y --no-install-recommends curl \
-    && rm -rf /var/lib/apt/lists/*
+RUN apk add --no-cache curl
 
 WORKDIR /app
 
 # Copy built application from builder stage
-COPY --from=builder /app/.output ./.output
+COPY --from=builder --chown=node:node /app/.output ./.output
 
 # Copy Supabase configuration and migrations
-COPY --from=builder /app/supabase ./supabase
+COPY --from=builder --chown=node:node /app/supabase ./supabase
 
 ENV NODE_ENV=production
+
+# Switch to non-root user
+USER node
 
 # Expose the port
 EXPOSE 3000
