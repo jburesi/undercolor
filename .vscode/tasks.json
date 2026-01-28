@@ -65,8 +65,8 @@
     },
     {
       "type": "shell",
-      "command": "pnpm",
-      "args": ["dlx", "supabase", "start"],
+      "command": "supabase",
+      "args": ["start"],
       "group": "build",
       "label": "Supabase: Start Local",
       "detail": "Start Supabase local development stack ▶️",
@@ -82,8 +82,8 @@
     },
     {
       "type": "shell",
-      "command": "pnpm",
-      "args": ["dlx", "supabase", "stop"],
+      "command": "supabase",
+      "args": ["stop"],
       "group": "build",
       "label": "Supabase: Stop Local",
       "detail": "Stop Supabase local development stack ⏹️",
@@ -96,8 +96,8 @@
     },
     {
       "type": "shell",
-      "command": "pnpm",
-      "args": ["dlx", "supabase", "db", "reset"],
+      "command": "supabase",
+      "args": ["db", "reset"],
       "group": "build",
       "label": "Supabase: Reset Database",
       "detail": "Reset Supabase database to initial state 🔄",
@@ -110,8 +110,8 @@
     },
     {
       "type": "shell",
-      "command": "pnpm",
-      "args": ["dlx", "supabase", "db", "diff", "-f", "${input:migrationName}"],
+      "command": "supabase",
+      "args": ["db", "diff", "-f", "${input:migrationName}"],
       "group": "build",
       "label": "Supabase: Create Migration",
       "detail": "Create a diff file for database changes 📋",
