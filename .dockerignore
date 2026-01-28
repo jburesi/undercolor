@@ -44,6 +44,8 @@ coverage
 # Supabase local development
 supabase/.branches
 supabase/.temp
+supabase/.gitignore
+supabase/config.toml
 
 # OS files
 .DS_Store
