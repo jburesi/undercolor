@@ -27,7 +27,7 @@ const onSubmit = form.handleSubmit(async (values) => {
   isJoining.value = true;
   try {
     // Check if room exists
-    await $api(`/rooms/${code}`);
+    await $api(`/api/rooms/${code}`);
     // Room exists, navigate to it
     await navigateTo(localePath({ name: "rooms-code", params: { code } }));
   } catch {
