@@ -1,12 +1,10 @@
-# Undercolor - Visual Social Deduction Platform
+# Undercolor
 
 A modern, real-time visual social deduction game built with **Nuxt 4**, **Supabase**, and **Shadcn/ui**.
 
-> **Note**: This project is based on the `nuxt-v4-template` but has been specialized into a full-fledged gaming platform.
-
 ## 📖 Documentation
 
-- [**Technical Architecture & Design**](./docs/ARCHITECTURE.md) - Detailed report on the game's architecture, state management, and security.
+- [**(Oudated) Technical Architecture & Design**](./docs/ARCHITECTURE.md) - Detailed report on the game's architecture, state management, and security.
 - [**Naming Conventions**](./docs/NAMING_CONVENTIONS.md) - Code style and file naming standards.
 
 ## 🎮 Project Overview
