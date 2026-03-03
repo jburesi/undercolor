@@ -54,3 +54,9 @@ export const joinRoomSchema = z.object({
 });
 
 export type JoinRoomInput = z.infer<typeof joinRoomSchema>;
+
+export const joinRoomFormSchema = z.object({
+  username: usernameSchema,
+});
+
+export type JoinRoomFormInput = z.infer<typeof joinRoomFormSchema>;

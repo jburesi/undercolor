@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useForm } from "vee-validate";
 import { imageSetFormSchema } from "#shared/schemas";
+import { useAdminImages } from "~/composables/admin/useAdminImages";
 
 definePageMeta({
   layout: "default",
@@ -8,6 +9,7 @@ definePageMeta({
 });
 
 const { t } = useI18n();
+const { createImageSet } = useAdminImages();
 
 const form = useForm({
   validationSchema: imageSetFormSchema,
@@ -95,21 +97,19 @@ const onSubmit = handleSubmit(async (formValues) => {
       .from("game-images")
       .getPublicUrl(imposterPath);
 
-    // Create image set via API
-    const { $api } = useNuxtApp();
-    await $api("/api/admin/images", {
-      method: "POST",
-      body: {
-        name: formValues.name,
-        category: formValues.category,
-        difficulty: formValues.difficulty,
-        innocentImageUrl: innocentUrl.publicUrl,
-        imposterImageUrl: imposterUrl.publicUrl,
-      },
+    // Create image set via composable
+    const success = await createImageSet({
+      name: formValues.name,
+      category: formValues.category,
+      difficulty: formValues.difficulty,
+      innocentImageUrl: innocentUrl.publicUrl,
+      imposterImageUrl: imposterUrl.publicUrl,
     });
 
-    // Navigate back to image sets list
-    await navigateTo("admin-images");
+    if (success) {
+      // Navigate back to image sets list
+      await navigateTo("admin-images");
+    }
   } catch (err) {
     errorMessage.value = err instanceof Error ? err.message : t("common.error");
   } finally {

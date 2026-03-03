@@ -1,41 +1,13 @@
 <script setup lang="ts">
+import { usePublicRooms } from "~/composables/rooms/usePublicRooms";
+
 definePageMeta({
   layout: "default",
 });
 
 const { t } = useI18n();
 const localePath = useLocalePath();
-const { $api } = useNuxtApp();
-
-// Fetch public rooms from API
-interface PublicRoom {
-  roomId: string;
-  roomCode: string;
-  hostName: string;
-  playerCount: number;
-  maxPlayers: number;
-  createdAt: string;
-}
-
-const { data, status, refresh } = await useAsyncData("public-rooms", () =>
-  $api<{ rooms: PublicRoom[] }>("/api/rooms"),
-);
-
-const publicRooms = computed(() => data.value?.rooms || []);
-const isLoading = computed(() => status.value === "pending");
-
-// Refresh rooms every 10 seconds
-const refreshInterval = ref<ReturnType<typeof setInterval> | null>(null);
-onMounted(() => {
-  refreshInterval.value = setInterval(() => {
-    refresh();
-  }, 10000);
-});
-onUnmounted(() => {
-  if (refreshInterval.value) {
-    clearInterval(refreshInterval.value);
-  }
-});
+const { rooms: publicRooms, isLoading } = usePublicRooms();
 </script>
 
 <template>

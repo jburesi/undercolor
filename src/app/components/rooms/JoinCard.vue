@@ -3,10 +3,11 @@ import { useForm } from "vee-validate";
 import { toast } from "vue-sonner";
 import { roomCodeSchema } from "#shared/schemas";
 import { z } from "zod";
+import { useRoomCheck } from "~/composables/rooms/useRoomCheck";
 
 const { t } = useI18n();
 const localePath = useLocalePath();
-const { $api } = useNuxtApp();
+const { checkRoomExists } = useRoomCheck();
 
 const joinRoomFormSchema = z.object({
   roomCode: roomCodeSchema,
@@ -26,13 +27,12 @@ const onSubmit = form.handleSubmit(async (values) => {
 
   isJoining.value = true;
   try {
-    // Check if room exists
-    await $api(`/api/rooms/${code}`);
-    // Room exists, navigate to it
-    await navigateTo(localePath({ name: "rooms-code", params: { code } }));
-  } catch {
-    // Room doesn't exist
-    toast.error(t("toast.roomNotFound"));
+    const exists = await checkRoomExists(code);
+    if (exists) {
+      await navigateTo(localePath({ name: "rooms-code", params: { code } }));
+    } else {
+      toast.error(t("toast.roomNotFound"));
+    }
   } finally {
     isJoining.value = false;
   }

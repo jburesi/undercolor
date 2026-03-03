@@ -1,35 +1,20 @@
 <script setup lang="ts">
+import {
+  useAdminImages,
+  type ImageSet,
+} from "~/composables/admin/useAdminImages";
+
 definePageMeta({
   layout: "default",
   middleware: ["admin"],
 });
 
 const { t } = useI18n();
-const { $api } = useNuxtApp();
-
-interface ImageSet {
-  id: string;
-  name: string;
-  category: string;
-  difficulty: string;
-  innocent_image_url: string;
-  imposter_image_url: string;
-  is_active: boolean;
-  created_at: string;
-}
-
-// Fetch image sets from API
-const { data, status, refresh } = await useAsyncData("admin-image-sets", () =>
-  $api<{ imageSets: ImageSet[] }>("/api/admin/images"),
-);
-
-const imageSets = computed(() => data.value?.imageSets || []);
-const isLoading = computed(() => status.value === "pending");
+const { imageSets, isLoading, isDeleting, deleteImageSet } = useAdminImages();
 
 // Delete confirmation state
 const deleteDialogOpen = ref(false);
 const imageSetToDelete = ref<ImageSet | null>(null);
-const isDeleting = ref(false);
 
 const getDifficultyVariant = (difficulty: string) => {
   switch (difficulty) {
@@ -52,22 +37,10 @@ const openDeleteDialog = (imageSet: ImageSet) => {
 const handleDelete = async () => {
   if (!imageSetToDelete.value) return;
 
-  isDeleting.value = true;
-
-  try {
-    await $api(`/api/admin/images/${imageSetToDelete.value.id}`, {
-      method: "DELETE",
-    });
-
+  const success = await deleteImageSet(imageSetToDelete.value.id);
+  if (success) {
     deleteDialogOpen.value = false;
     imageSetToDelete.value = null;
-
-    // Refresh the list
-    await refresh();
-  } catch (err) {
-    console.error("Failed to delete image set:", err);
-  } finally {
-    isDeleting.value = false;
   }
 };
 </script>

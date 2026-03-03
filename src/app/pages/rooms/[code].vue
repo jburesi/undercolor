@@ -1,8 +1,14 @@
 <script setup lang="ts">
-import { toast } from "vue-sonner";
-import { GameState, PlayerRole } from "#shared/types/game.types";
+import { PlayerRole } from "#shared/types/game.types";
 import { useGameRoom } from "~/composables/game/useGameRoom";
 import { useGameTimer } from "~/composables/game/useGameTimer";
+import { useGameResult } from "~/composables/game/useGameResult";
+import { useGamePhase } from "~/composables/game/useGamePhase";
+import { useClipboard } from "~/composables/common/useClipboard";
+import { useAsyncAction } from "~/composables/common/useAsyncAction";
+import { useJoinRoomForm } from "~/composables/forms/useJoinRoomForm";
+import { getRoleBadgeVariant } from "~/utils/game-helpers";
+import { GAME_RULES } from "~/constants/game";
 
 definePageMeta({
   layout: "default",
@@ -10,7 +16,6 @@ definePageMeta({
 
 const route = useRoute();
 const { t } = useI18n();
-const { username: profileUsername } = useProfile();
 
 const roomCode = computed(() => (route.params.code as string).toUpperCase());
 
@@ -25,7 +30,7 @@ const {
   error,
   isHost,
   isAlive,
-  session,
+  hasJoined,
   init,
   joinRoom,
   startGame,
@@ -34,32 +39,73 @@ const {
 } = useGameRoom(roomCode.value);
 
 const timer = useGameTimer();
+const { copyRoomCode } = useClipboard();
+const { didIWin } = useGameResult(room, myRole);
+const {
+  isLobby,
+  isDistributing,
+  isObservation,
+  isDebate,
+  isVoting,
+  isFinished,
+  currentPhase,
+} = useGamePhase(room);
+
+// Join form
+const {
+  form: joinForm,
+  onSubmit: handleJoinRoom,
+  isSubmitting: isJoining,
+  error: joinError,
+} = useJoinRoomForm(joinRoom);
 
 // Local state
-const username = ref("");
-const isJoining = ref(false);
-const joinError = ref<string | null>(null);
 const selectedVoteTarget = ref<string | null>(null);
-const isVoting = ref(false);
 const roleRevealed = ref(false);
 
-// Pre-fill username from profile when available
-watch(
-  profileUsername,
-  (newUsername) => {
-    if (newUsername && !username.value) {
-      username.value = newUsername;
-    }
+// Async actions with loading states
+const { execute: handleStartGame } = useAsyncAction(
+  async () => {
+    if (!canStartGame.value) return;
+    await startGame();
   },
-  { immediate: true },
+  {
+    successMessage: t("toast.gameStarted"),
+    errorMessage: t("toast.errorStartGame"),
+  },
+);
+
+const { execute: handleVote, isLoading: isSubmittingVote } = useAsyncAction(
+  async () => {
+    if (!selectedVoteTarget.value || !isAlive.value) return;
+    await vote(selectedVoteTarget.value);
+    selectedVoteTarget.value = null;
+  },
+  {
+    successMessage: t("toast.voteSubmitted"),
+    errorMessage: t("toast.errorVote"),
+  },
+);
+
+const { execute: handleSkipPhase } = useAsyncAction(
+  async () => {
+    if (!isHost.value) return;
+    await advancePhase();
+  },
+  { showErrorToast: true },
 );
 
 // Computed
-const hasJoined = computed(() => !!session.value);
-const gameState = computed(() => room.value?.state || GameState.LOBBY);
 const canStartGame = computed(
   () =>
-    isHost.value && players.value.length >= 3 && gameState.value === "LOBBY",
+    isHost.value &&
+    players.value.length >= GAME_RULES.MIN_PLAYERS &&
+    isLobby.value,
+);
+
+const statusKey = computed(() => currentPhase.value?.toLowerCase() ?? "lobby");
+const showTimer = computed(
+  () => !isFinished.value && !isDistributing.value && !isLobby.value,
 );
 
 // Dynamic page title - update when room is loaded
@@ -89,110 +135,6 @@ watch(
 // Initialize room on mount
 onMounted(async () => {
   await init();
-});
-
-// Join room handler
-async function handleJoinRoom() {
-  if (!username.value.trim()) return;
-
-  isJoining.value = true;
-  joinError.value = null;
-
-  try {
-    await joinRoom(username.value);
-    toast.success(t("toast.roomJoined"));
-  } catch (err: unknown) {
-    joinError.value =
-      err instanceof Error ? err.message : "Failed to join room";
-    toast.error(t("toast.errorJoinRoom"));
-  } finally {
-    isJoining.value = false;
-  }
-}
-
-// Start game handler
-async function handleStartGame() {
-  if (!canStartGame.value) return;
-
-  try {
-    await startGame();
-    toast.success(t("toast.gameStarted"));
-  } catch (err: unknown) {
-    console.error("Failed to start game:", err);
-    toast.error(t("toast.errorStartGame"));
-  }
-}
-
-// Vote handler
-async function handleVote() {
-  if (!selectedVoteTarget.value || !isAlive.value) return;
-
-  isVoting.value = true;
-
-  try {
-    await vote(selectedVoteTarget.value);
-    selectedVoteTarget.value = null;
-    toast.success(t("toast.voteSubmitted"));
-  } catch (err: unknown) {
-    console.error("Failed to vote:", err);
-    toast.error(t("toast.errorVote"));
-  } finally {
-    isVoting.value = false;
-  }
-}
-
-// Skip phase handler (host only)
-async function handleSkipPhase() {
-  if (!isHost.value) return;
-
-  try {
-    await advancePhase();
-  } catch (err: unknown) {
-    console.error("Failed to advance phase:", err);
-  }
-}
-
-// Copy room code
-async function copyRoomCode() {
-  await navigator.clipboard.writeText(roomCode.value);
-  toast.success(t("toast.codeCopied"));
-}
-
-// Get role badge variant
-function getRoleBadgeVariant(role: PlayerRole) {
-  switch (role) {
-    case PlayerRole.INNOCENT:
-      return "default";
-    case PlayerRole.IMPOSTER:
-      return "destructive";
-    case PlayerRole.MR_WHITE:
-      return "secondary";
-  }
-}
-
-// Check if current player won
-const didIWin = computed(() => {
-  if (!room.value?.winner || !myRole.value) return false;
-
-  if (
-    room.value.winner === "INNOCENT" &&
-    myRole.value === PlayerRole.INNOCENT
-  ) {
-    return true;
-  }
-  if (
-    room.value.winner === "IMPOSTER" &&
-    myRole.value === PlayerRole.IMPOSTER
-  ) {
-    return true;
-  }
-  if (
-    room.value.winner === "MR_WHITE" &&
-    myRole.value === PlayerRole.MR_WHITE
-  ) {
-    return true;
-  }
-  return false;
 });
 
 // Get alive players for voting
@@ -248,7 +190,7 @@ const alivePlayersForVoting = computed(() =>
       <template v-else-if="room">
         <!-- Header: LOBBY layout (badge + button on right) -->
         <div
-          v-if="gameState === 'LOBBY'"
+          v-if="isLobby"
           class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-8"
         >
           <!-- Left: Title + Code -->
@@ -265,7 +207,7 @@ const alivePlayersForVoting = computed(() =>
                   variant="ghost"
                   size="icon"
                   class="size-6"
-                  @click="copyRoomCode"
+                  @click="copyRoomCode(roomCode)"
                 >
                   <Icon name="lucide:copy" class="size-3" />
                 </Button>
@@ -273,7 +215,7 @@ const alivePlayersForVoting = computed(() =>
             </div>
             <!-- Badge: mobile only -->
             <Badge class="text-sm px-4 py-1.5 sm:hidden" variant="secondary">
-              {{ t(`rooms.status.${gameState.toLowerCase()}`) }}
+              {{ t(`rooms.status.${statusKey}`) }}
             </Badge>
           </div>
 
@@ -284,7 +226,7 @@ const alivePlayersForVoting = computed(() =>
               class="hidden sm:inline-flex text-sm px-4 py-1.5"
               variant="secondary"
             >
-              {{ t(`rooms.status.${gameState.toLowerCase()}`) }}
+              {{ t(`rooms.status.${statusKey}`) }}
             </Badge>
             <!-- Start Game Button (Host only) -->
             <Button
@@ -314,7 +256,7 @@ const alivePlayersForVoting = computed(() =>
               <div
                 class="flex items-center gap-3 mb-1"
                 :class="
-                  gameState === 'FINISHED'
+                  isFinished
                     ? 'justify-between'
                     : 'justify-between sm:justify-start'
                 "
@@ -323,7 +265,7 @@ const alivePlayersForVoting = computed(() =>
                   {{ t("rooms.hostGame", { name: room.hostName }) }}
                 </h1>
                 <Badge class="text-sm px-4 py-1.5">
-                  {{ t(`rooms.status.${gameState.toLowerCase()}`) }}
+                  {{ t(`rooms.status.${statusKey}`) }}
                 </Badge>
               </div>
               <div class="flex items-center gap-2">
@@ -334,7 +276,7 @@ const alivePlayersForVoting = computed(() =>
                   variant="ghost"
                   size="icon"
                   class="size-6"
-                  @click="copyRoomCode"
+                  @click="copyRoomCode(roomCode)"
                 >
                   <Icon name="lucide:copy" class="size-3" />
                 </Button>
@@ -342,10 +284,7 @@ const alivePlayersForVoting = computed(() =>
             </div>
 
             <!-- Right: Timer (desktop only) -->
-            <div
-              v-if="gameState !== 'FINISHED' && gameState !== 'DISTRIBUTING'"
-              class="hidden sm:block text-right"
-            >
+            <div v-if="showTimer" class="hidden sm:block text-right">
               <p class="text-sm text-muted-foreground">
                 {{ t("game.timeRemaining") }}
               </p>
@@ -359,10 +298,7 @@ const alivePlayersForVoting = computed(() =>
           </div>
 
           <!-- Row 2: Timer (mobile only) -->
-          <div
-            v-if="gameState !== 'FINISHED' && gameState !== 'DISTRIBUTING'"
-            class="sm:hidden mt-3"
-          >
+          <div v-if="showTimer" class="sm:hidden mt-3">
             <p class="text-sm text-muted-foreground">
               {{ t("game.timeRemaining") }}
             </p>
@@ -384,26 +320,28 @@ const alivePlayersForVoting = computed(() =>
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form class="space-y-4" @submit.prevent="handleJoinRoom">
-              <div class="space-y-2">
-                <label for="join-username" class="text-sm font-medium">
-                  {{ t("auth.username") }}
-                </label>
-                <Input
-                  id="join-username"
-                  v-model="username"
-                  :placeholder="t('auth.username')"
-                  maxlength="20"
-                  :disabled="isJoining"
-                />
-                <p v-if="joinError" class="text-sm text-destructive">
-                  {{ joinError }}
-                </p>
-              </div>
+            <form class="space-y-4" @submit="handleJoinRoom">
+              <FormField v-slot="{ componentField }" name="username">
+                <FormItem>
+                  <FormLabel>{{ t("auth.username") }}</FormLabel>
+                  <FormControl>
+                    <Input
+                      :placeholder="t('auth.username')"
+                      maxlength="20"
+                      :disabled="isJoining"
+                      v-bind="componentField"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              </FormField>
+              <p v-if="joinError" class="text-sm text-destructive">
+                {{ joinError }}
+              </p>
               <Button
                 type="submit"
                 class="w-full"
-                :disabled="!username.trim() || isJoining"
+                :disabled="!joinForm.meta.value.valid || isJoining"
               >
                 <Icon
                   v-if="isJoining"
@@ -420,7 +358,7 @@ const alivePlayersForVoting = computed(() =>
         <!-- Game View (if joined) -->
         <div v-else>
           <!-- ==================== LOBBY STATE ==================== -->
-          <div v-if="gameState === 'LOBBY'" class="space-y-6">
+          <div v-if="isLobby" class="space-y-6">
             <Card>
               <CardHeader>
                 <CardTitle class="flex items-center gap-2">
@@ -462,7 +400,7 @@ const alivePlayersForVoting = computed(() =>
 
           <!-- ==================== DISTRIBUTING STATE ==================== -->
           <div
-            v-else-if="gameState === 'DISTRIBUTING'"
+            v-else-if="isDistributing"
             class="flex flex-col items-center justify-center min-h-[400px]"
           >
             <Icon
@@ -474,10 +412,7 @@ const alivePlayersForVoting = computed(() =>
           </div>
 
           <!-- ==================== OBSERVATION STATE ==================== -->
-          <div
-            v-else-if="gameState === 'OBSERVATION'"
-            class="max-w-2xl mx-auto space-y-6"
-          >
+          <div v-else-if="isObservation" class="max-w-2xl mx-auto space-y-6">
             <!-- Role Card -->
             <Card class="overflow-hidden">
               <CardHeader class="text-center">
@@ -551,7 +486,7 @@ const alivePlayersForVoting = computed(() =>
           </div>
 
           <!-- ==================== DEBATE STATE ==================== -->
-          <div v-else-if="gameState === 'DEBATE'" class="space-y-6">
+          <div v-else-if="isDebate" class="space-y-6">
             <Card>
               <CardHeader>
                 <CardTitle class="flex items-center gap-2">
@@ -585,7 +520,7 @@ const alivePlayersForVoting = computed(() =>
           </div>
 
           <!-- ==================== VOTING STATE ==================== -->
-          <div v-else-if="gameState === 'VOTING'" class="space-y-6">
+          <div v-else-if="isVoting" class="space-y-6">
             <Card>
               <CardHeader>
                 <CardTitle class="flex items-center gap-2">
@@ -643,11 +578,11 @@ const alivePlayersForVoting = computed(() =>
 
                   <Button
                     class="w-full"
-                    :disabled="!selectedVoteTarget || isVoting"
+                    :disabled="!selectedVoteTarget || isSubmittingVote"
                     @click="handleVote"
                   >
                     <Icon
-                      v-if="isVoting"
+                      v-if="isSubmittingVote"
                       name="lucide:loader-2"
                       class="size-4 mr-2 animate-spin"
                     />
@@ -660,7 +595,7 @@ const alivePlayersForVoting = computed(() =>
           </div>
 
           <!-- ==================== FINISHED STATE ==================== -->
-          <div v-else-if="gameState === 'FINISHED'" class="space-y-6">
+          <div v-else-if="isFinished" class="space-y-6">
             <Card class="text-center">
               <CardHeader>
                 <CardTitle class="text-3xl">
