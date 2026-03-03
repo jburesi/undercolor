@@ -9,7 +9,13 @@ services:
       - NUXT_PUBLIC_SUPABASE_KEY=${NUXT_PUBLIC_SUPABASE_KEY}
       - NUXT_SUPABASE_SECRET_KEY=${NUXT_SUPABASE_SECRET_KEY}
     healthcheck:
-      test: ["CMD", "curl", "-sf", "http://localhost:3000/"]
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:3000/').then((r) => {if (r.status !== 200) throw new Error(r.status)})",
+        ]
       interval: 5s
       timeout: 5s
       retries: 10
