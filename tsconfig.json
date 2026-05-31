@@ -14,14 +14,5 @@
     {
       "path": "./.nuxt/tsconfig.node.json"
     }
-  ],
-
-  //Shadcn | NuxtV4 https://github.com/unovue/shadcn-vue/pull/1372
-  "compilerOptions": {
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["./src/app/*"],
-      "~/*": ["./src/app/*"]
-    }
-  }
+  ]
 }

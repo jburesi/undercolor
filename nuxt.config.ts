@@ -36,10 +36,10 @@ export default defineNuxtConfig({
     plugins: [tailwindcss()],
     optimizeDeps: {
       include: [
+        "@lucide/vue",
         "class-variance-authority",
-        "clsx",
         "jwt-decode",
-        "lucide-vue-next",
+        "clsx",
         "reka-ui",
         "tailwind-merge",
         "vue-sonner",
@@ -49,7 +49,6 @@ export default defineNuxtConfig({
   },
   shadcn: {
     prefix: "",
-    componentDir: "./src/app/components/ui",
   },
   supabase: {
     redirect: false,

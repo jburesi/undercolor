@@ -29,6 +29,7 @@
     ]
   },
   "dependencies": {
+    "@lucide/vue": "^1.17.0",
     "@nuxt/fonts": "0.14.0",
     "@nuxt/icon": "2.2.2",
     "@nuxt/image": "2.0.0",
@@ -36,26 +37,23 @@
     "@nuxtjs/i18n": "10.4.0",
     "@nuxtjs/seo": "5.1.3",
     "@nuxtjs/supabase": "2.0.9",
-    "@tailwindcss/vite": "^4.3.0",
     "@takumi-rs/core": "^1.6.0",
     "@vee-validate/nuxt": "5.0.0-beta.0",
+    "@vee-validate/zod": "^4.15.1",
     "@vueuse/core": "^14.3.0",
     "@vueuse/nuxt": "14.3.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "jwt-decode": "^4.0.0",
-    "lucide-vue-next": "^1.0.0",
     "nuxt": "^4.4.6",
     "reka-ui": "^2.9.8",
     "shadcn-nuxt": "2.7.3",
     "tailwind-merge": "^3.6.0",
-    "tailwindcss": "^4.3.0",
-    "tw-animate-css": "^1.4.0",
     "vee-validate": "5.0.0-beta.0",
     "vue": "^3.5.35",
     "vue-router": "^5.1.0",
     "vue-sonner": "^2.0.9",
-    "zod": "^4.4.3"
+    "zod": "^3.25.76"
   },
   "devDependencies": {
     "@commitlint/cli": "^21.0.2",
@@ -63,12 +61,15 @@
     "@iconify-json/logos": "^1.2.11",
     "@iconify-json/lucide": "^1.2.111",
     "@nuxt/eslint": "1.15.2",
+    "@tailwindcss/vite": "^4.3.0",
     "eslint": "^10.4.1",
     "husky": "^9.1.7",
     "lint-staged": "^17.0.7",
     "markdownlint": "^0.40.0",
     "markdownlint-cli": "^0.48.0",
     "prettier": "3.8.3",
+    "tailwindcss": "^4.3.0",
+    "tw-animate-css": "^1.4.0",
     "typescript": "^6.0.3"
   },
   "packageManager": "pnpm@11.5.0"
