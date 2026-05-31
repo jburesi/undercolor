@@ -8,7 +8,9 @@
       "assetRegex": "supabase_.*_linux_.*\\.tar\\.gz",
       "releaseTagRegex": "^(?!.*(alpha|beta|rc|nightly)).*$"
     },
-    "ghcr.io/devcontainers/features/docker-in-docker:3": {},
+    "ghcr.io/devcontainers/features/docker-in-docker:3": {
+      "moby": false
+    },
     "ghcr.io/devcontainers-extra/features/act:1": {}
   },
   "customizations": {
