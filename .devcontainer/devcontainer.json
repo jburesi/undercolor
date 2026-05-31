@@ -2,7 +2,12 @@
   "name": "Nuxt 4 Development Container",
   "image": "mcr.microsoft.com/vscode/devcontainers/typescript-node:24",
   "features": {
-    "ghcr.io/devcontainers-extra/features/supabase-cli": {},
+    "ghcr.io/devcontainers-extra/features/gh-release:1": {
+      "repo": "supabase/cli",
+      "binaryNames": "supabase",
+      "assetRegex": "supabase_.*_linux_.*\\.tar\\.gz",
+      "releaseTagRegex": "^(?!.*(alpha|beta|rc|nightly)).*$"
+    },
     "ghcr.io/devcontainers/features/docker-in-docker:3": {},
     "ghcr.io/devcontainers-extra/features/act:1": {}
   },
