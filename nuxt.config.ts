@@ -66,7 +66,8 @@ export default defineNuxtConfig({
   },
   ogImage: {
     security: {
-      strict: true,
+      restrictRuntimeImagesToOrigin: true,
+      maxQueryParamSize: 2048,
     },
   },
   i18n: {
