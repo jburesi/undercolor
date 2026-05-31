@@ -46,9 +46,6 @@ RUN pnpm build
 # =============================================================================
 FROM node:24-alpine AS production
 
-# Install curl for healthcheck
-RUN apk add --no-cache curl
-
 WORKDIR /app
 
 # Copy built application from builder stage
@@ -67,7 +64,7 @@ EXPOSE 3000
 
 # Configure healthcheck
 HEALTHCHECK --interval=5s --timeout=5s --retries=10 \
-    CMD ["curl", "-sf", "http://localhost:3000/"]
+    CMD ["node", "-e", "fetch('http://127.0.0.1:3000/').then((r) => {if (r.status !== 200) throw new Error(r.status)})"]
 
 # Start the application
 CMD ["node", ".output/server/index.mjs"]
