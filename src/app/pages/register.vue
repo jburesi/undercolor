@@ -15,7 +15,7 @@ const supabase = useSupabaseClient();
 const formSchema = z
   .object({
     username: z.string().min(2).max(20),
-    email: z.email(),
+    email: z.string().email(),
     password: z.string().min(6),
     confirmPassword: z.string().min(6),
   })

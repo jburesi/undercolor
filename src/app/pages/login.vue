@@ -14,7 +14,7 @@ const supabase = useSupabaseClient();
 
 // VeeValidate v5 supports Zod v4 natively
 const formSchema = z.object({
-  email: z.email(),
+  email: z.string().email(),
   password: z.string().min(6),
 });
 

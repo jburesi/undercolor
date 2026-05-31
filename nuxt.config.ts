@@ -1,5 +1,5 @@
-import { fileURLToPath } from "node:url";
 import tailwindcss from "@tailwindcss/vite";
+import { fileURLToPath } from "node:url";
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
@@ -28,22 +28,27 @@ export default defineNuxtConfig({
     "@nuxtjs/i18n",
     "@nuxtjs/seo",
   ],
-  nitro: {
-    externals: {
-      // https://github.com/nuxt-modules/supabase/issues/559
-      inline: ["@supabase/supabase-js"],
-    },
-  },
   colorMode: {
     classSuffix: "",
   },
   css: ["~/assets/css/tailwind.css"],
   vite: {
     plugins: [tailwindcss()],
+    optimizeDeps: {
+      include: [
+        "@lucide/vue",
+        "class-variance-authority",
+        "jwt-decode",
+        "clsx",
+        "reka-ui",
+        "tailwind-merge",
+        "vue-sonner",
+        "zod",
+      ],
+    },
   },
   shadcn: {
     prefix: "",
-    componentDir: "./src/app/components/ui",
   },
   supabase: {
     redirect: false,
@@ -58,6 +63,11 @@ export default defineNuxtConfig({
     name: "Undercolor",
     description:
       "A visual social deduction game. Find the imposter among you - everyone sees an image, but not everyone sees the same one!",
+  },
+  ogImage: {
+    security: {
+      strict: true,
+    },
   },
   i18n: {
     strategy: "prefix",
